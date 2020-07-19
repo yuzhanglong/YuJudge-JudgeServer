@@ -1,5 +1,9 @@
 package com.yzl.yujudge.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,28 +15,47 @@ import java.util.List;
 @Entity
 @Table(name = "judge_problem", schema = "yu-judge")
 public class JudgeProblemEntity extends BaseEntity {
-    private Long id;
-    private String name;
-    private String content;
-    private Integer timeLimit;
-    private Integer memoryLimit;
-    private Integer cpuTimeLimit;
-
-
-    public List<JudgeSolutionEntity> getJudgeSolutionEntityList() {
-        return judgeSolutionEntityList;
-    }
-
-    public void setJudgeSolutionEntityList(List<JudgeSolutionEntity> judgeSolutionEntityList) {
-        this.judgeSolutionEntityList = judgeSolutionEntityList;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pk_problem")
-    private List<JudgeSolutionEntity> judgeSolutionEntityList;
-
     @Id
     @Column(name = "id")
+    private Long id;
+
+    @Basic
+    @Column(name = "name")
+    private String name;
+
+    @Basic
+    @Column(name = "content")
+    private String content;
+
+    @Basic
+    @Column(name = "time_limit")
+    private Integer timeLimit;
+
+    @Basic
+    @Column(name = "memory_limit")
+    private Integer memoryLimit;
+
+    @Basic
+    @Column(name = "cpu_time_limit")
+    private Integer cpuTimeLimit;
+
+    @Basic
+    @Column(name = "character_tags")
+    private String characterTags;
+
+    @OneToMany
+    @JoinColumn(name = "pk_problem")
+    private List<JudgeSolutionEntity> solutions;
+
+    public List<JudgeSolutionEntity> getJudgeSolutionEntityList() {
+        return solutions;
+    }
+
+    public void setJudgeSolutionEntityList(List<JudgeSolutionEntity> solutions) {
+        this.solutions = solutions;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -41,8 +64,7 @@ public class JudgeProblemEntity extends BaseEntity {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "name")
+
     public String getName() {
         return name;
     }
@@ -51,8 +73,7 @@ public class JudgeProblemEntity extends BaseEntity {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "content")
+
     public String getContent() {
         return content;
     }
@@ -61,8 +82,7 @@ public class JudgeProblemEntity extends BaseEntity {
         this.content = content;
     }
 
-    @Basic
-    @Column(name = "time_limit")
+
     public Integer getTimeLimit() {
         return timeLimit;
     }
@@ -71,8 +91,7 @@ public class JudgeProblemEntity extends BaseEntity {
         this.timeLimit = timeLimit;
     }
 
-    @Basic
-    @Column(name = "memory_limit")
+
     public Integer getMemoryLimit() {
         return memoryLimit;
     }
@@ -81,13 +100,21 @@ public class JudgeProblemEntity extends BaseEntity {
         this.memoryLimit = memoryLimit;
     }
 
-    @Basic
-    @Column(name = "cpu_time_limit")
+
     public Integer getCpuTimeLimit() {
         return cpuTimeLimit;
     }
 
     public void setCpuTimeLimit(Integer cpuTimeLimit) {
         this.cpuTimeLimit = cpuTimeLimit;
+    }
+
+    public List<String> getCharacterTags() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(characterTags, new TypeReference<List<String>>() {});
+    }
+
+    public void setCharacterTags(String characterTags) {
+        this.characterTags = characterTags;
     }
 }

@@ -18,7 +18,6 @@ public class ProblemService {
         this.problemRepository = problemRepository;
     }
 
-
     /**
      * @param problemId 问题id
      * @author yuzhanglong

@@ -2,6 +2,8 @@ package com.yzl.yujudge.api.v1;
 
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.service.ProblemService;
+import com.yzl.yujudge.vo.ProblemBasicVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +30,10 @@ public class ProblemController {
      * @date 2020-7-18 04:26
      */
     @GetMapping("/get_problem_by_id/{problemId}")
-    public JudgeProblemEntity getProblemInfoById(@PathVariable Long problemId) {
+    public ProblemBasicVO getProblemInfoById(@PathVariable Long problemId) {
         JudgeProblemEntity problem = problemService.getProblemInfoById(problemId);
-        return problem;
+        ProblemBasicVO problemBasicInfo = new ProblemBasicVO();
+        BeanUtils.copyProperties(problem, problemBasicInfo);
+        return problemBasicInfo;
     }
 }

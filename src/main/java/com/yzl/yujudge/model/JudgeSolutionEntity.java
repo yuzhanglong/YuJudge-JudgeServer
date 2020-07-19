@@ -11,13 +11,23 @@ import javax.persistence.*;
 @Entity
 @Table(name = "judge_solution", schema = "yu-judge")
 public class JudgeSolutionEntity extends BaseEntity {
-    private Long id;
-    private String stdIn;
-    private String expectedStdOut;
-    private Long pkProblem;
-
     @Id
     @Column(name = "id")
+    private Long id;
+
+    @Basic
+    @Column(name = "std_in")
+    private String stdIn;
+
+    @Basic
+    @Column(name = "expected_std_out")
+    private String expectedStdOut;
+
+    @Basic
+    @Column(name = "pk_problem")
+    private Long pkProblem;
+
+
     public Long getId() {
         return id;
     }
@@ -26,8 +36,7 @@ public class JudgeSolutionEntity extends BaseEntity {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "std_in")
+
     public String getStdIn() {
         return stdIn;
     }
@@ -36,8 +45,7 @@ public class JudgeSolutionEntity extends BaseEntity {
         this.stdIn = stdIn;
     }
 
-    @Basic
-    @Column(name = "expected_std_out")
+
     public String getExpectedStdOut() {
         return expectedStdOut;
     }
@@ -46,8 +54,7 @@ public class JudgeSolutionEntity extends BaseEntity {
         this.expectedStdOut = expectedStdOut;
     }
 
-    @Basic
-    @Column(name = "pk_problem")
+
     public Long getPkProblem() {
         return pkProblem;
     }
