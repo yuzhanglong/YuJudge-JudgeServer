@@ -7,7 +7,7 @@ import java.util.List;
  * @description 题目基本信息（不包含解决方案）的视图层对象
  * @date 2020-7-19 12:13
  */
-public class ProblemBasicVO {
+public class ProblemBasicVO  {
     private Long id;
     private String name;
     private String content;

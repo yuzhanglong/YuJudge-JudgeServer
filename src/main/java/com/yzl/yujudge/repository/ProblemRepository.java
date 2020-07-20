@@ -1,6 +1,7 @@
 package com.yzl.yujudge.repository;
 
 import com.yzl.yujudge.model.JudgeProblemEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

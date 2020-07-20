@@ -1,0 +1,5 @@
+judge-server-exceptions:
+  codes:
+    A0001: 用户错误
+    B0001: 服务器错误
+    B0002: 找不到对应Problem

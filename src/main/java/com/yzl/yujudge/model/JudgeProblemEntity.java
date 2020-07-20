@@ -115,6 +115,6 @@ public class JudgeProblemEntity extends BaseEntity {
     }
 
     public void setCharacterTags(String characterTags) {
-        this.characterTags = characterTags;
+        this.characterTags = characterTags ;
     }
 }
