@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
         String requestUrl = request.getRequestURI();
         String method = request.getMethod();
         String message = exception.getMessage();
-        // 初始化unifyresponse
+        // 初始化unifyResponse
         return new UnifiedResponse("A0001", message, getRequestUrlString(method, requestUrl));
     }
 
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
         List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
         String message = getMessageStringByValidateExceptionList(errorList);
 
-        // 初始化unifyresponse
+        // 初始化unifyResponse
         return new UnifiedResponse("A0002", message, getRequestUrlString(method, requestUrl));
     }
 

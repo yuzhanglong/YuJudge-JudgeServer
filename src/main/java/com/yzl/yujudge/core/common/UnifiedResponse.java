@@ -7,12 +7,16 @@ package com.yzl.yujudge.core.common;
  * 包括：错误码、错误信息、请求的地址
  */
 public class UnifiedResponse {
-    private final String code;
-    private final String message;
-    private final String request;
+    private String code;
+    private String message;
+    private String request;
+    private Object data;
 
 
-    private final Object data;
+    private void initCodeAndMessageForSuccess(){
+        this.code = "00000";
+        this.message = "success";
+    }
 
 
     public String getCode() {
@@ -35,10 +39,13 @@ public class UnifiedResponse {
     }
 
     public UnifiedResponse(Object viewObject) {
-        this.code = "00000";
-        this.message = "success";
+        initCodeAndMessageForSuccess();
         this.request = null;
         this.data = viewObject;
+    }
+
+    public UnifiedResponse() {
+        initCodeAndMessageForSuccess();
     }
 
     public Object getData() {

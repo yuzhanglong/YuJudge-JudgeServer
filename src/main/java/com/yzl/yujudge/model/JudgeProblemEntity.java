@@ -3,6 +3,8 @@ package com.yzl.yujudge.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,9 +15,12 @@ import java.util.List;
  * @description problem实体类
  */
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @Table(name = "judge_problem", schema = "yu-judge")
 public class JudgeProblemEntity extends BaseEntity {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -44,7 +49,7 @@ public class JudgeProblemEntity extends BaseEntity {
     private String characterTags;
 
     @OneToMany
-    @JoinColumn(name = "pk_problem")
+    @JoinColumn(name = "pk_problem", referencedColumnName = "id")
     private List<JudgeSolutionEntity> solutions;
 
     public List<JudgeSolutionEntity> getJudgeSolutionEntityList() {

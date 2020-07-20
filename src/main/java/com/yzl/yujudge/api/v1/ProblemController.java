@@ -1,12 +1,14 @@
 package com.yzl.yujudge.api.v1;
 
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.dto.ProblemDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.service.ProblemService;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
  * @date 2020-7-18 04:26
  */
 @RestController
+@Validated
 @RequestMapping("/problem")
 public class ProblemController {
     private final ProblemService problemService;
@@ -57,6 +60,7 @@ public class ProblemController {
         PaginationVO<JudgeProblemEntity> paginationVO = new PaginationVO<>(problems);
         List<JudgeProblemEntity> items = paginationVO.getItems();
         List<ProblemBasicVO> result = new ArrayList<>();
+        //TODO: 封装下面这块遍历的代码,因为不止一处需要用到分页对象
         items.forEach(res -> {
             ProblemBasicVO tmp = new ProblemBasicVO();
             BeanUtils.copyProperties(res, tmp);
@@ -65,8 +69,9 @@ public class ProblemController {
         return new UnifiedResponse(result);
     }
 
-    @PostMapping("create_problem")
-    public String createProblem(){
-        return "create success";
+    @PostMapping("/create_problem")
+    public UnifiedResponse createProblem(@RequestBody @Validated ProblemDTO problemDTO) {
+        problemService.createProblem(problemDTO);
+        return new UnifiedResponse();
     }
 }
