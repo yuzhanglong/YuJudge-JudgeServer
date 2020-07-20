@@ -3,7 +3,7 @@ spring:
     active: dev
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: true

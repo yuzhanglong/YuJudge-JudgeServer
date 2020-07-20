@@ -74,4 +74,12 @@ public class ProblemController {
         problemService.createProblem(problemDTO);
         return new UnifiedResponse();
     }
+
+    @PostMapping("/edit_problem/{problemId}")
+    public UnifiedResponse editProblem(
+            @PathVariable Long problemId,
+            @RequestBody @Validated ProblemDTO problemDTO){
+        problemService.editProblem(problemId, problemDTO);
+        return new UnifiedResponse();
+    }
 }

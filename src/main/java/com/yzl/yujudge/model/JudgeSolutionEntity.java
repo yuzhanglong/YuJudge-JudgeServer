@@ -1,5 +1,6 @@
 package com.yzl.yujudge.model;
 
+import com.yzl.yujudge.dto.ProblemDTO;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -17,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "judge_solution", schema = "yu-judge")
 public class JudgeSolutionEntity extends BaseEntity {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 

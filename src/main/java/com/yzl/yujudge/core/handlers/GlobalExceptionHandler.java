@@ -65,10 +65,10 @@ public class GlobalExceptionHandler {
         String errorCode = exception.getCode();
         String message = getMessageByExceptionCode(errorCode);
 
-        // 初始化unifyresponse
+        // 初始化unifyResponse
         UnifiedResponse unifiedResponse = new UnifiedResponse(errorCode, message, getRequestUrlString(method, requestUrl));
 
-        // statuscode 到 HttpStatus
+        // statusCode 到 HttpStatus
         HttpStatus httpStatus = HttpStatus.resolve(exception.getHttpStatusCode());
         assert httpStatus != null;
         return new ResponseEntity<>(unifiedResponse, null, httpStatus);
