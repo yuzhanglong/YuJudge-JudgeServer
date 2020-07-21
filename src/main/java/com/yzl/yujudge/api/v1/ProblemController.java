@@ -21,6 +21,7 @@ import java.util.List;
  */
 @RestController
 @Validated
+@CrossOrigin
 @RequestMapping("/problem")
 public class ProblemController {
     private final ProblemService problemService;
@@ -69,16 +70,30 @@ public class ProblemController {
         return new UnifiedResponse(result);
     }
 
+    /**
+     * @param problemDTO 问题信息
+     * @author yuzhanglong
+     * @description 创建一个Problem
+     * @date 2020-7-21 17:42:13
+     */
     @PostMapping("/create_problem")
     public UnifiedResponse createProblem(@RequestBody @Validated ProblemDTO problemDTO) {
         problemService.createProblem(problemDTO);
         return new UnifiedResponse();
     }
 
+
+    /**
+     * @param problemDTO 问题信息
+     * @param problemId  目标问题id
+     * @author yuzhanglong
+     * @description 编辑一个Problem
+     * @date 2020-7-21 17:42:13
+     */
     @PostMapping("/edit_problem/{problemId}")
     public UnifiedResponse editProblem(
             @PathVariable Long problemId,
-            @RequestBody @Validated ProblemDTO problemDTO){
+            @RequestBody @Validated ProblemDTO problemDTO) {
         problemService.editProblem(problemId, problemDTO);
         return new UnifiedResponse();
     }

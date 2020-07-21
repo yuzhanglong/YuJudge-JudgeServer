@@ -1,6 +1,5 @@
 package com.yzl.yujudge.model;
 
-import com.yzl.yujudge.dto.ProblemDTO;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 

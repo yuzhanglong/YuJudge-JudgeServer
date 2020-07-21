@@ -1,7 +1,5 @@
 package com.yzl.yujudge.dto;
 
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,11 +19,11 @@ public class ProblemDTO {
     private Integer timeLimit;
     private Integer memoryLimit;
     private Integer cpuTimeLimit;
-    private String characterTags;
+    private List<String> characterTags;
 
+    @Valid
     @NotNull(message = "解决方案不得为空")
     @Size(message = "解决方案至少为一个，最多为十个", min = 1, max = 10)
-    @Valid
     private List<SolutionDTO> solutions;
 
     @Override
@@ -81,11 +79,11 @@ public class ProblemDTO {
         this.cpuTimeLimit = cpuTimeLimit;
     }
 
-    public String getCharacterTags() {
+    public List<String> getCharacterTags() {
         return characterTags;
     }
 
-    public void setCharacterTags(String characterTags) {
+    public void setCharacterTags(List<String> characterTags) {
         this.characterTags = characterTags;
     }
 

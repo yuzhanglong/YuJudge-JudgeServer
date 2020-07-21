@@ -1,5 +1,6 @@
 package com.yzl.yujudge.vo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * @description 题目基本信息（不包含解决方案）的视图层对象
  * @date 2020-7-19 12:13
  */
-public class ProblemBasicVO  {
+public class ProblemBasicVO {
     private Long id;
     private String name;
     private String content;
@@ -15,6 +16,7 @@ public class ProblemBasicVO  {
     private Integer memoryLimit;
     private Integer cpuTimeLimit;
     private List<String> characterTags;
+    private Date createTime;
 
     public List<String> getCharacterTags() {
         return characterTags;
@@ -22,6 +24,14 @@ public class ProblemBasicVO  {
 
     public void setCharacterTags(List<String> characterTags) {
         this.characterTags = characterTags;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public Long getId() {

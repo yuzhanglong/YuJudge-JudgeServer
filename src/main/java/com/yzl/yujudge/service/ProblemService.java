@@ -8,13 +8,11 @@ import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.SolutionRepository;
 import com.yzl.yujudge.utils.ToEntityUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,7 +75,7 @@ public class ProblemService {
     }
 
     /**
-     * @param problemId 要修改的问题
+     * @param problemId  要修改的问题
      * @param problemDTO 修改的问题信息
      * @author yuzhanglong
      * @description 编辑一个problem
@@ -85,7 +83,7 @@ public class ProblemService {
      */
     public void editProblem(Long problemId, ProblemDTO problemDTO) {
         JudgeProblemEntity problem = problemRepository.findOneById(problemId);
-        if(problem == null){
+        if (problem == null) {
             throw new NotFoundException("B0002");
         }
         List<SolutionDTO> solutionDTOList = problemDTO.getSolutions();

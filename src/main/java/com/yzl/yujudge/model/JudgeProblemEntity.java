@@ -1,8 +1,6 @@
 package com.yzl.yujudge.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yzl.yujudge.utils.ListJsonUtil;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -20,7 +18,7 @@ import java.util.List;
 @Table(name = "judge_problem", schema = "yu-judge")
 public class JudgeProblemEntity extends BaseEntity {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -44,9 +42,9 @@ public class JudgeProblemEntity extends BaseEntity {
     @Column(name = "cpu_time_limit")
     private Integer cpuTimeLimit;
 
-    @Basic
+    @Convert(converter = ListJsonUtil.class)
     @Column(name = "character_tags")
-    private String characterTags;
+    private List<String> characterTags;
 
     @OneToMany
     @JoinColumn(name = "pk_problem", referencedColumnName = "id")
@@ -114,12 +112,11 @@ public class JudgeProblemEntity extends BaseEntity {
         this.cpuTimeLimit = cpuTimeLimit;
     }
 
-    public List<String> getCharacterTags() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(characterTags, new TypeReference<List<String>>() {});
+    public List<String> getCharacterTags() {
+        return characterTags;
     }
 
-    public void setCharacterTags(String characterTags) {
-        this.characterTags = characterTags ;
+    public void setCharacterTags(List<String> characterTags) {
+        this.characterTags = characterTags;
     }
 }

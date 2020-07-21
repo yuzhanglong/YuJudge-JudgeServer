@@ -15,7 +15,8 @@ public class PaginationVO<T> {
     private Integer count;
     private Integer page;
     private Integer totalPage;
-    private final List<T> items;
+
+    private  List<T> items;
 
     public PaginationVO(Page<T> pageItems) {
         this.initPaginationData(pageItems);
@@ -27,6 +28,10 @@ public class PaginationVO<T> {
         this.count = pageItems.getSize();
         this.page = pageItems.getNumber();
         this.totalPage = pageItems.getTotalPages();
+    }
+
+    public void setItems(List<T> items) {
+        this.items = items;
     }
 
 
