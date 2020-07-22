@@ -1,8 +1,6 @@
 package com.yzl.yujudge.dto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -21,11 +19,6 @@ public class ProblemDTO {
     private Integer cpuTimeLimit;
     private List<String> characterTags;
 
-    @Valid
-    @NotNull(message = "解决方案不得为空")
-    @Size(message = "解决方案至少为一个，最多为十个", min = 1, max = 10)
-    private List<SolutionDTO> solutions;
-
     @Override
     public String toString() {
         return "ProblemDTO{" +
@@ -35,7 +28,6 @@ public class ProblemDTO {
                 ", memoryLimit=" + memoryLimit +
                 ", cpuTimeLimit=" + cpuTimeLimit +
                 ", characterTags='" + characterTags + '\'' +
-                ", solutions=" + solutions +
                 '}';
     }
 
@@ -85,13 +77,5 @@ public class ProblemDTO {
 
     public void setCharacterTags(List<String> characterTags) {
         this.characterTags = characterTags;
-    }
-
-    public List<SolutionDTO> getSolutions() {
-        return solutions;
-    }
-
-    public void setSolutions(List<SolutionDTO> solutions) {
-        this.solutions = solutions;
     }
 }

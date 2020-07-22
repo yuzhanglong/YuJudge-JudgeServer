@@ -20,4 +20,16 @@ public interface SolutionRepository extends JpaRepository<JudgeSolutionEntity, L
      * @description 传入problemId,获取这个problems下所有的解决方案
      */
     List<JudgeSolutionEntity> findAllByPkProblem(Long pkProblemId);
+
+
+    /**
+     * 获取单个解决方案
+     *
+     * @return JudgeSolutionEntity 解决方案实体类
+     * @param solutionId 解决方案id
+     * @author yuzhanglong
+     * @date 2020-7-22 23:06
+     * @description 获取单个解决方案
+     */
+    JudgeSolutionEntity findOneById(Long solutionId);
 }

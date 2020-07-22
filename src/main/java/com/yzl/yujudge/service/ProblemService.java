@@ -1,5 +1,7 @@
 package com.yzl.yujudge.service;
 
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
@@ -67,10 +69,6 @@ public class ProblemService {
     public void createProblem(ProblemDTO problemInfo) {
         // problem实体类
         JudgeProblemEntity problem = ToEntityUtil.problemDtoToProblemEntity(problemInfo);
-        List<SolutionDTO> solutionDTOList = problemInfo.getSolutions();
-        List<JudgeSolutionEntity> solutions = ToEntityUtil.solutionDtoToSolutionEntityList(solutionDTOList);
-        problem.setJudgeSolutionEntityList(solutions);
-        solutionRepository.saveAll(solutions);
         problemRepository.save(problem);
     }
 
@@ -86,12 +84,8 @@ public class ProblemService {
         if (problem == null) {
             throw new NotFoundException("B0002");
         }
-        List<SolutionDTO> solutionDTOList = problemDTO.getSolutions();
         List<JudgeSolutionEntity> oldSolutions = problem.getJudgeSolutionEntityList();
         solutionRepository.deleteAll(oldSolutions);
-        List<JudgeSolutionEntity> solutions = ToEntityUtil.solutionDtoToSolutionEntityList(solutionDTOList);
-        problem.setJudgeSolutionEntityList(solutions);
-        solutionRepository.saveAll(solutions);
         problemRepository.save(problem);
     }
 
@@ -119,7 +113,40 @@ public class ProblemService {
      */
     public List<JudgeSolutionEntity> getProblemSolutions(Long problemId) {
         List<JudgeSolutionEntity> solutionEntity = solutionRepository.findAllByPkProblem(problemId);
-        //        // 此处为空没有必要抛出异常，我们直接返回一个空数组就可以了
+        // 此处为空没有必要抛出异常，我们直接返回一个空数组就可以了
         return solutionEntity;
+    }
+
+
+    /**
+     * @param problemId 目标问题id
+     * @author yuzhanglong
+     * @description 为目标problem添加一个解决方案
+     * @date 2020-7-22
+     */
+    public void createSolution(Long problemId, SolutionDTO solution) {
+        JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
+        if (problemEntity == null) {
+            throw new NotFoundException("B0002");
+        }
+        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        JudgeSolutionEntity solutionEntity = mapper.map(solution, JudgeSolutionEntity.class);
+        problemEntity.getJudgeSolutionEntityList().add(solutionEntity);
+        solutionRepository.save(solutionEntity);
+    }
+
+
+    /**
+     * @param solutionId 目标solutionId
+     * @author yuzhanglong
+     * @description 删除某个solution
+     * @date 2020-7-22
+     */
+    public void deleteSolution(Long solutionId) {
+        JudgeSolutionEntity solutionEntity = solutionRepository.findOneById(solutionId);
+        if (solutionId == null) {
+            throw new NotFoundException("B0003");
+        }
+        solutionRepository.delete(solutionEntity);
     }
 }

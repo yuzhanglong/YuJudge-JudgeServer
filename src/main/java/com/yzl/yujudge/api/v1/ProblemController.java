@@ -4,6 +4,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.ProblemDTO;
+import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.service.ProblemService;
@@ -17,7 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -68,7 +69,6 @@ public class ProblemController {
     }
 
 
-
     /**
      * @param start 从第几条记录开始获取内容
      * @param count 获取数据的数量
@@ -115,7 +115,7 @@ public class ProblemController {
 
 
     /**
-     * @param problemId  目标问题id
+     * @param problemId 目标问题id
      * @author yuzhanglong
      * @description 删除一个problem
      * @date 2020-7-22
@@ -128,7 +128,7 @@ public class ProblemController {
 
 
     /**
-     * @param problemId  目标问题id
+     * @param problemId 目标问题id
      * @author yuzhanglong
      * @description 获取某个problem的所有解决方案
      * @date 2020-7-22
@@ -138,5 +138,32 @@ public class ProblemController {
         List<JudgeSolutionEntity> solutionEntityList = problemService.getProblemSolutions(problemId);
         List<SolutionVO> solutions = ToVoUtil.solutionsEntityListToSolutionVoList(solutionEntityList);
         return new UnifiedResponse(solutions);
+    }
+
+    /**
+     * @param problemId 目标问题id
+     * @author yuzhanglong
+     * @description 获取某个problem的所有解决方案
+     * @date 2020-7-22
+     */
+    @PostMapping("/create_solution/{problemId}")
+    public UnifiedResponse editProblemSolutions(
+            @PathVariable Long problemId,
+            @RequestBody @NotNull SolutionDTO solution) {
+        problemService.createSolution(problemId, solution);
+        return new UnifiedResponse();
+    }
+
+
+    /**
+     * @param solutionId 目标solutionId
+     * @author yuzhanglong
+     * @description 删除某个solution
+     * @date 2020-7-22
+     */
+    @DeleteMapping("/delete_solution/{solutionId}")
+    public UnifiedResponse deleteSolution(@PathVariable Long solutionId) {
+        problemService.deleteSolution(solutionId);
+        return new UnifiedResponse();
     }
 }
