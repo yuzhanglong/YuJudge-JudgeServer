@@ -1,11 +1,17 @@
 package com.yzl.yujudge.api.v1;
 
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.ProblemDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
+import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.service.ProblemService;
+import com.yzl.yujudge.utils.ToVoUtil;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
+import com.yzl.yujudge.vo.ProblemDetailedVO;
+import com.yzl.yujudge.vo.SolutionVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -47,6 +53,23 @@ public class ProblemController {
 
 
     /**
+     * @param problemId 问题id
+     * @author yuzhanglong
+     * @description 获取某个problem的详细信息
+     * 我们通过这个id找到problem详细信息并返回给调用者
+     * @date 2020-7-18 04:26
+     */
+    @GetMapping("/get_problem_detailed_by_id/{problemId}")
+    public UnifiedResponse getProblemDetailedInfoById(@PathVariable Long problemId) {
+        JudgeProblemEntity problem = problemService.getProblemInfoById(problemId);
+        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        ProblemDetailedVO problemDetailed = mapper.map(problem, ProblemDetailedVO.class);
+        return new UnifiedResponse(problemDetailed);
+    }
+
+
+
+    /**
      * @param start 从第几条记录开始获取内容
      * @param count 获取数据的数量
      * @author yuzhanglong
@@ -58,16 +81,8 @@ public class ProblemController {
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count) {
         Page<JudgeProblemEntity> problems = problemService.getProblems(start, count);
-        PaginationVO<JudgeProblemEntity> paginationVO = new PaginationVO<>(problems);
-        List<JudgeProblemEntity> items = paginationVO.getItems();
-        List<ProblemBasicVO> result = new ArrayList<>();
-        //TODO: 封装下面这块遍历的代码,因为不止一处需要用到分页对象
-        items.forEach(res -> {
-            ProblemBasicVO tmp = new ProblemBasicVO();
-            BeanUtils.copyProperties(res, tmp);
-            result.add(tmp);
-        });
-        return new UnifiedResponse(result);
+        PaginationVO<JudgeProblemEntity, ProblemBasicVO> paginationVO = new PaginationVO<>(problems, ProblemBasicVO.class);
+        return new UnifiedResponse(paginationVO);
     }
 
     /**
@@ -96,5 +111,32 @@ public class ProblemController {
             @RequestBody @Validated ProblemDTO problemDTO) {
         problemService.editProblem(problemId, problemDTO);
         return new UnifiedResponse();
+    }
+
+
+    /**
+     * @param problemId  目标问题id
+     * @author yuzhanglong
+     * @description 删除一个problem
+     * @date 2020-7-22
+     */
+    @DeleteMapping("/delete_problem/{problemId}")
+    public UnifiedResponse deleteProblem(@PathVariable Long problemId) {
+        problemService.deleteProblem(problemId);
+        return new UnifiedResponse();
+    }
+
+
+    /**
+     * @param problemId  目标问题id
+     * @author yuzhanglong
+     * @description 获取某个problem的所有解决方案
+     * @date 2020-7-22
+     */
+    @GetMapping("/get_solutions/{problemId}")
+    public UnifiedResponse getProblemSolutions(@PathVariable Long problemId) {
+        List<JudgeSolutionEntity> solutionEntityList = problemService.getProblemSolutions(problemId);
+        List<SolutionVO> solutions = ToVoUtil.solutionsEntityListToSolutionVoList(solutionEntityList);
+        return new UnifiedResponse(solutions);
     }
 }

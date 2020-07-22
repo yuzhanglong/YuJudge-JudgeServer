@@ -1,38 +1,19 @@
 package com.yzl.yujudge.vo;
 
+
 import java.util.Date;
 import java.util.List;
 
 /**
  * @author yuzhanglong
- * @description 题目基本信息（不包含解决方案）的视图层对象
+ * @description 题目基本信息（不包含解决方案/具体内容）的视图层对象
  * @date 2020-7-19 12:13
  */
 public class ProblemBasicVO {
     private Long id;
     private String name;
-    private String content;
-    private Integer timeLimit;
-    private Integer memoryLimit;
-    private Integer cpuTimeLimit;
     private List<String> characterTags;
     private Date createTime;
-
-    public List<String> getCharacterTags() {
-        return characterTags;
-    }
-
-    public void setCharacterTags(List<String> characterTags) {
-        this.characterTags = characterTags;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 
     public Long getId() {
         return id;
@@ -50,36 +31,20 @@ public class ProblemBasicVO {
         this.name = name;
     }
 
-    public String getContent() {
-        return content;
+    public List<String> getCharacterTags() {
+        return characterTags;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setCharacterTags(List<String> characterTags) {
+        this.characterTags = characterTags;
     }
 
-    public Integer getTimeLimit() {
-        return timeLimit;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setTimeLimit(Integer timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-
-    public Integer getMemoryLimit() {
-        return memoryLimit;
-    }
-
-    public void setMemoryLimit(Integer memoryLimit) {
-        this.memoryLimit = memoryLimit;
-    }
-
-    public Integer getCpuTimeLimit() {
-        return cpuTimeLimit;
-    }
-
-    public void setCpuTimeLimit(Integer cpuTimeLimit) {
-        this.cpuTimeLimit = cpuTimeLimit;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Override
@@ -87,9 +52,8 @@ public class ProblemBasicVO {
         return "ProblemBasicVO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", content='" + content + '\'' +
-                ", timeLimit=" + timeLimit +
-                ", memoryLimit=" + memoryLimit +
-                ", cpuTimeLimit=" + cpuTimeLimit;
+                ", characterTags=" + characterTags +
+                ", createTime=" + createTime +
+                '}';
     }
 }

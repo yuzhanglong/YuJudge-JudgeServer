@@ -16,9 +16,8 @@ import java.util.List;
  */
 public class YamlPropertySourceFactory extends DefaultPropertySourceFactory {
 
-
     /**
-     * @param name 配置文件源名称
+     * @param name     配置文件源名称
      * @param resource 配置文件源,如果没有给予name参数，则name会从这里得到
      * @author yuzhanglong
      * @description YAML配置文件读取工厂类

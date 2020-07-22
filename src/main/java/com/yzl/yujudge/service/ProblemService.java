@@ -88,9 +88,38 @@ public class ProblemService {
         }
         List<SolutionDTO> solutionDTOList = problemDTO.getSolutions();
         List<JudgeSolutionEntity> oldSolutions = problem.getJudgeSolutionEntityList();
+        solutionRepository.deleteAll(oldSolutions);
         List<JudgeSolutionEntity> solutions = ToEntityUtil.solutionDtoToSolutionEntityList(solutionDTOList);
         problem.setJudgeSolutionEntityList(solutions);
         solutionRepository.saveAll(solutions);
         problemRepository.save(problem);
+    }
+
+    /**
+     * @param problemId 目标问题id
+     * @author yuzhanglong
+     * @description 删除一个problem
+     * @date 2020-7-22
+     */
+    public void deleteProblem(Long problemId) {
+        JudgeProblemEntity problem = problemRepository.findOneById(problemId);
+        if (problem == null) {
+            throw new NotFoundException("B0002");
+        }
+        problemRepository.delete(problem);
+    }
+
+
+    /**
+     * @param problemId 目标问题id
+     * @return List<JudgeSolutionEntity> 一个或者多个解决方案实体类
+     * @author yuzhanglong
+     * @description 删除一个problem
+     * @date 2020-7-22
+     */
+    public List<JudgeSolutionEntity> getProblemSolutions(Long problemId) {
+        List<JudgeSolutionEntity> solutionEntity = solutionRepository.findAllByPkProblem(problemId);
+        //        // 此处为空没有必要抛出异常，我们直接返回一个空数组就可以了
+        return solutionEntity;
     }
 }

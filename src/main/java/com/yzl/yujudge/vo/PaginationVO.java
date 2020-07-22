@@ -1,8 +1,10 @@
 package com.yzl.yujudge.vo;
 
-import org.apache.catalina.mapper.Mapper;
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,27 +12,34 @@ import java.util.List;
  * @description 分页对象的视图层对象
  * @date 2020-7-20 11:35:34
  */
-public class PaginationVO<T> {
+public class PaginationVO<T, K> {
     private Long total;
     private Integer count;
     private Integer page;
     private Integer totalPage;
+    private  List<K> items;
 
-    private  List<T> items;
-
-    public PaginationVO(Page<T> pageItems) {
+    public PaginationVO(Page<T> pageItems, Class<K> targetClass) {
         this.initPaginationData(pageItems);
-        this.items = pageItems.getContent();
+
+        List<T> tList = pageItems.getContent();
+        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        List<K> resultList = new ArrayList<>();
+        tList.forEach(res -> {
+            K viewObject = mapper.map(res, targetClass);
+            resultList.add(viewObject);
+        });
+        setItems(resultList);
     }
 
-    private void initPaginationData(Page<T> pageItems) {
+     void initPaginationData(Page<T> pageItems) {
         this.total = pageItems.getTotalElements();
         this.count = pageItems.getSize();
         this.page = pageItems.getNumber();
         this.totalPage = pageItems.getTotalPages();
     }
 
-    public void setItems(List<T> items) {
+    public void setItems(List<K> items) {
         this.items = items;
     }
 
@@ -67,7 +76,7 @@ public class PaginationVO<T> {
         this.totalPage = totalPage;
     }
 
-    public List<T> getItems() {
+    public List<K> getItems() {
         return items;
     }
 

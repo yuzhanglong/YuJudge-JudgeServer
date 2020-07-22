@@ -13,7 +13,7 @@ public class UnifiedResponse {
     private Object data;
 
 
-    private void initCodeAndMessageForSuccess(){
+    public void initCodeAndMessageForSuccess(){
         this.code = "00000";
         this.message = "success";
     }
