@@ -46,9 +46,19 @@ public class JudgeProblemEntity extends BaseEntity {
     @Column(name = "character_tags")
     private List<String> characterTags;
 
+
+    @Convert(converter = ListJsonUtil.class)
+    @Column(name = "allowed_language")
+    private List<String> allowedLanguage;
+
     @OneToMany
     @JoinColumn(name = "pk_problem", referencedColumnName = "id")
     private List<JudgeSolutionEntity> solutions;
+
+
+    @Basic
+    @Column(name = "is_closed")
+    private Boolean closed;
 
     public List<JudgeSolutionEntity> getJudgeSolutionEntityList() {
         return solutions;
@@ -58,6 +68,13 @@ public class JudgeProblemEntity extends BaseEntity {
         this.solutions = solutions;
     }
 
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
+    }
 
     public Long getId() {
         return id;
@@ -118,5 +135,13 @@ public class JudgeProblemEntity extends BaseEntity {
 
     public void setCharacterTags(List<String> characterTags) {
         this.characterTags = characterTags;
+    }
+
+    public List<String> getAllowedLanguage() {
+        return allowedLanguage;
+    }
+
+    public void setAllowedLanguage(List<String> allowedLanguage) {
+        this.allowedLanguage = allowedLanguage;
     }
 }

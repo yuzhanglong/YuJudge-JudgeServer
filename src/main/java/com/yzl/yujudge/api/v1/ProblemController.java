@@ -166,4 +166,17 @@ public class ProblemController {
         problemService.deleteSolution(solutionId);
         return new UnifiedResponse();
     }
+
+
+    /**
+     * @param problemId 目标problemId
+     * @author yuzhanglong
+     * @description 关闭某个problem
+     * @date 2020-7-26
+     */
+    @GetMapping("/close_problem/{problemId}")
+    public UnifiedResponse closeProblem(@PathVariable Long problemId) {
+        problemService.closeProblem(problemId);
+        return new UnifiedResponse();
+    }
 }

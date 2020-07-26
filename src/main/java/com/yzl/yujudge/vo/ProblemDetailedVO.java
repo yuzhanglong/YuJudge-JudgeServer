@@ -17,6 +17,8 @@ public class ProblemDetailedVO {
     private Integer cpuTimeLimit;
     private List<String> characterTags;
     private Date createTime;
+    private Boolean closed;
+    private List<String> allowedLanguage;
 
     public String getContent() {
         return content;
@@ -82,13 +84,35 @@ public class ProblemDetailedVO {
         this.cpuTimeLimit = cpuTimeLimit;
     }
 
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
+    }
+
+    public List<String> getAllowedLanguage() {
+        return allowedLanguage;
+    }
+
+    public void setAllowedLanguage(List<String> allowedLanguage) {
+        this.allowedLanguage = allowedLanguage;
+    }
+
     @Override
     public String toString() {
-        return "ProblemBasicVO{" +
+        return "ProblemDetailedVO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", content='" + content + '\'' +
                 ", timeLimit=" + timeLimit +
                 ", memoryLimit=" + memoryLimit +
-                ", cpuTimeLimit=" + cpuTimeLimit;
+                ", cpuTimeLimit=" + cpuTimeLimit +
+                ", characterTags=" + characterTags +
+                ", createTime=" + createTime +
+                ", closed=" + closed +
+                ", allowedLanguage=" + allowedLanguage +
+                '}';
     }
 }

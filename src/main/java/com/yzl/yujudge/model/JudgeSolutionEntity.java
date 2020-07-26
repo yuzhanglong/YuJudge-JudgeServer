@@ -33,6 +33,10 @@ public class JudgeSolutionEntity extends BaseEntity {
     @Column(name = "pk_problem")
     private Long pkProblem;
 
+    @Basic
+    @Column(name = "description")
+    private String description;
+
 
     public Long getId() {
         return id;
@@ -67,5 +71,13 @@ public class JudgeSolutionEntity extends BaseEntity {
 
     public void setPkProblem(Long pkProblem) {
         this.pkProblem = pkProblem;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

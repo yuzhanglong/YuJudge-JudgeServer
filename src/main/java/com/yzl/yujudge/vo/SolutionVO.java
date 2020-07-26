@@ -1,6 +1,7 @@
 package com.yzl.yujudge.vo;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -12,6 +13,17 @@ public class SolutionVO {
     private String stdIn;
     private String expectedStdOut;
     private Date createTime;
+    private String description;
+
+    public List<String> getAllowedLanguage() {
+        return allowedLanguage;
+    }
+
+    public void setAllowedLanguage(List<String> allowedLanguage) {
+        this.allowedLanguage = allowedLanguage;
+    }
+
+    private List<String> allowedLanguage;
 
     public Date getCreateTime() {
         return createTime;
@@ -45,12 +57,23 @@ public class SolutionVO {
         this.expectedStdOut = expectedStdOut;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "SolutionVO{" +
                 "id=" + id +
                 ", stdIn='" + stdIn + '\'' +
                 ", expectedStdOut='" + expectedStdOut + '\'' +
+                ", createTime=" + createTime +
+                ", description='" + description + '\'' +
+                ", allowedLanguage=" + allowedLanguage +
                 '}';
     }
 }
