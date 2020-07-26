@@ -4,6 +4,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.ProblemDTO;
+import com.yzl.yujudge.dto.ProblemLimitationDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
@@ -114,6 +115,8 @@ public class ProblemController {
     }
 
 
+
+
     /**
      * @param problemId 目标问题id
      * @author yuzhanglong
@@ -179,4 +182,33 @@ public class ProblemController {
         problemService.closeProblem(problemId);
         return new UnifiedResponse();
     }
+
+    /**
+     * @param problemId 目标problemId
+     * @author yuzhanglong
+     * @description 修改Problem限制
+     * @date 2020-7-26 17:54:45
+     */
+    @PostMapping("/set_limitation/{problemId}")
+    public UnifiedResponse setLimitation(
+            @PathVariable Long problemId,
+            @RequestBody @Validated ProblemLimitationDTO limitation){
+        problemService.setLimitation(problemId, limitation);
+        return new UnifiedResponse("修改题目限制成功");
+    }
+
+    /**
+     * @param problemId 目标problemId
+     * @author yuzhanglong
+     * @description 修改Problem限制
+     * @date 2020-7-26 17:54:45
+     */
+    @PostMapping("/set_basic_info/{problemId}")
+    public UnifiedResponse setLimitation(
+            @PathVariable Long problemId,
+            @RequestBody ProblemDTO problemDTO){
+        problemService.setProblemBasicInfo(problemId, problemDTO);
+        return new UnifiedResponse("编辑题目基本信息成功");
+    }
+
 }

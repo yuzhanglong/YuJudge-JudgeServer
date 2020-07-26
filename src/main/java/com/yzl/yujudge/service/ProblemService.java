@@ -4,6 +4,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemDTO;
+import com.yzl.yujudge.dto.ProblemLimitationDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
@@ -14,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -82,13 +81,13 @@ public class ProblemService {
      * @date 2020-7-20 23:29:23
      */
     public void editProblem(Long problemId, ProblemDTO problemDTO) {
-        JudgeProblemEntity problem = problemRepository.findOneById(problemId);
-        if (problem == null) {
-            throw new NotFoundException("B0002");
+        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
+        problemEntity.setName(problemDTO.getName());
+        problemEntity.setContent(problemDTO.getContent());
+        if(problemDTO.getCharacterTags() != null){
+            problemEntity.setCharacterTags(problemDTO.getCharacterTags());
         }
-        List<JudgeSolutionEntity> oldSolutions = problem.getJudgeSolutionEntityList();
-        solutionRepository.deleteAll(oldSolutions);
-        problemRepository.save(problem);
+        problemRepository.save(problemEntity);
     }
 
     /**
@@ -98,11 +97,8 @@ public class ProblemService {
      * @date 2020-7-22
      */
     public void deleteProblem(Long problemId) {
-        JudgeProblemEntity problem = problemRepository.findOneById(problemId);
-        if (problem == null) {
-            throw new NotFoundException("B0002");
-        }
-        problemRepository.delete(problem);
+        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
+        problemRepository.delete(problemEntity);
     }
 
 
@@ -127,10 +123,7 @@ public class ProblemService {
      * @date 2020-7-22
      */
     public void createSolution(Long problemId, SolutionDTO solution) {
-        JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
-        if (problemEntity == null) {
-            throw new NotFoundException("B0002");
-        }
+        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         JudgeSolutionEntity solutionEntity = mapper.map(solution, JudgeSolutionEntity.class);
         problemEntity.getJudgeSolutionEntityList().add(solutionEntity);
@@ -159,12 +152,47 @@ public class ProblemService {
      * @date 2020-7-26
      */
     public void closeProblem(Long problemId) {
-        JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
-        if (problemEntity == null) {
-            throw new NotFoundException("B0002");
-        }
+        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
         Boolean isClosed = problemEntity.getClosed();
         problemEntity.setClosed(!isClosed);
         problemRepository.save(problemEntity);
+    }
+
+    /**
+     * @param problemId 目标problemId
+     * @author yuzhanglong
+     * @description 修改Problem限制
+     * @date 2020-7-26 17:54:45
+     */
+    public void setLimitation(Long problemId, ProblemLimitationDTO limitation){
+        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
+        problemEntity.setTimeLimit(limitation.getTimeLimit());
+        problemEntity.setCpuTimeLimit(limitation.getCpuTimeLimit());
+        problemEntity.setOutputLimit(limitation.getOutputLimit());
+        problemEntity.setMemoryLimit(limitation.getMemoryLimit());
+        problemEntity.setAllowedLanguage(limitation.getAllowedLanguage());
+        problemRepository.save(problemEntity);
+    }
+
+    public void setProblemBasicInfo(Long problemId, ProblemDTO problemDTO){
+        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
+
+    }
+
+    /**
+     * @param problemId 目标problemId
+     * @param isNullable 是否允许实体对象是否为空
+     * @author yuzhanglong
+     * @description 根据problemId，获取problem实体对象
+     * 如果不允许实体为空的情况下，实体为空
+     * 那么我们会抛出一个全局异常B0002(problem不存在)
+     * @date 2020-7-26 18:07:44
+     */
+    private JudgeProblemEntity getProblemEntityById(Long problemId, Boolean isNullable){
+        JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
+        if (!isNullable && problemEntity == null) {
+            throw new NotFoundException("B0002");
+        }
+        return problemEntity;
     }
 }

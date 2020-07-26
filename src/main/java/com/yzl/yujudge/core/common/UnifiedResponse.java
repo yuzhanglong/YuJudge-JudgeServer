@@ -18,19 +18,6 @@ public class UnifiedResponse {
         this.message = "success";
     }
 
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getRequest() {
-        return request;
-    }
-
     public UnifiedResponse(String code, String message, String request) {
         this.code = code;
         this.message = message;
@@ -48,7 +35,40 @@ public class UnifiedResponse {
         initCodeAndMessageForSuccess();
     }
 
+    public UnifiedResponse(String message){
+        initCodeAndMessageForSuccess();
+        setMessage(message);
+    }
+
     public Object getData() {
         return data;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }

@@ -51,14 +51,21 @@ public class JudgeProblemEntity extends BaseEntity {
     @Column(name = "allowed_language")
     private List<String> allowedLanguage;
 
-    @OneToMany
-    @JoinColumn(name = "pk_problem", referencedColumnName = "id")
-    private List<JudgeSolutionEntity> solutions;
-
 
     @Basic
     @Column(name = "is_closed")
     private Boolean closed;
+
+
+    @Basic
+    @Column(name = "output_limit")
+    private Integer outputLimit;
+
+
+    @OneToMany
+    @JoinColumn(name = "pk_problem", referencedColumnName = "id")
+    private List<JudgeSolutionEntity> solutions;
+
 
     public List<JudgeSolutionEntity> getJudgeSolutionEntityList() {
         return solutions;
@@ -143,5 +150,13 @@ public class JudgeProblemEntity extends BaseEntity {
 
     public void setAllowedLanguage(List<String> allowedLanguage) {
         this.allowedLanguage = allowedLanguage;
+    }
+
+    public Integer getOutputLimit() {
+        return outputLimit;
+    }
+
+    public void setOutputLimit(Integer outputLimit) {
+        this.outputLimit = outputLimit;
     }
 }
