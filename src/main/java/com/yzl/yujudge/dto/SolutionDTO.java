@@ -1,5 +1,6 @@
 package com.yzl.yujudge.dto;
 
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -7,29 +8,12 @@ import javax.validation.constraints.NotNull;
  * @date 2020-7-20 16:58:51
  * @description 解决方案的数据传输对象
  */
+
 public class SolutionDTO {
-    private Long id;
-    @NotNull(message = "期望输入不得为空")
+    @NotNull(message = "输入不得为空")
     private String stdIn;
     @NotNull(message = "期望输出不得为空")
     private String expectedStdOut;
-
-    @Override
-    public String toString() {
-        return "SolutionDTO{" +
-                "id=" + id +
-                ", stdIn='" + stdIn + '\'' +
-                ", expectedStdOut='" + expectedStdOut + '\'' +
-                ", pkProblem=";
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getStdIn() {
         return stdIn;
@@ -45,5 +29,13 @@ public class SolutionDTO {
 
     public void setExpectedStdOut(String expectedStdOut) {
         this.expectedStdOut = expectedStdOut;
+    }
+
+    @Override
+    public String toString() {
+        return "SolutionDTO{" +
+                ", stdIn='" + stdIn + '\'' +
+                ", expectedStdOut='" + expectedStdOut + '\'' +
+                '}';
     }
 }

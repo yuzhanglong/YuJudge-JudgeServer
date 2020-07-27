@@ -152,7 +152,7 @@ public class ProblemController {
     @PostMapping("/create_solution/{problemId}")
     public UnifiedResponse editProblemSolutions(
             @PathVariable Long problemId,
-            @RequestBody @NotNull SolutionDTO solution) {
+            @Validated @RequestBody @NotNull SolutionDTO solution) {
         problemService.createSolution(problemId, solution);
         return new UnifiedResponse();
     }

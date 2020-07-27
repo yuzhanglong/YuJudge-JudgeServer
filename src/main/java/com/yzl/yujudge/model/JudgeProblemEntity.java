@@ -66,6 +66,9 @@ public class JudgeProblemEntity extends BaseEntity {
     @JoinColumn(name = "pk_problem", referencedColumnName = "id")
     private List<JudgeSolutionEntity> solutions;
 
+    @ManyToMany(mappedBy = "judgeProblemEntityList")
+    private List<ProblemSetEntity> problemSetEntityList;
+
 
     public List<JudgeSolutionEntity> getJudgeSolutionEntityList() {
         return solutions;
@@ -158,5 +161,13 @@ public class JudgeProblemEntity extends BaseEntity {
 
     public void setOutputLimit(Integer outputLimit) {
         this.outputLimit = outputLimit;
+    }
+
+    public List<ProblemSetEntity> getProblemSetEntityList() {
+        return problemSetEntityList;
+    }
+
+    public void setProblemSetEntityList(List<ProblemSetEntity> problemSetEntityList) {
+        this.problemSetEntityList = problemSetEntityList;
     }
 }
