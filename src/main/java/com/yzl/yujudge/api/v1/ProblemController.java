@@ -98,7 +98,6 @@ public class ProblemController {
         return new UnifiedResponse();
     }
 
-
     /**
      * @param problemDTO 问题信息
      * @param problemId  目标问题id
@@ -113,9 +112,6 @@ public class ProblemController {
         problemService.editProblem(problemId, problemDTO);
         return new UnifiedResponse();
     }
-
-
-
 
     /**
      * @param problemId 目标问题id
@@ -192,7 +188,7 @@ public class ProblemController {
     @PostMapping("/set_limitation/{problemId}")
     public UnifiedResponse setLimitation(
             @PathVariable Long problemId,
-            @RequestBody @Validated ProblemLimitationDTO limitation){
+            @RequestBody @Validated ProblemLimitationDTO limitation) {
         problemService.setLimitation(problemId, limitation);
         return new UnifiedResponse("修改题目限制成功");
     }
@@ -206,9 +202,8 @@ public class ProblemController {
     @PostMapping("/set_basic_info/{problemId}")
     public UnifiedResponse setLimitation(
             @PathVariable Long problemId,
-            @RequestBody ProblemDTO problemDTO){
+            @RequestBody ProblemDTO problemDTO) {
         problemService.setProblemBasicInfo(problemId, problemDTO);
         return new UnifiedResponse("编辑题目基本信息成功");
     }
-
 }

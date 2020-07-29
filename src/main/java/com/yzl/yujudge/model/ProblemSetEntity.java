@@ -17,6 +17,7 @@ import java.util.List;
 @Table(name = "problem_set", schema = "yu-judge")
 public class ProblemSetEntity extends BaseEntity{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 

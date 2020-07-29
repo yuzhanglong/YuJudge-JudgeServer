@@ -11,9 +11,9 @@ import java.util.List;
 /**
  * @author yuzhanglong
  * @description 语言类型验证
- * @date 2020-6-28 15:01
+ * @date 2020-7-29 14:46:51
  */
-public class LanguageTypeAcceptedValidator implements ConstraintValidator<LanguageTypeAccepted, ProblemLimitationDTO> {
+public class LanguageListAcceptedValidator implements ConstraintValidator<LanguageListAccepted, ProblemLimitationDTO> {
     @Override
     public boolean isValid(ProblemLimitationDTO limitationDTO, ConstraintValidatorContext constraintValidatorContext) {
         List<String> languages = limitationDTO.getAllowedLanguage();

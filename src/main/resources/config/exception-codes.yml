@@ -5,3 +5,4 @@ judge-server-exceptions:
     B0001: 服务器错误
     B0002: 找不到对应Problem
     B0003: 找不到对应solution
+    B0004: 语言不在允许的范围内

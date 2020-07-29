@@ -1,6 +1,6 @@
 package com.yzl.yujudge.dto;
 
-import com.yzl.yujudge.validators.LanguageTypeAccepted;
+import com.yzl.yujudge.validators.LanguageListAccepted;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2020-7-26 17:56:26
  */
 
-@LanguageTypeAccepted
+@LanguageListAccepted
 public class ProblemLimitationDTO {
     private Integer timeLimit;
     private Integer memoryLimit;

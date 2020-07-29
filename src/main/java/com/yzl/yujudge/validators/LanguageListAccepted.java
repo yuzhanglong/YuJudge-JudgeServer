@@ -12,8 +12,8 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
-@Constraint(validatedBy = LanguageTypeAcceptedValidator.class)
-public @interface LanguageTypeAccepted {
+@Constraint(validatedBy = LanguageListAcceptedValidator.class)
+public @interface LanguageListAccepted {
     String message() default "编程语言不合法，请重试";
 
     Class<?>[] groups() default {};
