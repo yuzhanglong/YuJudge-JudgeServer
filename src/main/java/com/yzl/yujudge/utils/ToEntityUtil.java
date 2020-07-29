@@ -1,6 +1,5 @@
 package com.yzl.yujudge.utils;
 
-import com.sun.org.apache.xerces.internal.xs.XSIDCDefinition;
 import com.yzl.yujudge.dto.ProblemDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;

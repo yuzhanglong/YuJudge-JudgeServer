@@ -15,7 +15,71 @@ public class JudgeDTO {
     private Integer outputLimit;
     private String language;
     private String judgePreference;
-    private List<SolutionDTO> resolutions;
+    private List<SolutionDTO> solutions;
+
+    public String getSubmissionCode() {
+        return submissionCode;
+    }
+
+    public void setSubmissionCode(String submissionCode) {
+        this.submissionCode = submissionCode;
+    }
+
+    public Integer getRealTimeLimit() {
+        return realTimeLimit;
+    }
+
+    public void setRealTimeLimit(Integer realTimeLimit) {
+        this.realTimeLimit = realTimeLimit;
+    }
+
+    public Integer getCpuTimeLimit() {
+        return cpuTimeLimit;
+    }
+
+    public void setCpuTimeLimit(Integer cpuTimeLimit) {
+        this.cpuTimeLimit = cpuTimeLimit;
+    }
+
+    public Integer getMemoryLimit() {
+        return memoryLimit;
+    }
+
+    public void setMemoryLimit(Integer memoryLimit) {
+        this.memoryLimit = memoryLimit;
+    }
+
+    public Integer getOutputLimit() {
+        return outputLimit;
+    }
+
+    public void setOutputLimit(Integer outputLimit) {
+        this.outputLimit = outputLimit;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getJudgePreference() {
+        return judgePreference;
+    }
+
+    public void setJudgePreference(String judgePreference) {
+        this.judgePreference = judgePreference;
+    }
+
+    public List<SolutionDTO> getSolutions() {
+        return solutions;
+    }
+
+    public void setSolutions(List<SolutionDTO> solutions) {
+        this.solutions = solutions;
+    }
 
     @Override
     public String toString() {
@@ -27,7 +91,7 @@ public class JudgeDTO {
                 ", outputLimit=" + outputLimit +
                 ", language='" + language + '\'' +
                 ", judgePreference='" + judgePreference + '\'' +
-                ", resolutions=" + resolutions +
+                ", resolutions=" + solutions +
                 '}';
     }
 }

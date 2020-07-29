@@ -1,19 +1,24 @@
 package com.yzl.yujudge.service;
 
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.enumerations.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
+import com.yzl.yujudge.dto.JudgeDTO;
+import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
+import com.yzl.yujudge.network.JudgeRequest;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author yuzhanglong
@@ -81,13 +86,21 @@ public class SubmissionService {
         //  2.对于某段时间内大量的提交，有一定的并发量，我们直接在数据库save有些不妥，可以考虑使用缓存
 
         // 进入这个方法说明已经完成了排队操作，我们将状态置为【PENDING -- 判题中】
-        try {
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
         List<JudgeSolutionEntity> solutionEntities = judgeProblemEntity.getJudgeSolutionEntityList();
+        JudgeDTO judgeDTO = new JudgeDTO();
+
+        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        List<SolutionDTO> solutionDTOList = new ArrayList<>();
+        solutionDTOList.add(mapper.map(solutionEntities.get(0), SolutionDTO.class));
+        judgeDTO.setSolutions(solutionDTOList);
+        judgeDTO.setLanguage("JAVA");
+        judgeDTO.setSubmissionCode("import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int a = in.nextInt();\n        int b = in.nextInt();\n        System.out.println(a + b);\n    }\n}");
+        judgeDTO.setMemoryLimit(65536);
+        judgeDTO.setOutputLimit(100000);
+        JudgeRequest judgeRequest = new JudgeRequest();
+        String res = judgeRequest.judgeSubmission(judgeDTO);
+        System.out.println(res);
     }
 
     /**

@@ -27,7 +27,7 @@ public class SubmissionExecutorConfiguration {
     @Bean
     public ThreadPoolExecutor submissionAsyncServiceExecutor() {
         final int maximumPoolSize = Runtime.getRuntime().availableProcessors() + 1;
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+        return new ThreadPoolExecutor(
                 maximumPoolSize,
                 maximumPoolSize,
                 KEEP_ALIVE_TIME,
@@ -36,6 +36,5 @@ public class SubmissionExecutorConfiguration {
                 new SubmissionFactory(THREAD_NAME_PREFIX),
                 new ThreadPoolExecutor.AbortPolicy()
         );
-        return executor;
     }
 }

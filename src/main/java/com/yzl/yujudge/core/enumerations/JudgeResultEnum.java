@@ -36,5 +36,5 @@ public enum JudgeResultEnum {
     UNKNOWN_ERROR,
 
     //编译失败
-    COMPILE_ERROR;
+    COMPILE_ERROR
 }

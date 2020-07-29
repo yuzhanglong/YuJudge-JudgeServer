@@ -110,9 +110,8 @@ public class ProblemService {
      * @date 2020-7-22
      */
     public List<JudgeSolutionEntity> getProblemSolutions(Long problemId) {
-        List<JudgeSolutionEntity> solutionEntity = solutionRepository.findAllByPkProblem(problemId);
         // 此处为空没有必要抛出异常，我们直接返回一个空数组就可以了
-        return solutionEntity;
+        return solutionRepository.findAllByPkProblem(problemId);
     }
 
 
