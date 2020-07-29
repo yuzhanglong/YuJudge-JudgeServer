@@ -20,16 +20,15 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableAsync
 public class SubmissionExecutorConfiguration {
-    final int CORE_POOL_SIZE = 1;
     final long KEEP_ALIVE_TIME = 5L;
     final int BLOCKING_QUEUE_CAPACITY = 100;
     final String THREAD_NAME_PREFIX = "submissionJudge";
 
     @Bean
-    public ThreadPoolExecutor asyncServiceExecutor() {
+    public ThreadPoolExecutor submissionAsyncServiceExecutor() {
         final int maximumPoolSize = Runtime.getRuntime().availableProcessors() + 1;
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                CORE_POOL_SIZE,
+                maximumPoolSize,
                 maximumPoolSize,
                 KEEP_ALIVE_TIME,
                 TimeUnit.SECONDS,
