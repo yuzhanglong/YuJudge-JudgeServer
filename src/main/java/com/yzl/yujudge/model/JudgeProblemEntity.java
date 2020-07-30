@@ -62,7 +62,7 @@ public class JudgeProblemEntity extends BaseEntity {
     private Integer outputLimit;
 
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "pk_problem", referencedColumnName = "id")
     private List<JudgeSolutionEntity> solutions;
 

@@ -4,7 +4,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.enumerations.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
-import com.yzl.yujudge.dto.JudgeDTO;
+import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
@@ -13,6 +13,7 @@ import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.network.JudgeRequest;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
+import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,8 @@ public class SubmissionService {
 
         // 验证语言是否在允许的范围内
         List<String> language = judgeProblemEntity.getAllowedLanguage();
-        if (!language.contains(submissionDTO.getLanguage())) {
+        boolean isLanguageAccept = language.contains(submissionDTO.getLanguage());
+        if (!isLanguageAccept) {
             throw new NotFoundException("B0004");
         }
     }
@@ -80,27 +82,22 @@ public class SubmissionService {
      */
     @Async(value = "submissionAsyncServiceExecutor")
     public void addSubmissionTask(SubmissionEntity submissionEntity) {
+        // 获取这个submission对应的problem实体
         JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionEntity.getPkProblem());
 
-        // TODO: 1.如果目标problem不存在,需要记录错误（不是返回异常，因为这是异步操作）
-        //  2.对于某段时间内大量的提交，有一定的并发量，我们直接在数据库save有些不妥，可以考虑使用缓存
+        // TODO: 如果目标problem不存在,需要记录错误（不是返回异常，因为这是异步操作）
+        // TODO: 对于某段时间内大量的提交，有一定的并发量，我们直接在数据库save有些不妥，需要使用缓存
 
         // 进入这个方法说明已经完成了排队操作，我们将状态置为【PENDING -- 判题中】
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
-        List<JudgeSolutionEntity> solutionEntities = judgeProblemEntity.getJudgeSolutionEntityList();
-        JudgeDTO judgeDTO = new JudgeDTO();
+        JudgeHostDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
 
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-        List<SolutionDTO> solutionDTOList = new ArrayList<>();
-        solutionDTOList.add(mapper.map(solutionEntities.get(0), SolutionDTO.class));
-        judgeDTO.setSolutions(solutionDTOList);
-        judgeDTO.setLanguage("JAVA");
-        judgeDTO.setSubmissionCode("import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int a = in.nextInt();\n        int b = in.nextInt();\n        System.out.println(a + b);\n    }\n}");
-        judgeDTO.setMemoryLimit(65536);
-        judgeDTO.setOutputLimit(100000);
+        // 执行判题请求
         JudgeRequest judgeRequest = new JudgeRequest();
-        String res = judgeRequest.judgeSubmission(judgeDTO);
+        String res = judgeRequest.judgeSubmission(judgeHostDTO);
         System.out.println(res);
+        // 保存判题结果
+        saveJudgeResult(submission, res);
     }
 
     /**
@@ -111,9 +108,19 @@ public class SubmissionService {
      * @date 2020-7-29 19:45:32
      */
     private SubmissionEntity setSubmissionPendingCondition(SubmissionEntity submissionEntity) {
-        SubmissionEntity submission = submissionEntity;
-        submission.setCondition(JudgeConditionEnum.PENDING.toString());
-        submissionRepository.save(submission);
-        return submission;
+        submissionEntity.setCondition(JudgeConditionEnum.PENDING.toString());
+        submissionRepository.save(submissionEntity);
+        return submissionEntity;
+    }
+
+    /**
+     * @param submissionEntity 提交的实体对象
+     * @author yuzhanglong
+     * @description 保存判题服务器的判题结果
+     * @date 2020-7-30 10:34
+     */
+    private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultJsonString){
+        submissionEntity.setJudgeResult(judgeResultJsonString);
+        submissionRepository.save(submissionEntity);
     }
 }

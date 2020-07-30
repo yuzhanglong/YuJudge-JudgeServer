@@ -1,6 +1,6 @@
 package com.yzl.yujudge.network;
 
-import com.yzl.yujudge.dto.JudgeDTO;
+import com.yzl.yujudge.dto.JudgeHostDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -39,21 +39,21 @@ public class JudgeRequest extends HttpRequest {
 
 
     /**
-     * @param judgeDTO 判题相关数据传输对象
+     * @param judgeHostDTO 判题相关数据传输对象
      * @return String 判题结果的json字符串
      * @throws WebClientResponseException 请求失败时抛出异常
      * @author yuzhanglong
      * @date 2020-7-30 00:17
      * @description 发送用户提交到judgeHost
      */
-    public String judgeSubmission(JudgeDTO judgeDTO) throws WebClientResponseException {
+    public String judgeSubmission(JudgeHostDTO judgeHostDTO) throws WebClientResponseException {
         WebClient webClient = getWebClient();
         Mono<String> responseMono = webClient.post()
                 .uri("/judge/run")
                 .header("accessToken", testAccessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .acceptCharset(StandardCharsets.UTF_8)
-                .body(Mono.just(judgeDTO), JudgeDTO.class)
+                .body(Mono.just(judgeHostDTO), JudgeHostDTO.class)
                 .retrieve()
                 .bodyToMono(String.class);
         return responseMono.block();
