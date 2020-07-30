@@ -1,4 +1,4 @@
-package com.yzl.yujudge.utils;
+package com.yzl.yujudge.core.factory;
 
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.PropertySource;

@@ -53,6 +53,10 @@ public class SubmissionEntity extends BaseEntity {
     @Column(name = "code_content")
     private String codeContent;
 
+    @Basic
+    @Column(name = "judge_preference")
+    private String judgePreference;
+
     public Long getId() {
         return id;
     }
@@ -123,5 +127,21 @@ public class SubmissionEntity extends BaseEntity {
 
     public void setCodeContent(String codeContent) {
         this.codeContent = codeContent;
+    }
+
+    public String getJudgeCondition() {
+        return judgeCondition;
+    }
+
+    public void setJudgeCondition(String judgeCondition) {
+        this.judgeCondition = judgeCondition;
+    }
+
+    public String getJudgePreference() {
+        return judgePreference;
+    }
+
+    public void setJudgePreference(String judgePreference) {
+        this.judgePreference = judgePreference;
     }
 }

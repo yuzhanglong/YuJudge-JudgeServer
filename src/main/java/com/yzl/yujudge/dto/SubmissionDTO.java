@@ -18,6 +18,8 @@ public class SubmissionDTO {
     private String codeContent;
     @NotNull(message = "目标语言不得为空")
     private String language;
+    @NotNull(message = "判题偏好不得为空")
+    private String judgePreference;
 
 
     public Long getProblemId() {
@@ -34,6 +36,14 @@ public class SubmissionDTO {
 
     public void setCodeContent(String codeContent) {
         this.codeContent = codeContent;
+    }
+
+    public String getJudgePreference() {
+        return judgePreference;
+    }
+
+    public void setJudgePreference(String judgePreference) {
+        this.judgePreference = judgePreference;
     }
 
     public String getLanguage() {

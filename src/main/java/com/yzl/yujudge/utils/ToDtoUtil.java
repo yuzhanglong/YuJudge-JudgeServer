@@ -30,6 +30,7 @@ public class ToDtoUtil {
         judgeHostDTO.setLanguage(submissionEntity.getLanguage());
         judgeHostDTO.setSubmissionCode(submissionEntity.getCodeContent());
         judgeHostDTO.setOutputLimit(judgeProblemEntity.getOutputLimit());
+        judgeHostDTO.setJudgePreference(submissionEntity.getJudgePreference());
         // 获取解决方案
         List<JudgeSolutionEntity> expectedSolutions = judgeProblemEntity.getJudgeSolutionEntityList();
         List<SolutionDTO> solutions = solutionEntityListToSolutionDtoList(expectedSolutions);

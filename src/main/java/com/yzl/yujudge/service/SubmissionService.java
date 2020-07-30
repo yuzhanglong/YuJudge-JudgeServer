@@ -1,24 +1,24 @@
 package com.yzl.yujudge.service;
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.core.enumerations.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostDTO;
-import com.yzl.yujudge.dto.SolutionDTO;
+import com.yzl.yujudge.dto.JudgeResultDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
-import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.network.JudgeRequest;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
+import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +49,8 @@ public class SubmissionService {
         SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO);
         // 我们将本次提交设为waiting（等待判题）
         submissionEntity.setCondition(JudgeConditionEnum.WAITING.toString());
+        submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
+        submissionEntity.setCodeContent(submissionDTO.getCodeContent());
         submissionRepository.save(submissionEntity);
         return submissionEntity;
     }
@@ -94,10 +96,14 @@ public class SubmissionService {
 
         // 执行判题请求
         JudgeRequest judgeRequest = new JudgeRequest();
-        String res = judgeRequest.judgeSubmission(judgeHostDTO);
-        System.out.println(res);
-        // 保存判题结果
-        saveJudgeResult(submission, res);
+        try {
+            String res = judgeRequest.judgeSubmission(judgeHostDTO);
+            System.out.println(res);
+            // 保存判题结果
+            saveJudgeResult(submission, res);
+        }catch (WebClientResponseException e){
+            System.out.println(e.getResponseBodyAsString());
+        }
     }
 
     /**
@@ -119,8 +125,19 @@ public class SubmissionService {
      * @description 保存判题服务器的判题结果
      * @date 2020-7-30 10:34
      */
-    private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultJsonString){
+    private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultJsonString) {
         submissionEntity.setJudgeResult(judgeResultJsonString);
+        submissionEntity.setCondition(JudgeConditionEnum.SUCCESS.toString());
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JudgeResultDTO judgeResult = objectMapper.readValue(judgeResultJsonString, JudgeResultDTO.class);
+            JudgeResultCalculateUtil calculator = new JudgeResultCalculateUtil(judgeResult);
+            calculator.executeCalculate();
+            submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
+            submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));
+        } catch (JsonProcessingException e) {
+            submissionEntity.setCondition(JudgeConditionEnum.ERROR.toString());
+        }
         submissionRepository.save(submissionEntity);
     }
 }
