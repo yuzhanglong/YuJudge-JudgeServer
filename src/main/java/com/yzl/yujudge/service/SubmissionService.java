@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.core.enumerations.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
-import com.yzl.yujudge.dto.JudgeHostRequestDTO;
+import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
-import com.yzl.yujudge.network.JudgeRequest;
+import com.yzl.yujudge.network.JudgeHostJudgeRequest;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
@@ -92,12 +92,12 @@ public class SubmissionService {
 
         // 进入这个方法说明已经完成了排队操作，我们将状态置为【PENDING -- 判题中】
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
-        JudgeHostRequestDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
+        JudgeHostJudgeRequestDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
 
         // 执行判题请求
-        JudgeRequest judgeRequest = new JudgeRequest();
+        JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest();
         try {
-            String res = judgeRequest.judgeSubmission(judgeHostDTO);
+            String res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
             System.out.println(res);
             // 保存判题结果
             saveJudgeResult(submission, res);

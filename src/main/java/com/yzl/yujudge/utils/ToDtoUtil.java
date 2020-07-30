@@ -3,7 +3,7 @@ package com.yzl.yujudge.utils;
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
-import com.yzl.yujudge.dto.JudgeHostRequestDTO;
+import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
@@ -24,8 +24,8 @@ public class ToDtoUtil {
      * @description 将某个submission的实体对象以及其对应的problem实体对象转换成JudgeHostDTO
      * @date 2020-7-30 09:59
      */
-    public static JudgeHostRequestDTO submissionToJudgeHostDTO(JudgeProblemEntity judgeProblemEntity, SubmissionEntity submissionEntity) {
-        JudgeHostRequestDTO judgeHostDTO = new JudgeHostRequestDTO();
+    public static JudgeHostJudgeRequestDTO submissionToJudgeHostDTO(JudgeProblemEntity judgeProblemEntity, SubmissionEntity submissionEntity) {
+        JudgeHostJudgeRequestDTO judgeHostDTO = new JudgeHostJudgeRequestDTO();
         judgeHostDTO.setMemoryLimit(judgeProblemEntity.getMemoryLimit());
         judgeHostDTO.setLanguage(submissionEntity.getLanguage());
         judgeHostDTO.setSubmissionCode(submissionEntity.getCodeContent());

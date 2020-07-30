@@ -1,11 +1,9 @@
 package com.yzl.yujudge.api.v1;
 
+import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.JudgeHostDTO;
-import com.yzl.yujudge.model.JudgeHostEntity;
 import com.yzl.yujudge.service.JudgeHostService;
-import com.yzl.yujudge.utils.ToVoUtil;
-import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,9 +33,9 @@ public class JudgeHostController {
      */
     @GetMapping("/inspect_all")
     public UnifiedResponse inspectJudgeHost() {
-        List<JudgeHostEntity> judgeHostEntities = judgeHostService.inspectJudgeHosts();
-        List<JudgeHostVO> judgeHostVOList = ToVoUtil.judgeHostEntityListToJudgeHostVoList(judgeHostEntities);
-        return new UnifiedResponse(judgeHostVOList);
+        List<JudgeHostBO> judgeHostBOList = judgeHostService.inspectJudgeHosts();
+        // TODO: BO转化为VO，觉得这里意义不大.....
+        return new UnifiedResponse(judgeHostBOList);
     }
 
     /**

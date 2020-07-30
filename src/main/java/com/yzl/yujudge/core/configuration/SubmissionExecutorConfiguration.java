@@ -1,6 +1,6 @@
 package com.yzl.yujudge.core.configuration;
 
-import com.yzl.yujudge.core.factory.SubmissionFactory;
+import com.yzl.yujudge.core.factory.SubmissionThreadPoolFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -33,7 +33,7 @@ public class SubmissionExecutorConfiguration {
                 KEEP_ALIVE_TIME,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(BLOCKING_QUEUE_CAPACITY),
-                new SubmissionFactory(THREAD_NAME_PREFIX),
+                new SubmissionThreadPoolFactory(THREAD_NAME_PREFIX),
                 new ThreadPoolExecutor.AbortPolicy()
         );
     }

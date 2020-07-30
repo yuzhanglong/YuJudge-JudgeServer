@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2020-7-29 14:07:52
  */
 
-public class SubmissionFactory implements ThreadFactory {
+public class SubmissionThreadPoolFactory implements ThreadFactory {
     private final String namePrefix;
     private final AtomicInteger nextId = new AtomicInteger(1);
 
-    public SubmissionFactory(String name) {
+    public SubmissionThreadPoolFactory(String name) {
         namePrefix = "From SubmissionFactory's " + name + "-Worker-";
     }
 

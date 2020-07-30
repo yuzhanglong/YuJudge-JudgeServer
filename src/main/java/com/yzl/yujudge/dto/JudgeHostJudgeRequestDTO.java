@@ -7,7 +7,7 @@ import java.util.List;
  * @description 请求判题服务器相关的数据传输对象
  * @date 2020-7-29 19:06:50
  */
-public class JudgeHostRequestDTO {
+public class JudgeHostJudgeRequestDTO {
     private String submissionCode;
     private Integer realTimeLimit;
     private Integer cpuTimeLimit;
