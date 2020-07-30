@@ -1,17 +1,14 @@
-package com.yzl.yujudge.dto;
-
-import javax.validation.constraints.NotNull;
+package com.yzl.yujudge.vo;
 
 /**
  * @author yuzhanglong
- * @description 判题服务器信息的数据传输对象
- * @date 2020-7-30 19:29
+ * @description 判题服务器信息的视图层对象
+ * @date 2020-7-30 19:07
  */
-public class JudgeHostDTO {
-    @NotNull(message = "服务器名称不得为空")
+public class JudgeHostVO {
     private String name;
-    @NotNull(message = "服务器地址不能为空")
     private String address;
+    private Boolean isActive;
 
     public String getName() {
         return name;
@@ -29,11 +26,20 @@ public class JudgeHostDTO {
         this.address = address;
     }
 
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
     @Override
     public String toString() {
-        return "JudgeHostDTO{" +
+        return "JudgeHostVO{" +
                 "name='" + name + '\'' +
                 ", address='" + address + '\'' +
+                ", isActive=" + isActive +
                 '}';
     }
 }

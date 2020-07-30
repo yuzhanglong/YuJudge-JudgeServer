@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.core.enumerations.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
-import com.yzl.yujudge.dto.JudgeHostDTO;
+import com.yzl.yujudge.dto.JudgeHostRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
@@ -92,7 +92,7 @@ public class SubmissionService {
 
         // 进入这个方法说明已经完成了排队操作，我们将状态置为【PENDING -- 判题中】
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
-        JudgeHostDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
+        JudgeHostRequestDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
 
         // 执行判题请求
         JudgeRequest judgeRequest = new JudgeRequest();
