@@ -2,7 +2,7 @@ package com.yzl.yujudge.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yzl.yujudge.core.enumerations.JudgeConditionEnum;
+import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
@@ -101,7 +101,7 @@ public class SubmissionService {
             System.out.println(res);
             // 保存判题结果
             saveJudgeResult(submission, res);
-        }catch (WebClientResponseException e){
+        } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
         }
     }
@@ -135,6 +135,7 @@ public class SubmissionService {
             calculator.executeCalculate();
             submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
             submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));
+            submissionEntity.setCondition(calculator.countJudgeResult().toString());
         } catch (JsonProcessingException e) {
             submissionEntity.setCondition(JudgeConditionEnum.ERROR.toString());
         }

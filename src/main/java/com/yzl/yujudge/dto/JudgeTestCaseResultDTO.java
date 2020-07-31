@@ -15,7 +15,7 @@ public class JudgeTestCaseResultDTO {
     private String message;
 
     public Integer getRealTimeCost() {
-        return realTimeCost == null ? 0 : realTimeCost;
+        return realTimeCost;
     }
 
     public void setRealTimeCost(Integer realTimeCost) {
@@ -23,7 +23,7 @@ public class JudgeTestCaseResultDTO {
     }
 
     public Integer getMemoryCost() {
-        return memoryCost == null ? 0 : memoryCost;
+        return memoryCost;
     }
 
     public void setMemoryCost(Integer memoryCost) {
@@ -31,7 +31,7 @@ public class JudgeTestCaseResultDTO {
     }
 
     public Integer getCpuTimeCost() {
-        return cpuTimeCost == null ? 0 : cpuTimeCost;
+        return cpuTimeCost;
     }
 
     public void setCpuTimeCost(Integer cpuTimeCost) {

@@ -1,5 +1,6 @@
 package com.yzl.yujudge.utils;
 
+import com.yzl.yujudge.core.enumeration.JudgeResultEnum;
 import com.yzl.yujudge.dto.JudgeResultDTO;
 import com.yzl.yujudge.dto.JudgeTestCaseResultDTO;
 
@@ -38,8 +39,8 @@ public class JudgeResultCalculateUtil {
         int time = 0;
         int memory = 0;
         for (JudgeTestCaseResultDTO testCase : testCaseResultDTOList) {
-            int maxTime = Math.max(testCase.getCpuTimeCost(), testCase.getRealTimeCost());
-            int maxMemory = testCase.getMemoryCost();
+            int maxTime = countMaxTime(testCase);
+            int maxMemory = countMaxMemory(testCase);
             if (maxTime > time) {
                 time = maxTime;
             }
@@ -49,6 +50,58 @@ public class JudgeResultCalculateUtil {
         }
         setTimeCost(time);
         setMemoryCost(memory);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取最大时间消耗
+     * @date 2020-7-31 9:36
+     */
+    private Integer countMaxTime(JudgeTestCaseResultDTO testCase) {
+        Integer cpuTimeCost = testCase.getCpuTimeCost();
+        Integer realTimeCost = testCase.getRealTimeCost();
+        if (cpuTimeCost == null) {
+            cpuTimeCost = 0;
+        }
+        if (realTimeCost == null) {
+            realTimeCost = 0;
+        }
+        return Math.max(cpuTimeCost, realTimeCost);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @date 2020-7-31 9:48
+     * @description 获取判题结果描述
+     * 判题描述是对一次提交的汇总评价，以一个字符串的形式来表示，例如"ACCEPT"、"WRONG_ANSWER"等，
+     * 在多个提交中，如果全ac则返回accept否则返回第一个错误描述
+     */
+    public JudgeResultEnum countJudgeResult() {
+        List<JudgeTestCaseResultDTO> testCaseResultDTOList = judgeResult.getJudgeResults();
+        for (JudgeTestCaseResultDTO resultDTO : testCaseResultDTOList) {
+            String message = resultDTO.getMessage();
+            JudgeResultEnum condition = JudgeResultEnum.toJudgeResult(message);
+            // WA 或者没有condition，我们返回WA
+            if (condition == null || condition == JudgeResultEnum.WRONG_ANSWER) {
+                return JudgeResultEnum.WRONG_ANSWER;
+            }
+            // 其他情况，我们返回第一个（不是ac）
+            if (condition != JudgeResultEnum.ACCEPT) {
+                return condition;
+            }
+        }
+        // 当所有都ac了
+        return JudgeResultEnum.ACCEPT;
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取内存消耗
+     * @date 2020-7-31 9:38
+     */
+    private Integer countMaxMemory(JudgeTestCaseResultDTO testCase) {
+        Integer memoryCost = testCase.getMemoryCost();
+        return memoryCost == null ? 0 : memoryCost;
     }
 
     public JudgeResultDTO getJudgeResult() {

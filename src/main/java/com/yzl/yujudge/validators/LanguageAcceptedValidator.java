@@ -1,6 +1,6 @@
 package com.yzl.yujudge.validators;
 
-import com.yzl.yujudge.core.enumerations.LanguageEnum;
+import com.yzl.yujudge.core.enumeration.LanguageEnum;
 import com.yzl.yujudge.dto.SubmissionDTO;
 
 import javax.validation.ConstraintValidator;

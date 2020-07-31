@@ -1,4 +1,4 @@
-package com.yzl.yujudge.core.enumerations;
+package com.yzl.yujudge.core.enumeration;
 
 import java.util.stream.Stream;
 

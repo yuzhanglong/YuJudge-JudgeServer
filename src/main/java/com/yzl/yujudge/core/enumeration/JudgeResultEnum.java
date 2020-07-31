@@ -1,5 +1,7 @@
-package com.yzl.yujudge.core.enumerations;
+package com.yzl.yujudge.core.enumeration;
 
+
+import java.util.stream.Stream;
 
 /**
  * @author yuzhanglong
@@ -9,7 +11,7 @@ package com.yzl.yujudge.core.enumerations;
 
 public enum JudgeResultEnum {
     // 程序通过这个测试样例
-    ACCEPTED,
+    ACCEPT,
 
     // 答案错误
     WRONG_ANSWER,
@@ -36,5 +38,12 @@ public enum JudgeResultEnum {
     UNKNOWN_ERROR,
 
     //编译失败
-    COMPILE_ERROR
+    COMPILE_ERROR;
+
+    public static JudgeResultEnum toJudgeResult(String res) {
+        return Stream.of(JudgeResultEnum.values())
+                .filter(c -> c.toString().equals(res))
+                .findAny()
+                .orElse(null);
+    }
 }
