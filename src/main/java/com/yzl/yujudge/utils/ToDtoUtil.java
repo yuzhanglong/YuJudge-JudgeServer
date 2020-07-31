@@ -31,6 +31,8 @@ public class ToDtoUtil {
         judgeHostDTO.setSubmissionCode(submissionEntity.getCodeContent());
         judgeHostDTO.setOutputLimit(judgeProblemEntity.getOutputLimit());
         judgeHostDTO.setJudgePreference(submissionEntity.getJudgePreference());
+        judgeHostDTO.setCpuTimeLimit(judgeProblemEntity.getTimeLimit());
+        judgeHostDTO.setRealTimeLimit(judgeProblemEntity.getTimeLimit());
         // 获取解决方案
         List<JudgeSolutionEntity> expectedSolutions = judgeProblemEntity.getJudgeSolutionEntityList();
         List<SolutionDTO> solutions = solutionEntityListToSolutionDtoList(expectedSolutions);

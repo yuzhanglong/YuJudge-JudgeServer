@@ -1,5 +1,8 @@
 package com.yzl.yujudge.model;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -12,6 +15,8 @@ import java.util.Date;
  */
 
 @MappedSuperclass
+@DynamicUpdate
+@DynamicInsert
 public class BaseEntity {
     private Date createTime;
     private Date deleteTime;

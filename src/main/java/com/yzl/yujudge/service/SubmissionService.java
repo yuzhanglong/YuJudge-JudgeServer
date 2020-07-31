@@ -15,10 +15,14 @@ import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +55,7 @@ public class SubmissionService {
         submissionEntity.setCondition(JudgeConditionEnum.WAITING.toString());
         submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
         submissionEntity.setCodeContent(submissionDTO.getCodeContent());
+        submissionEntity.setCreateTime(new Date());
         submissionRepository.save(submissionEntity);
         return submissionEntity;
     }
@@ -140,5 +145,19 @@ public class SubmissionService {
             submissionEntity.setCondition(JudgeConditionEnum.ERROR.toString());
         }
         submissionRepository.save(submissionEntity);
+    }
+
+    /**
+     * @param start 开始的条目
+     * @param problemId  目标问题id
+     * @param size 条目数量
+     * @author yuzhanglong
+     * @return Page<SubmissionEntity> 提交实体的分页对象
+     * @description 获取某个problem下的用户提交(分页)
+     * @date 2020-7-31 19:56:19
+     */
+    public Page<SubmissionEntity> getSubmissionByProblemId(Integer start, Integer size, Long problemId){
+        Pageable pageable = PageRequest.of(start, size);
+        return submissionRepository.findAllByPkProblemOrderByCreateTimeDesc(problemId, pageable);
     }
 }

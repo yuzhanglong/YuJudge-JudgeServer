@@ -5,9 +5,13 @@ import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
+import com.yzl.yujudge.vo.PaginationVO;
+import com.yzl.yujudge.vo.SubmissionVO;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -47,5 +51,23 @@ public class SubmissionController {
     public UnifiedResponse getSubmitCondition() {
         ThreadPoolExecutor threadPoolExecutor = submissionExecutorConfiguration.submissionAsyncServiceExecutor();
         return new UnifiedResponse("获取condition成功~");
+    }
+
+
+    /**
+     * @param start 开始的条目
+     * @param problemId  目标问题id
+     * @author yuzhanglong
+     * @description 获取某个problem下的用户提交(分页)
+     * @date 2020-7-31 20:06:36
+     */
+    @GetMapping("/get_submissions")
+    public UnifiedResponse getSubmissions(
+            @RequestParam(defaultValue = "0") Integer start,
+            @RequestParam(defaultValue = "10") Integer count,
+            @RequestParam @NotNull Long problemId) {
+        Page<SubmissionEntity> submissionEntities = submissionService.getSubmissionByProblemId(start, count, problemId);
+        PaginationVO<SubmissionEntity, SubmissionVO> data = new PaginationVO<>(submissionEntities, SubmissionVO.class);
+        return new UnifiedResponse(data);
     }
 }
