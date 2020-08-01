@@ -148,16 +148,31 @@ public class SubmissionService {
     }
 
     /**
-     * @param start 开始的条目
-     * @param problemId  目标问题id
-     * @param size 条目数量
-     * @author yuzhanglong
+     * @param start     开始的条目
+     * @param problemId 目标问题id
+     * @param size      条目数量
      * @return Page<SubmissionEntity> 提交实体的分页对象
+     * @author yuzhanglong
      * @description 获取某个problem下的用户提交(分页)
      * @date 2020-7-31 19:56:19
      */
-    public Page<SubmissionEntity> getSubmissionByProblemId(Integer start, Integer size, Long problemId){
+    public Page<SubmissionEntity> getSubmissionByProblemId(Integer start, Integer size, Long problemId) {
         Pageable pageable = PageRequest.of(start, size);
         return submissionRepository.findAllByPkProblemOrderByCreateTimeDesc(problemId, pageable);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @param submissionId 某次提交的id
+     * @return SubmissionEntity 找到的submission的实体对象
+     * @description 获取某个submission的详细信息，如果找不到，我们会抛出异常
+     * @date 2020-8-1 11:51:18
+     */
+    public SubmissionEntity getSubmissionDataById(Long submissionId) {
+        SubmissionEntity submissionEntity = submissionRepository.findOneById(submissionId);
+        if(submissionEntity == null){
+            throw new NotFoundException("B0005");
+        }
+        return submissionEntity;
     }
 }

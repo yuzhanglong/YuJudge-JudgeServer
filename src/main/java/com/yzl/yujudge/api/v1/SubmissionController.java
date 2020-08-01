@@ -5,7 +5,9 @@ import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
+import com.yzl.yujudge.utils.ToVoUtil;
 import com.yzl.yujudge.vo.PaginationVO;
+import com.yzl.yujudge.vo.SubmissionDetailVO;
 import com.yzl.yujudge.vo.SubmissionVO;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -49,14 +51,15 @@ public class SubmissionController {
 
     @GetMapping("/get_submit_condition")
     public UnifiedResponse getSubmitCondition() {
+        // TODO: 获取submission线程池状态
         ThreadPoolExecutor threadPoolExecutor = submissionExecutorConfiguration.submissionAsyncServiceExecutor();
-        return new UnifiedResponse("获取condition成功~");
+        return new UnifiedResponse(threadPoolExecutor.getActiveCount());
     }
 
 
     /**
-     * @param start 开始的条目
-     * @param problemId  目标问题id
+     * @param start     开始的条目
+     * @param problemId 目标问题id
      * @author yuzhanglong
      * @description 获取某个problem下的用户提交(分页)
      * @date 2020-7-31 20:06:36
@@ -69,5 +72,19 @@ public class SubmissionController {
         Page<SubmissionEntity> submissionEntities = submissionService.getSubmissionByProblemId(start, count, problemId);
         PaginationVO<SubmissionEntity, SubmissionVO> data = new PaginationVO<>(submissionEntities, SubmissionVO.class);
         return new UnifiedResponse(data);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @param submissionId 某次提交的id
+     * @description 获取某个submission的详细信息
+     * @date 2020-8-1 11:42:46
+     */
+    @GetMapping("/get_submission_detail")
+    public UnifiedResponse getSubmissionDetail(@RequestParam @NotNull Long submissionId) {
+        // TODO: 提交详情某些内容（例如代码）是否应该开放？我们需要一个权限控制
+        SubmissionEntity submission = submissionService.getSubmissionDataById(submissionId);
+        SubmissionDetailVO submissionDetailVO = ToVoUtil.submissionEntityToSubmissionDetailVO(submission);
+        return new UnifiedResponse(submissionDetailVO);
     }
 }
