@@ -1,5 +1,7 @@
 package com.yzl.yujudge.vo;
 
+import com.yzl.yujudge.dto.JudgeResultDTO;
+
 import java.util.Map;
 
 /**
@@ -8,14 +10,14 @@ import java.util.Map;
  * @date 2020-8-1 11:58:46
  */
 public class SubmissionDetailVO extends SubmissionVO{
-    private String judgeResult;
+    private JudgeResultDTO judgeResult;
     private String codeContent;
 
-    public String getJudgeResult() {
+    public JudgeResultDTO getJudgeResult() {
         return judgeResult;
     }
 
-    public void setJudgeResult(String judgeResult) {
+    public void setJudgeResult(JudgeResultDTO judgeResult) {
         this.judgeResult = judgeResult;
     }
 

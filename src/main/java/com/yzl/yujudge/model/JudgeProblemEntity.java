@@ -1,6 +1,6 @@
 package com.yzl.yujudge.model;
 
-import com.yzl.yujudge.utils.ListJsonUtil;
+import com.yzl.yujudge.utils.converter.ListJsonConverter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -42,12 +42,12 @@ public class JudgeProblemEntity extends BaseEntity {
     @Column(name = "cpu_time_limit")
     private Integer cpuTimeLimit;
 
-    @Convert(converter = ListJsonUtil.class)
+    @Convert(converter = ListJsonConverter.class)
     @Column(name = "character_tags")
     private List<String> characterTags;
 
 
-    @Convert(converter = ListJsonUtil.class)
+    @Convert(converter = ListJsonConverter.class)
     @Column(name = "allowed_language")
     private List<String> allowedLanguage;
 

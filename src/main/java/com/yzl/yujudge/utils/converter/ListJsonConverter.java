@@ -1,4 +1,4 @@
-package com.yzl.yujudge.utils;
+package com.yzl.yujudge.utils.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,10 +11,10 @@ import java.util.List;
  * @description listJson的序列化
  * @date 2020-7-21 19:32:35
  */
-public class ListJsonUtil implements AttributeConverter<List<Object>, String> {
+public class ListJsonConverter implements AttributeConverter<List<Object>, String> {
     private final ObjectMapper mapper;
 
-    public ListJsonUtil(ObjectMapper mapper) {
+    public ListJsonConverter(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

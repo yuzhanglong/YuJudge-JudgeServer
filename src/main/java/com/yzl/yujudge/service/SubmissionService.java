@@ -131,12 +131,12 @@ public class SubmissionService {
      * @date 2020-7-30 10:34
      */
     private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultJsonString) {
-        submissionEntity.setJudgeResult(judgeResultJsonString);
         submissionEntity.setCondition(JudgeConditionEnum.SUCCESS.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JudgeResultDTO judgeResult = objectMapper.readValue(judgeResultJsonString, JudgeResultDTO.class);
             JudgeResultCalculateUtil calculator = new JudgeResultCalculateUtil(judgeResult);
+            submissionEntity.setJudgeResult(judgeResult);
             calculator.executeCalculate();
             submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
             submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));

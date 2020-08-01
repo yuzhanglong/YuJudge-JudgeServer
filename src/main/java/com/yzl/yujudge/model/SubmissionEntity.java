@@ -1,6 +1,7 @@
 package com.yzl.yujudge.model;
 
-import com.yzl.yujudge.utils.MapJsonUtil;
+import com.yzl.yujudge.dto.JudgeResultDTO;
+import com.yzl.yujudge.utils.converter.JudgeResultConverter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -46,9 +47,9 @@ public class SubmissionEntity extends BaseEntity {
     @Column(name = "memory_cost")
     private Long memoryCost;
 
-
     @Column(name = "judge_result")
-    private String judgeResult;
+    @Convert(converter = JudgeResultConverter.class)
+    private JudgeResultDTO judgeResult;
 
     @Basic
     @Column(name = "code_content")
@@ -138,11 +139,11 @@ public class SubmissionEntity extends BaseEntity {
         this.judgePreference = judgePreference;
     }
 
-    public String getJudgeResult() {
+    public JudgeResultDTO getJudgeResult() {
         return judgeResult;
     }
 
-    public void setJudgeResult(String judgeResult) {
+    public void setJudgeResult(JudgeResultDTO judgeResult) {
         this.judgeResult = judgeResult;
     }
 }
