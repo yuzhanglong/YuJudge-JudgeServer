@@ -1,6 +1,6 @@
 package com.yzl.yujudge.dto;
 
-import com.yzl.yujudge.validators.LanguageAccepted;
+import com.yzl.yujudge.validators.annotations.LanguageAccepted;
 
 import javax.validation.constraints.NotNull;
 

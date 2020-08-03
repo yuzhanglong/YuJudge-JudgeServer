@@ -49,19 +49,36 @@ public class UserService {
         if (isPass) {
             return generateUserTokenByUserId(user.getId());
         } else {
-            throw new ForbiddenException("用户名或者密码错误");
+            throw new ForbiddenException("B0007");
         }
     }
 
+    /**
+     * @param registerDTO 注册信息的数据传输对象
+     * @author yuzhanglong
+     * @description 用户注册
+     * @date 2020-08-03 18:42:30
+     */
+
     public void userRegister(RegisterDTO registerDTO) {
         //TODO: 验证码的判断
+        String nickname = registerDTO.getNickname();
+        String email = registerDTO.getEmail();
         // 判断用户是否已经存在
-        if (isUserExisted(registerDTO.getNickname())) {
+        if (isUserExisted(nickname)) {
             throw new ForbiddenException("B0008");
         }
+        // TODO: 以注解的形式分离此处的验证操作，另外还有字符串为 "" 的情况，都是不允许的
+        if (nickname == null && email == null) {
+            // 允许使用用户名或者密码登录，如果两者都没有传入，我们拒绝之
+            throw new NotFoundException("A0002");
+        }
         UserEntity userEntity = ToEntityUtil.registerDtoToUserEntity(registerDTO);
+        // 将密码hash，并存入entity对象
+        userEntity.setPassword(SecurityUtil.generatePasswordHash(registerDTO.getPassword()));
         userRepository.save(userEntity);
     }
+
 
     /**
      * @author yuzhanglong
@@ -85,6 +102,7 @@ public class UserService {
      * @description 判断某个用户名对应的用户是否存在
      * @date 2020-08-03 16:40:18
      */
+
     private Boolean isUserExisted(String userName) {
         UserEntity user = userRepository.findByNickname(userName);
         return user != null;

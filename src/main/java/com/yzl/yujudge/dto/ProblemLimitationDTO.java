@@ -1,6 +1,6 @@
 package com.yzl.yujudge.dto;
 
-import com.yzl.yujudge.validators.LanguageListAccepted;
+import com.yzl.yujudge.validators.annotations.LanguageListAccepted;
 
 import javax.validation.Valid;
 import java.util.List;

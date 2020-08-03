@@ -9,11 +9,6 @@ public class AuthorizationVO {
     private String accessToken;
     private Integer expiresIn;
 
-    public AuthorizationVO(String accessToken, Integer expiresIn) {
-        this.accessToken = accessToken;
-        this.expiresIn = expiresIn;
-    }
-
     public String getAccessToken() {
         return accessToken;
     }
