@@ -2,6 +2,7 @@ package com.yzl.yujudge.store.redis;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
@@ -97,6 +98,20 @@ public class RedisOperations {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    /**
+     * @param keys 需要删除的key(s)
+     * @author yuzhanglong
+     * @description 删除一个或者多个key
+     * @date 2020-08-03 22:15:05
+     */
+    public void remove(String... keys) {
+        if (keys != null && keys.length > 0) {
+            for (String s : keys) {
+                redisTemplate.delete(s);
+            }
         }
     }
 }

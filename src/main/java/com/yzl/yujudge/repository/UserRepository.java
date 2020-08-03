@@ -33,5 +33,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @description 通过用户昵称或者邮箱找到对应用户
      * @date 2020-08-03 22:09:55
      */
-    UserEntity findByNicknameOrEmail(String nickname, String email);
+    UserEntity findUserEntityByNicknameOrEmail(String nickname, String email);
 }

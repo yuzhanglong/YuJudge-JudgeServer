@@ -48,7 +48,7 @@ public class UserService {
      */
 
     public String userLogin(LoginDTO loginDTO) {
-        UserEntity user = userRepository.findByNicknameOrEmail(loginDTO.getNickname(), loginDTO.getEmail());
+        UserEntity user = userRepository.findUserEntityByNicknameOrEmail(loginDTO.getNickname(), loginDTO.getEmail());
         if (user == null) {
             throw new NotFoundException("B0006");
         }
@@ -56,8 +56,10 @@ public class UserService {
         String passwordHash = user.getPassword();
         String passwordToCheck = loginDTO.getPassword();
         boolean isPasswordPass = SecurityUtil.checkPasswordHash(passwordToCheck, passwordHash);
-        boolean isCodePass = isCheckCodePass(loginDTO.getCheckCodeKey(), loginDTO.getCheckCodeContent());
-
+        String key = loginDTO.getCheckCodeKey();
+        boolean isCodePass = isCheckCodePass(key, loginDTO.getCheckCodeContent());
+        // 移除本次验证码的相关信息
+        redisOperations.remove(key);
         if (!isCodePass) {
             // 验证码异常
             throw new ForbiddenException("B0009");
@@ -81,7 +83,7 @@ public class UserService {
         String nickname = registerDTO.getNickname();
         String email = registerDTO.getEmail();
         // 判断用户是否已经存在
-        if (userRepository.findByNicknameOrEmail(nickname, email) != null) {
+        if (userRepository.findUserEntityByNicknameOrEmail(nickname, email) != null) {
             throw new ForbiddenException("B0008");
         }
         UserEntity userEntity = ToEntityUtil.registerDtoToUserEntity(registerDTO);
