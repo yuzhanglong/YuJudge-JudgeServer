@@ -50,7 +50,7 @@ public class TokenUtil {
         Map<String, Date> map = new HashMap<>(2);
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
-        calendar.add(Calendar.SECOND, expiredIn);
+        calendar.add(Calendar.SECOND, 10);
         map.put("now", now);
         map.put("expiredIn", calendar.getTime());
         return map;
@@ -59,21 +59,16 @@ public class TokenUtil {
     /**
      * @param token     用户传入的token
      * @param secretKey 验证密钥
-     * @param userId    用户名
      * @return boolean token是否验证通过
      * @author yuzhanglong
      * @date 2020-08-03 16:27:16
      * @description 检测传入的token是否合法、正确
      */
-    public static Boolean checkAuthToken(String token, String userId, String secretKey) {
+    public static Boolean checkAuthToken(String token, String secretKey) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
             JWTVerifier jwtVerifier = JWT.require(algorithm).build();
             DecodedJWT decodedJwt = jwtVerifier.verify(token);
-            String uid = decodedJwt.getClaim("userId").asString();
-            if (!userId.equals(uid)) {
-                return false;
-            }
         } catch (JWTVerificationException e) {
             return false;
         }

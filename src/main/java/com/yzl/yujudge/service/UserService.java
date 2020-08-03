@@ -1,5 +1,6 @@
 package com.yzl.yujudge.service;
 
+import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -95,6 +96,7 @@ public class UserService {
         Integer expiredIn = authorizationConfiguration.getExpiredIn();
         return TokenUtil.generateAuthToken(userId.toString(), salt, expiredIn);
     }
+
 
     /**
      * @param userName 用户名

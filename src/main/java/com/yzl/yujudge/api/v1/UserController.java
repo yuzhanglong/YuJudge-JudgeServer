@@ -1,6 +1,7 @@
 package com.yzl.yujudge.api.v1;
 
 import com.wf.captcha.utils.CaptchaUtil;
+import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.dto.LoginDTO;
@@ -56,6 +57,17 @@ public class UserController {
         authorizationVO.setAccessToken(token);
         authorizationVO.setExpiresIn(authorizationConfiguration.getExpiredIn());
         return new UnifiedResponse(authorizationVO);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 本接口仅用于token的测试
+     * @date 2020-08-03 19:38:25
+     */
+    @GetMapping("/check_token")
+    @AuthorizationRequired
+    public UnifiedResponse checkToken() {
+        return new UnifiedResponse("验证成功,本接口仅用于token的测试");
     }
 
 

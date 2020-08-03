@@ -1,4 +1,4 @@
-package com.yzl.yujudge.core.handlers;
+package com.yzl.yujudge.core.handler;
 
 
 import com.yzl.yujudge.core.common.UnifiedResponse;
