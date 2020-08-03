@@ -13,6 +13,7 @@ import java.util.List;
  * @description 提交相关查询类接口
  */
 public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Long> {
+
     /**
      * 获取单个提交
      *
@@ -29,7 +30,7 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * 根据problemId 获取多个提交
      *
      * @param problemId 问题的id
-     * @param pageable 分页参数
+     * @param pageable  分页参数
      * @return SubmissionEntity 解决方案实体类List
      * @author yuzhanglong
      * @date 2020-7-31 19:18:51

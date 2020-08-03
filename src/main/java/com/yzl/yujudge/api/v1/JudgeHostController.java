@@ -44,7 +44,7 @@ public class JudgeHostController {
      * @date 2020-7-30 18:31
      */
     @PostMapping("/create")
-    public UnifiedResponse createJudgeHost(@RequestBody @Validated JudgeHostDTO judgeHostDTO){
+    public UnifiedResponse createJudgeHost(@RequestBody @Validated JudgeHostDTO judgeHostDTO) {
         judgeHostService.createJudgeHost(judgeHostDTO);
         return new UnifiedResponse("添加判题服务器信息成功");
     }

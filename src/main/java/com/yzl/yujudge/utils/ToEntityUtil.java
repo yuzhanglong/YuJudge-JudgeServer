@@ -1,11 +1,13 @@
 package com.yzl.yujudge.utils;
 
 import com.yzl.yujudge.dto.ProblemDTO;
+import com.yzl.yujudge.dto.RegisterDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
+import com.yzl.yujudge.model.UserEntity;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class ToEntityUtil {
     }
 
     /**
+     * @param solutionDTO 解决方案的数据传输对象
      * @author yuzhanglong
      * @description 由solutionDTO转换为solution
      * @date 2020-7-29 13:27:36
@@ -54,6 +57,7 @@ public class ToEntityUtil {
     }
 
     /**
+     * @param submissionDTO 提交相关的数据传输对象
      * @author yuzhanglong
      * @description 由solutionDTO转换为solution
      * @date 2020-7-29 13:28:04
@@ -64,5 +68,11 @@ public class ToEntityUtil {
         submissionEntity.setCodeContent(submissionDTO.getCodeContent());
         submissionEntity.setLanguage(submissionDTO.getLanguage());
         return submissionEntity;
+    }
+
+    public static UserEntity registerDtoToUserEntity(RegisterDTO registerDTO) {
+        UserEntity userEntity = new UserEntity();
+        BeanUtils.copyProperties(registerDTO, userEntity);
+        return userEntity;
     }
 }

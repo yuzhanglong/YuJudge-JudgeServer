@@ -49,6 +49,11 @@ public class SubmissionController {
         return new UnifiedResponse("提交已经开始处理");
     }
 
+    /**
+     * @author yuzhanglong
+     * @date 2020-8-2 18:00
+     * @description 查看submission调度的线程池状态
+     */
     @GetMapping("/get_submit_condition")
     public UnifiedResponse getSubmitCondition() {
         // TODO: 获取submission线程池状态
@@ -75,8 +80,8 @@ public class SubmissionController {
     }
 
     /**
-     * @author yuzhanglong
      * @param submissionId 某次提交的id
+     * @author yuzhanglong
      * @description 获取某个submission的详细信息
      * @date 2020-8-1 11:42:46
      */
