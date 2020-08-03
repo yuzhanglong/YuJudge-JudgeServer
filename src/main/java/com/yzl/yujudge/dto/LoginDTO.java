@@ -19,7 +19,10 @@ public class LoginDTO {
     private String password;
 
     @NotNull(message = "验证码不得为空")
-    private String checkCode;
+    private String checkCodeContent;
+
+    @NotNull(message = "验证码key不得为空")
+    private String checkCodeKey;
 
     public String getNickname() {
         return nickname;
@@ -46,12 +49,20 @@ public class LoginDTO {
     }
 
 
-    public String getCheckCode() {
-        return checkCode;
+    public String getCheckCodeContent() {
+        return checkCodeContent;
     }
 
-    public void setCheckCode(String checkCode) {
-        this.checkCode = checkCode;
+    public void setCheckCodeContent(String checkCodeContent) {
+        this.checkCodeContent = checkCodeContent;
+    }
+
+    public String getCheckCodeKey() {
+        return checkCodeKey;
+    }
+
+    public void setCheckCodeKey(String checkCodeKey) {
+        this.checkCodeKey = checkCodeKey;
     }
 
     @Override
@@ -60,7 +71,8 @@ public class LoginDTO {
                 "nickname='" + nickname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", checkCode='" + checkCode + '\'' +
+                ", checkCodeContent='" + checkCodeContent + '\'' +
+                ", checkCodeKey='" + checkCodeKey + '\'' +
                 '}';
     }
 }

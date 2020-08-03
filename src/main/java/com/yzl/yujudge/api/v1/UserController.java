@@ -1,6 +1,5 @@
 package com.yzl.yujudge.api.v1;
 
-import com.wf.captcha.utils.CaptchaUtil;
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
@@ -11,8 +10,7 @@ import com.yzl.yujudge.vo.AuthorizationVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * @author yuzhanglong
@@ -71,8 +69,14 @@ public class UserController {
     }
 
 
-    @RequestMapping("/captcha")
-    public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CaptchaUtil.out(request, response);
+    /**
+     * @author yuzhanglong
+     * @description 下发验证码图片
+     * @date 2020-08-03 19:51:21
+     */
+    @RequestMapping("/get_check_code")
+    public UnifiedResponse getCheckCode() {
+        Map<String, String> generatedCodeInfo = userService.generateCheckCode();
+        return new UnifiedResponse(generatedCodeInfo);
     }
 }

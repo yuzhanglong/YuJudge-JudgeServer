@@ -1,6 +1,5 @@
 package com.yzl.yujudge.service;
 
-import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -8,10 +7,15 @@ import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.repository.UserRepository;
+import com.yzl.yujudge.store.redis.RedisOperations;
+import com.yzl.yujudge.utils.CheckCodeUtil;
 import com.yzl.yujudge.utils.SecurityUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import com.yzl.yujudge.utils.TokenUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author yuzhanglong
@@ -21,15 +25,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+    public static final long CHECK_CODE_EXPIRED_TIME_IN_SECOND = 60 * 10;
+
     private final UserRepository userRepository;
     private final AuthorizationConfiguration authorizationConfiguration;
+    private final RedisOperations redisOperations;
 
-    public UserService(UserRepository userRepository, AuthorizationConfiguration authorizationConfiguration) {
+    public UserService(UserRepository userRepository, AuthorizationConfiguration authorizationConfiguration, RedisOperations redisOperations) {
         this.userRepository = userRepository;
         this.authorizationConfiguration = authorizationConfiguration;
+        this.redisOperations = redisOperations;
     }
 
     /**
+     * @param loginDTO 登录信息的数据传输对象
      * @author yuzhanglong
      * @description 用户登录
      * 在这里，我们会将用户名和密码进行比对，
@@ -39,19 +48,25 @@ public class UserService {
      */
 
     public String userLogin(LoginDTO loginDTO) {
-        UserEntity user = userRepository.findByNickname(loginDTO.getNickname());
+        UserEntity user = userRepository.findByNicknameOrEmail(loginDTO.getNickname(), loginDTO.getEmail());
         if (user == null) {
             throw new NotFoundException("B0006");
         }
         // 验证密码正误
         String passwordHash = user.getPassword();
         String passwordToCheck = loginDTO.getPassword();
-        boolean isPass = SecurityUtil.checkPasswordHash(passwordToCheck, passwordHash);
-        if (isPass) {
-            return generateUserTokenByUserId(user.getId());
-        } else {
+        boolean isPasswordPass = SecurityUtil.checkPasswordHash(passwordToCheck, passwordHash);
+        boolean isCodePass = isCheckCodePass(loginDTO.getCheckCodeKey(), loginDTO.getCheckCodeContent());
+
+        if (!isCodePass) {
+            // 验证码异常
+            throw new ForbiddenException("B0009");
+        }
+        if (!isPasswordPass) {
+            // 用户密码异常
             throw new ForbiddenException("B0007");
         }
+        return generateUserTokenByUserId(user.getId());
     }
 
     /**
@@ -66,13 +81,8 @@ public class UserService {
         String nickname = registerDTO.getNickname();
         String email = registerDTO.getEmail();
         // 判断用户是否已经存在
-        if (isUserExisted(nickname)) {
+        if (userRepository.findByNicknameOrEmail(nickname, email) != null) {
             throw new ForbiddenException("B0008");
-        }
-        // TODO: 以注解的形式分离此处的验证操作，另外还有字符串为 "" 的情况，都是不允许的
-        if (nickname == null && email == null) {
-            // 允许使用用户名或者密码登录，如果两者都没有传入，我们拒绝之
-            throw new NotFoundException("A0002");
         }
         UserEntity userEntity = ToEntityUtil.registerDtoToUserEntity(registerDTO);
         // 将密码hash，并存入entity对象
@@ -99,14 +109,36 @@ public class UserService {
 
 
     /**
-     * @param userName 用户名
      * @author yuzhanglong
-     * @description 判断某个用户名对应的用户是否存在
-     * @date 2020-08-03 16:40:18
+     * @description 生成验证码信息，以供返回给前端
+     * @date 2020-08-03 20:15:29
      */
 
-    private Boolean isUserExisted(String userName) {
-        UserEntity user = userRepository.findByNickname(userName);
-        return user != null;
+    public Map<String, String> generateCheckCode() {
+        Map<String, String> codeInfo = CheckCodeUtil.getCheckCode();
+        String content = codeInfo.get(CheckCodeUtil.CODE_CONTENT_KEY_NAME);
+        String key = UUID.randomUUID().toString();
+        Boolean isSet = redisOperations.set(key, content, CHECK_CODE_EXPIRED_TIME_IN_SECOND);
+        // TODO: 对isSet进行处理
+        // 移除codeContent, 添加生成的key
+        codeInfo.remove(CheckCodeUtil.CODE_CONTENT_KEY_NAME);
+        codeInfo.replace(CheckCodeUtil.CODE_KEY_KEY_NAME, key);
+        return codeInfo;
+    }
+
+    /**
+     * @param key     验证码对应的key
+     * @param content 客户端传入的验证码内容
+     * @author yuzhanglong
+     * @description 检测验证码是否通过
+     * @date 2020-08-03 21:22:00
+     */
+
+    private Boolean isCheckCodePass(String key, String content) {
+        String value = (String) redisOperations.get(key);
+        if (value == null) {
+            return false;
+        }
+        return value.equals(content);
     }
 }
