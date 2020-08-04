@@ -46,7 +46,6 @@ public class UserService {
      * 接下来调用相关接口只需要带上token即可
      * @date 2020-08-03 13:30:29
      */
-
     public String userLogin(LoginDTO loginDTO) {
         UserEntity user = userRepository.findUserEntityByNicknameOrEmail(loginDTO.getNickname(), loginDTO.getEmail());
         if (user == null) {
@@ -77,13 +76,18 @@ public class UserService {
      * @description 用户注册
      * @date 2020-08-03 18:42:30
      */
-
     public void userRegister(RegisterDTO registerDTO) {
-        //TODO: 验证码的判断
+        String key = registerDTO.getCheckCodeKey();
+        boolean isCodePass = isCheckCodePass(key, registerDTO.getCheckCodeContent());
+        // 移除本次验证码的相关信息
+        redisOperations.remove(key);
+        if (!isCodePass) {
+            // 验证码异常
+            throw new ForbiddenException("B0009");
+        }
         String nickname = registerDTO.getNickname();
-        String email = registerDTO.getEmail();
         // 判断用户是否已经存在
-        if (userRepository.findUserEntityByNicknameOrEmail(nickname, email) != null) {
+        if (userRepository.findByNickname(nickname) != null) {
             throw new ForbiddenException("B0008");
         }
         UserEntity userEntity = ToEntityUtil.registerDtoToUserEntity(registerDTO);
@@ -99,7 +103,6 @@ public class UserService {
      * 接下来客户端需要调用相关接口只需要传入token
      * @date 2020-08-03 16:30:20
      */
-
     private String generateUserTokenByUserId(Long userId) throws NullPointerException {
         if (userId == null) {
             throw new NullPointerException("userId不存在");
@@ -115,7 +118,6 @@ public class UserService {
      * @description 生成验证码信息，以供返回给前端
      * @date 2020-08-03 20:15:29
      */
-
     public Map<String, String> generateCheckCode() {
         Map<String, String> codeInfo = CheckCodeUtil.getCheckCode();
         String content = codeInfo.get(CheckCodeUtil.CODE_CONTENT_KEY_NAME);
@@ -135,7 +137,6 @@ public class UserService {
      * @description 检测验证码是否通过
      * @date 2020-08-03 21:22:00
      */
-
     private Boolean isCheckCodePass(String key, String content) {
         String value = (String) redisOperations.get(key);
         if (value == null) {
