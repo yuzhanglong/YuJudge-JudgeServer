@@ -14,6 +14,8 @@ public class SolutionDTO {
     private String stdIn;
     @NotNull(message = "期望输出不得为空")
     private String expectedStdOut;
+    @NotNull(message = "描述不得为空")
+    private String description;
 
     public String getStdIn() {
         return stdIn;
@@ -29,6 +31,14 @@ public class SolutionDTO {
 
     public void setExpectedStdOut(String expectedStdOut) {
         this.expectedStdOut = expectedStdOut;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

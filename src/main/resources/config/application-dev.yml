@@ -14,3 +14,9 @@ spring:
 authorization:
   expired-in: 14400
   secret-key: secret
+
+upload:
+  qn-service:
+    access-key: o4fgM7P2lPEyo3FZ7s_NGdo_xJVNDdKf55apCubX
+    secret-key: YxRkcS8o-GSLMo1ajWuLjeFxFsMo1WKnOvyrLjB8
+    bucket: yzlyzl123

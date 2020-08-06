@@ -47,7 +47,8 @@ public class UserService {
      * @date 2020-08-03 13:30:29
      */
     public String userLogin(LoginDTO loginDTO) {
-        UserEntity user = userRepository.findUserEntityByNicknameOrEmail(loginDTO.getNickname(), loginDTO.getEmail());
+        // TODO: 支持邮箱登录
+        UserEntity user = userRepository.findByNickname(loginDTO.getNickname());
         if (user == null) {
             throw new NotFoundException("B0006");
         }
