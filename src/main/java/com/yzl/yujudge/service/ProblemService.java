@@ -28,6 +28,7 @@ import java.util.List;
 public class ProblemService {
     private final ProblemRepository problemRepository;
     private final SolutionRepository solutionRepository;
+    public static final int RECENT_PROBLEM_SEARCH_MAX_SIZE = 15;
 
     public ProblemService(ProblemRepository problemRepository, SolutionRepository solutionRepository) {
         this.problemRepository = problemRepository;
@@ -84,7 +85,7 @@ public class ProblemService {
         JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
         problemEntity.setName(problemDTO.getName());
         problemEntity.setContent(problemDTO.getContent());
-        if(problemDTO.getCharacterTags() != null){
+        if (problemDTO.getCharacterTags() != null) {
             problemEntity.setCharacterTags(problemDTO.getCharacterTags());
         }
         problemRepository.save(problemEntity);
@@ -163,7 +164,7 @@ public class ProblemService {
      * @description 修改Problem限制
      * @date 2020-7-26 17:54:45
      */
-    public void setLimitation(Long problemId, ProblemLimitationDTO limitation){
+    public void setLimitation(Long problemId, ProblemLimitationDTO limitation) {
         JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
         problemEntity.setTimeLimit(limitation.getTimeLimit());
         problemEntity.setCpuTimeLimit(limitation.getCpuTimeLimit());
@@ -173,13 +174,12 @@ public class ProblemService {
         problemRepository.save(problemEntity);
     }
 
-    public void setProblemBasicInfo(Long problemId, ProblemDTO problemDTO){
+    public void setProblemBasicInfo(Long problemId, ProblemDTO problemDTO) {
         JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
-
     }
 
     /**
-     * @param problemId 目标problemId
+     * @param problemId  目标problemId
      * @param isNullable 是否允许实体对象是否为空
      * @author yuzhanglong
      * @description 根据problemId，获取problem实体对象
@@ -187,11 +187,25 @@ public class ProblemService {
      * 那么我们会抛出一个全局异常B0002(problem不存在)
      * @date 2020-7-26 18:07:44
      */
-    private JudgeProblemEntity getProblemEntityById(Long problemId, Boolean isNullable){
+    private JudgeProblemEntity getProblemEntityById(Long problemId, Boolean isNullable) {
         JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
         if (!isNullable && problemEntity == null) {
             throw new NotFoundException("B0002");
         }
         return problemEntity;
+    }
+
+    /**
+     * @param size 需要获取problem的数量
+     * @author yuzhanglong
+     * @description 传入你需要获取的数量获取最近创建的problems，
+     * 实际上是利用分页机制加上createTime的排序得出
+     * 注意: 最多获取十五条，如果size大于15，则我们只去最近的十五条记录
+     * @date 2020-08-06 20:55:11
+     */
+    public List<JudgeProblemEntity> getRecentProblem(Integer size) {
+        int finalSize = size > RECENT_PROBLEM_SEARCH_MAX_SIZE ? RECENT_PROBLEM_SEARCH_MAX_SIZE : size;
+        Pageable pageable = PageRequest.of(0, finalSize);
+        return problemRepository.findByOrderByCreateTimeDesc(pageable);
     }
 }

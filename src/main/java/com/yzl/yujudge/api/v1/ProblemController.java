@@ -9,6 +9,7 @@ import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.service.ProblemService;
+import com.yzl.yujudge.utils.EntityAndVoListMapper;
 import com.yzl.yujudge.utils.ToVoUtil;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
@@ -205,5 +206,18 @@ public class ProblemController {
             @RequestBody ProblemDTO problemDTO) {
         problemService.setProblemBasicInfo(problemId, problemDTO);
         return new UnifiedResponse("编辑题目基本信息成功");
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取最新的若干个problem
+     * @date 2020-08-06 20:14:45
+     */
+    @GetMapping("/get_recent_problem")
+    public UnifiedResponse getRecentProblem(@RequestParam Integer size) {
+        List<JudgeProblemEntity> res = problemService.getRecentProblem(size);
+        EntityAndVoListMapper<JudgeProblemEntity, ProblemBasicVO> mapper = new EntityAndVoListMapper<>(res, ProblemBasicVO.class);
+        List<ProblemBasicVO> problemBasicVOList = mapper.getItems();
+        return new UnifiedResponse(problemBasicVOList);
     }
 }

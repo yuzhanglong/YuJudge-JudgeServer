@@ -1,7 +1,6 @@
 package com.yzl.yujudge.vo;
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
+import com.yzl.yujudge.utils.EntityAndVoListMapper;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
@@ -17,22 +16,17 @@ public class PaginationVO<T, K> {
     private Integer count;
     private Integer page;
     private Integer totalPage;
-    private  List<K> items;
+    private List<K> items;
 
     public PaginationVO(Page<T> pageItems, Class<K> targetClass) {
         this.initPaginationData(pageItems);
 
         List<T> tList = pageItems.getContent();
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-        List<K> resultList = new ArrayList<>();
-        tList.forEach(res -> {
-            K viewObject = mapper.map(res, targetClass);
-            resultList.add(viewObject);
-        });
-        setItems(resultList);
+        EntityAndVoListMapper<T, K> mapper = new EntityAndVoListMapper<>(tList, targetClass);
+        setItems(mapper.getItems());
     }
 
-     void initPaginationData(Page<T> pageItems) {
+    void initPaginationData(Page<T> pageItems) {
         this.total = pageItems.getTotalElements();
         this.count = pageItems.getSize();
         this.page = pageItems.getNumber();

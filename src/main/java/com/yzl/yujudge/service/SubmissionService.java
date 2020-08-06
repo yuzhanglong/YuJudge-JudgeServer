@@ -162,15 +162,15 @@ public class SubmissionService {
     }
 
     /**
-     * @author yuzhanglong
      * @param submissionId 某次提交的id
      * @return SubmissionEntity 找到的submission的实体对象
+     * @author yuzhanglong
      * @description 获取某个submission的详细信息，如果找不到，我们会抛出异常
      * @date 2020-8-1 11:51:18
      */
     public SubmissionEntity getSubmissionDataById(Long submissionId) {
         SubmissionEntity submissionEntity = submissionRepository.findOneById(submissionId);
-        if(submissionEntity == null){
+        if (submissionEntity == null) {
             throw new NotFoundException("B0005");
         }
         return submissionEntity;
