@@ -12,8 +12,11 @@ import com.yzl.yujudge.utils.CheckCodeUtil;
 import com.yzl.yujudge.utils.SecurityUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import com.yzl.yujudge.utils.TokenUtil;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +28,8 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    public static final long CHECK_CODE_EXPIRED_TIME_IN_SECOND = 60 * 10;
+    private static final long CHECK_CODE_EXPIRED_TIME_IN_SECOND = 60 * 10;
+    private static final int GET_RECENT_USER_MAX_SIZE = 10;
 
     private final UserRepository userRepository;
     private final AuthorizationConfiguration authorizationConfiguration;
@@ -144,5 +148,17 @@ public class UserService {
             return false;
         }
         return value.equals(content);
+    }
+
+    /**
+     * @param userAmount 用户的数量
+     * @author yuzhanglong
+     * @description 获取近期活跃用户信息
+     * @date 2020-08-07 16:18:31
+     */
+    public List<UserEntity> getActiveUser(Integer userAmount) {
+        int finalSize = userAmount > GET_RECENT_USER_MAX_SIZE ? GET_RECENT_USER_MAX_SIZE : userAmount;
+        Pageable pageable = PageRequest.of(0, finalSize);
+        return userRepository.findByOrderBySubmissionAmountDesc(pageable);
     }
 }

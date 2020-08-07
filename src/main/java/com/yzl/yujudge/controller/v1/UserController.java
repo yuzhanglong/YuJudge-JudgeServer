@@ -6,11 +6,16 @@ import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
+import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.service.UserService;
+import com.yzl.yujudge.utils.EntityAndVoListMapper;
 import com.yzl.yujudge.vo.AuthorizationVO;
+import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,5 +86,19 @@ public class UserController {
     public UnifiedResponse getCheckCode() {
         Map<String, String> generatedCodeInfo = userService.generateCheckCode();
         return new UnifiedResponse(generatedCodeInfo);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取近期活跃用户
+     * @date 2020-08-07 20:13:09
+     */
+    @GetMapping("/get_active_user")
+    @AuthorizationRequired
+    public UnifiedResponse getActiveUser(@RequestParam @NotNull Integer amount) {
+        List<UserEntity> userEntities = userService.getActiveUser(amount);
+        EntityAndVoListMapper<UserEntity, UserInfoVO> mapper = new EntityAndVoListMapper<>(userEntities, UserInfoVO.class);
+        List<UserInfoVO> userInfoVOList = mapper.getItems();
+        return new UnifiedResponse(userInfoVOList);
     }
 }

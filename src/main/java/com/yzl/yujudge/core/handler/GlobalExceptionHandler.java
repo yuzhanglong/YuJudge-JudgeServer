@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -138,13 +139,29 @@ public class GlobalExceptionHandler {
      * @description 拦截post请求内容为空的异常
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public UnifiedResponse handleConstraintViolationException(HttpServletRequest request, HttpMessageNotReadableException exception) {
         String requestUrl = request.getRequestURI();
         String method = request.getMethod();
         // 初始化unifyResponse
-        return new UnifiedResponse("A0006", "请求内容为空", getRequestUrlString(method, requestUrl));
+        return new UnifiedResponse("A0006", "POST请求内容为空", getRequestUrlString(method, requestUrl));
     }
+
+    /**
+     * @param request   请求参数
+     * @param exception 抛出的异常
+     * @author yzl
+     * @description 拦截get请求内容为空的异常
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    public UnifiedResponse handleConstraintViolationException(HttpServletRequest request, MissingServletRequestParameterException exception) {
+        String requestUrl = request.getRequestURI();
+        String method = request.getMethod();
+        // 初始化unifyResponse
+        return new UnifiedResponse("A0005", "GET请求内容为空", getRequestUrlString(method, requestUrl));
+    }
+
 
     /**
      * @param method 请求方法

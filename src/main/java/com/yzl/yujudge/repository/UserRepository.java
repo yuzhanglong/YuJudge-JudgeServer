@@ -1,7 +1,10 @@
 package com.yzl.yujudge.repository;
 
 import com.yzl.yujudge.model.UserEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -34,4 +37,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @date 2020-08-03 22:09:55
      */
     UserEntity findUserEntityByNicknameOrEmail(String nickname, String email);
+
+    /**
+     * 获取活跃用户
+     *
+     * @param pageable 分页参数
+     * @return List UserEntity 多个用户实体对象
+     * @author yuzhanglong
+     * @description 通过用户昵称或者邮箱找到对应用户
+     * @date 2020-08-07 16:22:05
+     */
+    List<UserEntity> findByOrderBySubmissionAmountDesc(Pageable pageable);
 }

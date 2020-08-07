@@ -30,7 +30,7 @@ public interface ProblemRepository extends JpaRepository<JudgeProblemEntity, Lon
      * @param pageable 分页参数
      * @return List JudgeProblemEntity 多个题目信息实体类
      * @author yuzhanglong
-     * @description 获取最近创建的10个问题
+     * @description 获取最近创建的X个问题
      * @date 2020-08-06 21:01:06
      */
     List<JudgeProblemEntity> findByOrderByCreateTimeDesc(Pageable pageable);
