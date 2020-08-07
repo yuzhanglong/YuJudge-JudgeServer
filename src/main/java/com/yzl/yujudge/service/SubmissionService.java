@@ -197,19 +197,21 @@ public class SubmissionService {
      */
     public List<Map<String, Long>> countUserRecentSubmission(Long userId, Integer days) {
         int finalDay = days > COUNT_USER_RECENT_SUBMISSION_MAX_DAYS ? COUNT_USER_RECENT_SUBMISSION_MAX_DAYS : days;
-        Calendar calendar = Calendar.getInstance();
         List<Map<String, Long>> result = new ArrayList<>(finalDay);
 
         // TODO:下面的代码可以在sql查询层面上进行优化
         long lastAc = 0;
         long lastTotal = 0;
         for (int i = 1; i <= finalDay; i++) {
+            Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DATE, i * -1);
             long acAmount = submissionRepository.countAllByPkUserAndJudgeConditionEqualsAndCreateTimeAfter(userId, "ACCEPT", calendar.getTime()) - lastAc;
             long totAmount = submissionRepository.countAllByPkUserAndCreateTimeAfter(userId, calendar.getTime()) - lastTotal;
             Map<String, Long> map = new HashMap<>(3);
             map.put(AC_AMOUNT_KEY_NAME, acAmount);
             map.put(TOTAL_AMOUNT_KEY_NAME, totAmount);
+            map.put("time", calendar.getTime().getTime());
+            System.out.println(map.get("time"));
             lastAc += acAmount;
             lastTotal += totAmount;
             result.add(map);
