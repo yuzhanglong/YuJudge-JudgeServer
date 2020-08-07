@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,4 +38,43 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @description 通过问题id获取多个解决方案, 按时间先后倒序排列
      */
     Page<SubmissionEntity> findAllByPkProblemOrderByCreateTimeDesc(Long problemId, Pageable pageable);
+
+
+    /**
+     * 获取某天之后的所有submission
+     *
+     * @param time   开始时间
+     * @param userId 目标用户Id
+     * @return SubmissionEntity 解决方案实体类List
+     * @author yuzhanglong
+     * @date 2020-08-07 13:09:06
+     * @description 获取某天之后的所有submission
+     */
+    List<SubmissionEntity> findAllByPkUserAndCreateTimeAfter(Long userId, Date time);
+
+    /**
+     * 获取某天之后的所有submission的数量（限定状态）
+     *
+     * @param time      开始时间
+     * @param condition 需要查询的状态
+     * @param userId    目标用户Id
+     * @return Long 数量
+     * @author yuzhanglong
+     * @date 2020-08-07 13:09:06
+     * @description 获取某天之后的所有submission
+     */
+    Long countAllByPkUserAndJudgeConditionEqualsAndCreateTimeAfter(Long userId, String condition, Date time);
+
+
+    /**
+     * 获取某天之后的所有submission的数量
+     *
+     * @param time   开始时间
+     * @param userId 目标用户Id
+     * @return Long 数量
+     * @author yuzhanglong
+     * @date 2020-08-07 14:57:44
+     * @description 获取某天之后的所有submission数量
+     */
+    Long countAllByPkUserAndCreateTimeAfter(Long userId, Date time);
 }

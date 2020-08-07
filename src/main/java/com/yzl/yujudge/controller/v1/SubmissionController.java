@@ -1,11 +1,13 @@
 package com.yzl.yujudge.controller.v1;
 
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
+import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
+import com.yzl.yujudge.utils.EntityAndVoListMapper;
 import com.yzl.yujudge.utils.ToVoUtil;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.SubmissionDetailVO;
@@ -15,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -93,5 +97,19 @@ public class SubmissionController {
         SubmissionEntity submission = submissionService.getSubmissionDataById(submissionId);
         SubmissionDetailVO submissionDetailVO = ToVoUtil.submissionEntityToSubmissionDetailVO(submission);
         return new UnifiedResponse(submissionDetailVO);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取某用户最近的提交, 包括每一天的ac个数等资料
+     * 注意: 天数不得小于20天
+     * @date 2020-08-07 12:19:37
+     */
+    @GetMapping("/get_user_recent_submission")
+    @AuthorizationRequired
+    public UnifiedResponse getUserRecentSubmission(@RequestParam @NotNull Integer days) {
+        Long userId = UserHolder.getUserId();
+        List<Map<String, Long>> res = submissionService.countUserRecentSubmission(userId, days);
+        return new UnifiedResponse(res);
     }
 }

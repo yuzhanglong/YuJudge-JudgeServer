@@ -2,6 +2,7 @@ package com.yzl.yujudge.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
@@ -22,8 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yuzhanglong
@@ -35,6 +35,9 @@ import java.util.List;
 public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final ProblemRepository problemRepository;
+    private static final int COUNT_USER_RECENT_SUBMISSION_MAX_DAYS = 20;
+    public static final String AC_AMOUNT_KEY_NAME = "acAmount";
+    public static final String TOTAL_AMOUNT_KEY_NAME = "totalAmount";
 
     public SubmissionService(SubmissionRepository submissionRepository, ProblemRepository problemRepository) {
         this.submissionRepository = submissionRepository;
@@ -56,6 +59,7 @@ public class SubmissionService {
         submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
         submissionEntity.setCodeContent(submissionDTO.getCodeContent());
         submissionEntity.setCreateTime(new Date());
+        submissionEntity.setPkUser(UserHolder.getUserId());
         submissionRepository.save(submissionEntity);
         return submissionEntity;
     }
@@ -174,5 +178,42 @@ public class SubmissionService {
             throw new NotFoundException("B0005");
         }
         return submissionEntity;
+    }
+
+    /**
+     * @param userId 需要查询的用户Id
+     * @param days   查询的天数(从当前时间往前推移)
+     * @return List<Map < String, Long>> 每一天的提交情况，详见@description
+     * @author yuzhanglong
+     * @description 获取某用户最近的提交, 包括每一天的ac个数等资料
+     * 注意: 天数不得小于20天
+     * 返回内容的格式：map数组，单个map包括: 当天的ac数量以及总的提交数量
+     * 例如：(单个map)
+     * {
+     * "acAmount": 2,
+     * "totalAmount": 6
+     * }
+     * @date 2020-08-07 12:19:37
+     */
+    public List<Map<String, Long>> countUserRecentSubmission(Long userId, Integer days) {
+        int finalDay = days > COUNT_USER_RECENT_SUBMISSION_MAX_DAYS ? COUNT_USER_RECENT_SUBMISSION_MAX_DAYS : days;
+        Calendar calendar = Calendar.getInstance();
+        List<Map<String, Long>> result = new ArrayList<>(finalDay);
+
+        // TODO:下面的代码可以在sql查询层面上进行优化
+        long lastAc = 0;
+        long lastTotal = 0;
+        for (int i = 1; i <= finalDay; i++) {
+            calendar.add(Calendar.DATE, i * -1);
+            long acAmount = submissionRepository.countAllByPkUserAndJudgeConditionEqualsAndCreateTimeAfter(userId, "ACCEPT", calendar.getTime()) - lastAc;
+            long totAmount = submissionRepository.countAllByPkUserAndCreateTimeAfter(userId, calendar.getTime()) - lastTotal;
+            Map<String, Long> map = new HashMap<>(3);
+            map.put(AC_AMOUNT_KEY_NAME, acAmount);
+            map.put(TOTAL_AMOUNT_KEY_NAME, totAmount);
+            lastAc += acAmount;
+            lastTotal += totAmount;
+            result.add(map);
+        }
+        return result;
     }
 }

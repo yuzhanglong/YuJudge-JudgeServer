@@ -29,7 +29,7 @@ public class SubmissionEntity extends BaseEntity {
 
     @Basic
     @Column(name = "pk_user")
-    private String pkUser;
+    private Long pkUser;
 
     @Basic
     @Column(name = "language")
@@ -75,11 +75,11 @@ public class SubmissionEntity extends BaseEntity {
         this.pkProblem = pkProblem;
     }
 
-    public String getPkUser() {
+    public Long getPkUser() {
         return pkUser;
     }
 
-    public void setPkUser(String pkUser) {
+    public void setPkUser(Long pkUser) {
         this.pkUser = pkUser;
     }
 
