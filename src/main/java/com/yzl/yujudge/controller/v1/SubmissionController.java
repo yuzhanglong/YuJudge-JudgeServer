@@ -1,5 +1,6 @@
-package com.yzl.yujudge.api.v1;
+package com.yzl.yujudge.controller.v1;
 
+import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.dto.SubmissionDTO;
@@ -42,6 +43,7 @@ public class SubmissionController {
      * @description 提交代码
      */
     @PostMapping("/submit_code")
+    @AuthorizationRequired
     public UnifiedResponse submitCode(@Validated @RequestBody SubmissionDTO submissionDTO) {
         // 获取submission实体对象，当我们拿到它之后，说明这个submission已经被保存了
         SubmissionEntity submissionEntity = submissionService.initSubmission(submissionDTO);

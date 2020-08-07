@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Calendar;
@@ -50,7 +51,7 @@ public class TokenUtil {
         Map<String, Date> map = new HashMap<>(2);
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
-        calendar.add(Calendar.SECOND, 10);
+        calendar.add(Calendar.SECOND, expiredIn);
         map.put("now", now);
         map.put("expiredIn", calendar.getTime());
         return map;
@@ -64,14 +65,14 @@ public class TokenUtil {
      * @date 2020-08-03 16:27:16
      * @description 检测传入的token是否合法、正确
      */
-    public static Boolean checkAuthToken(String token, String secretKey) {
+    public static Map<String, Claim> checkAuthToken(String token, String secretKey) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
             JWTVerifier jwtVerifier = JWT.require(algorithm).build();
             DecodedJWT decodedJwt = jwtVerifier.verify(token);
+            return decodedJwt.getClaims();
         } catch (JWTVerificationException e) {
-            return false;
+            return null;
         }
-        return true;
     }
 }

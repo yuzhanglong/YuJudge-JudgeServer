@@ -1,4 +1,4 @@
-package com.yzl.yujudge.api.v1;
+package com.yzl.yujudge.controller.v1;
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;

@@ -1,6 +1,7 @@
 package com.yzl.yujudge.core.authorization;
 
 
+import com.auth0.jwt.interfaces.Claim;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.utils.TokenUtil;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * @author yuzhanglong
@@ -42,11 +44,27 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 throw new ForbiddenException("A0003");
             }
             String secret = authorizationConfiguration.getSecretKey();
-            Boolean isPass = TokenUtil.checkAuthToken(accessToken, secret);
-            if (!isPass) {
+            Map<String, Claim> userInfo = TokenUtil.checkAuthToken(accessToken, secret);
+            if (userInfo == null) {
                 throw new ForbiddenException("A0004");
             }
+            setDataToThreadLocal(userInfo);
         }
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        UserHolder.remove();
+    }
+
+    /**
+     * @author yuzhanglong
+     * @date 2020-08-07 11:09:04
+     * @description 向全局用户ThreadLocal添加用户信息
+     */
+    private void setDataToThreadLocal(Map<String, Claim> userInfo) {
+        String userId = userInfo.get("userId").asString();
+        UserHolder.setUser(Long.valueOf(userId));
     }
 }

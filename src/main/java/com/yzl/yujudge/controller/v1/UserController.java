@@ -1,6 +1,7 @@
-package com.yzl.yujudge.api.v1;
+package com.yzl.yujudge.controller.v1;
 
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
+import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.dto.LoginDTO;
@@ -65,6 +66,8 @@ public class UserController {
     @GetMapping("/check_token")
     @AuthorizationRequired
     public UnifiedResponse checkToken() {
+        Long userId = UserHolder.getUserId();
+        System.out.println(userId);
         return new UnifiedResponse("验证成功,本接口仅用于token的测试");
     }
 

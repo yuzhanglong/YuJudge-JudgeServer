@@ -1,4 +1,4 @@
-package com.yzl.yujudge.api.v1;
+package com.yzl.yujudge.controller.v1;
 
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.service.CommonService;
