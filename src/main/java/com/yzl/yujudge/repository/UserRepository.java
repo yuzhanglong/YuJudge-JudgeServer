@@ -48,4 +48,16 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @date 2020-08-07 16:22:05
      */
     List<UserEntity> findByOrderBySubmissionAmountDesc(Pageable pageable);
+
+
+    /**
+     * 获取活跃用户
+     *
+     * @param userId 要获取的用户id
+     * @return UserEntity 用户实体对象
+     * @author yuzhanglong
+     * @description 通过用户id寻找对应的用户
+     * @date 2020-08-08 12:58:04
+     */
+    UserEntity findOneById(Long userId);
 }

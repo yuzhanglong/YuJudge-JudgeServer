@@ -9,6 +9,7 @@ import com.yzl.yujudge.dto.RegisterDTO;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.service.UserService;
 import com.yzl.yujudge.utils.EntityAndVoListMapper;
+import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.AuthorizationVO;
 import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.validation.annotation.Validated;
@@ -100,5 +101,23 @@ public class UserController {
         EntityAndVoListMapper<UserEntity, UserInfoVO> mapper = new EntityAndVoListMapper<>(userEntities, UserInfoVO.class);
         List<UserInfoVO> userInfoVOList = mapper.getItems();
         return new UnifiedResponse(userInfoVOList);
+    }
+
+
+    /**
+     * @author yuzhanglong
+     * @description 通过用户id，获取用户信息
+     * 我们不会直接让调用者传入用户id
+     * 而是通过用户传入的token
+     * 将token解析，获取其中包含的用户id
+     * @date 2020-08-08 13:11:24
+     */
+    @GetMapping("/get_user_info")
+    @AuthorizationRequired
+    public UnifiedResponse getUserInfo() {
+        Long userId = UserHolder.getUserId();
+        UserEntity user = userService.getUserInfo(userId);
+        EntityToVoMapper<UserEntity, UserInfoVO> mapper = new EntityToVoMapper<>(user, UserInfoVO.class);
+        return new UnifiedResponse(mapper.getViewObject());
     }
 }

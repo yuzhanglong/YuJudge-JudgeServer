@@ -161,4 +161,18 @@ public class UserService {
         Pageable pageable = PageRequest.of(0, finalSize);
         return userRepository.findByOrderBySubmissionAmountDesc(pageable);
     }
+
+    /**
+     * @param userId 用户id
+     * @author yuzhanglong
+     * @description 获取近期活跃用户信息
+     * @date 2020-08-08 13:01:16
+     */
+    public UserEntity getUserInfo(Long userId) {
+        UserEntity userEntity = userRepository.findOneById(userId);
+        if (userEntity == null) {
+            throw new NotFoundException("B0010");
+        }
+        return userEntity;
+    }
 }

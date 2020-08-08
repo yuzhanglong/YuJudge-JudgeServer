@@ -10,7 +10,6 @@ import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.service.ProblemService;
 import com.yzl.yujudge.utils.EntityAndVoListMapper;
-import com.yzl.yujudge.utils.ToVoUtil;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
 import com.yzl.yujudge.vo.ProblemDetailedVO;
@@ -136,8 +135,8 @@ public class ProblemController {
     @GetMapping("/get_solutions/{problemId}")
     public UnifiedResponse getProblemSolutions(@PathVariable Long problemId) {
         List<JudgeSolutionEntity> solutionEntityList = problemService.getProblemSolutions(problemId);
-        List<SolutionVO> solutions = ToVoUtil.solutionsEntityListToSolutionVoList(solutionEntityList);
-        return new UnifiedResponse(solutions);
+        EntityAndVoListMapper<JudgeSolutionEntity, SolutionVO> mapper = new EntityAndVoListMapper<>(solutionEntityList, SolutionVO.class);
+        return new UnifiedResponse(mapper.getItems());
     }
 
     /**

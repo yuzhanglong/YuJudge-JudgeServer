@@ -7,8 +7,7 @@ import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
-import com.yzl.yujudge.utils.EntityAndVoListMapper;
-import com.yzl.yujudge.utils.ToVoUtil;
+import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.SubmissionDetailVO;
 import com.yzl.yujudge.vo.SubmissionVO;
@@ -95,8 +94,8 @@ public class SubmissionController {
     public UnifiedResponse getSubmissionDetail(@RequestParam @NotNull Long submissionId) {
         // TODO: 提交详情某些内容（例如代码）是否应该开放？我们需要一个权限控制
         SubmissionEntity submission = submissionService.getSubmissionDataById(submissionId);
-        SubmissionDetailVO submissionDetailVO = ToVoUtil.submissionEntityToSubmissionDetailVO(submission);
-        return new UnifiedResponse(submissionDetailVO);
+        EntityToVoMapper<SubmissionEntity, SubmissionDetailVO> mapper = new EntityToVoMapper<>(submission, SubmissionDetailVO.class);
+        return new UnifiedResponse(mapper.getViewObject());
     }
 
     /**

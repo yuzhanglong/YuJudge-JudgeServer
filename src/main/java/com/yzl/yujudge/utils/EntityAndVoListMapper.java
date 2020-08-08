@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author yuzhanglong
- * @description 实体类转换成视图层对象的工具类
+ * @description 实体类转换成视图层列表的工具类
  * @date 2020-08-06 21:07:37
  */
 public class EntityAndVoListMapper<T, K> {
