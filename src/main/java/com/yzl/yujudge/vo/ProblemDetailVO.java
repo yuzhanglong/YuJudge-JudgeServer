@@ -8,7 +8,7 @@ import java.util.List;
  * @description problem详细信息的视图层对象
  * @date 2020-7-21 23:49
  */
-public class ProblemDetailedVO {
+public class ProblemDetailVO {
     private Long id;
     private String name;
     private String content;

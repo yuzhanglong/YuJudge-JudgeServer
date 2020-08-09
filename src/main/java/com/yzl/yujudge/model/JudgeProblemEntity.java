@@ -66,7 +66,7 @@ public class JudgeProblemEntity extends BaseEntity {
     @JoinColumn(name = "pk_problem", referencedColumnName = "id")
     private List<JudgeSolutionEntity> solutions;
 
-    @ManyToMany(mappedBy = "judgeProblemEntityList")
+    @ManyToMany(mappedBy = "problems")
     private List<ProblemSetEntity> problemSetEntityList;
 
 

@@ -4,6 +4,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "problem_set", schema = "yu-judge")
-public class ProblemSetEntity extends BaseEntity{
+public class ProblemSetEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -29,16 +30,24 @@ public class ProblemSetEntity extends BaseEntity{
     @Column(name = "description")
     private String description;
 
+    @OneToOne
+    @JoinColumn(name = "pk_user", referencedColumnName = "id")
+    private UserEntity creator;
+
     @Basic
-    @Column(name = "creator")
-    private Integer creator;
+    @Column(name = "deadline")
+    private Date deadline;
+
+    @Basic
+    @Column(name = "start_time")
+    private Date startTime;
 
 
     @ManyToMany
     @JoinTable(name = "problem_set_problem",
             joinColumns = @JoinColumn(name = "pk_problem_set"),
             inverseJoinColumns = @JoinColumn(name = "pk_problem"))
-    private List<JudgeProblemEntity> judgeProblemEntityList;
+    private List<JudgeProblemEntity> problems;
 
     public Long getId() {
         return id;
@@ -64,19 +73,36 @@ public class ProblemSetEntity extends BaseEntity{
         this.description = description;
     }
 
-    public Integer getCreator() {
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public UserEntity getCreator() {
         return creator;
     }
 
-    public void setCreator(Integer creator) {
+    public void setCreator(UserEntity creator) {
         this.creator = creator;
     }
 
-    public List<JudgeProblemEntity> getJudgeProblemEntityList() {
-        return judgeProblemEntityList;
+    public List<JudgeProblemEntity> getProblems() {
+        return problems;
     }
 
-    public void setJudgeProblemEntityList(List<JudgeProblemEntity> judgeProblemEntityList) {
-        this.judgeProblemEntityList = judgeProblemEntityList;
+    public void setProblems(List<JudgeProblemEntity> problems) {
+        this.problems = problems;
     }
 }

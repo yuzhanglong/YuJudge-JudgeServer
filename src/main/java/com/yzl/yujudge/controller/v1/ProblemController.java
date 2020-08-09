@@ -12,7 +12,7 @@ import com.yzl.yujudge.service.ProblemService;
 import com.yzl.yujudge.utils.EntityAndVoListMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
-import com.yzl.yujudge.vo.ProblemDetailedVO;
+import com.yzl.yujudge.vo.ProblemDetailVO;
 import com.yzl.yujudge.vo.SolutionVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -65,7 +65,7 @@ public class ProblemController {
     public UnifiedResponse getProblemDetailedInfoById(@PathVariable Long problemId) {
         JudgeProblemEntity problem = problemService.getProblemInfoById(problemId);
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-        ProblemDetailedVO problemDetailed = mapper.map(problem, ProblemDetailedVO.class);
+        ProblemDetailVO problemDetailed = mapper.map(problem, ProblemDetailVO.class);
         return new UnifiedResponse(problemDetailed);
     }
 
