@@ -30,9 +30,7 @@ public class ProblemSetEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @OneToOne
-    @JoinColumn(name = "pk_user", referencedColumnName = "id")
-    private UserEntity creator;
+
 
     @Basic
     @Column(name = "deadline")
@@ -48,6 +46,10 @@ public class ProblemSetEntity extends BaseEntity {
             joinColumns = @JoinColumn(name = "pk_problem_set"),
             inverseJoinColumns = @JoinColumn(name = "pk_problem"))
     private List<JudgeProblemEntity> problems;
+
+    @OneToOne
+    @JoinColumn(name = "pk_user", referencedColumnName = "id")
+    private UserEntity creator;
 
     public Long getId() {
         return id;

@@ -39,7 +39,7 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
      * 用来筛选当前时间介于开始时间和截止时间之间的题目
      */
 
-    @Query("select p from ProblemSetEntity p where p.startTime <= ?1 and p.deadline >= ?1")
+    @Query("select p from ProblemSetEntity p where p.startTime <= ?1 and p.deadline >= ?1 order by p.createTime desc")
     Page<ProblemSetEntity> findBetweenCurrentTime(Date currentTime, Pageable pageable);
 
     /**

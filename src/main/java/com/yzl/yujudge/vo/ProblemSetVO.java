@@ -15,6 +15,7 @@ public class ProblemSetVO {
     private Date deadline;
     private Date startTime;
     private Date createTime;
+    private Long id;
 
     public String getName() {
         return name;
@@ -62,6 +63,14 @@ public class ProblemSetVO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

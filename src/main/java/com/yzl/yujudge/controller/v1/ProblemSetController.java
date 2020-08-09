@@ -1,7 +1,9 @@
 package com.yzl.yujudge.controller.v1;
 
 
+import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.dto.ProblemSetDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.service.ProblemSetService;
@@ -63,5 +65,18 @@ public class ProblemSetController {
         List<JudgeProblemEntity> problemSetEntity = problemSetService.getProblemSetProblems(problemSetId);
         EntityAndVoListMapper<JudgeProblemEntity, ProblemBasicVO> mapper = new EntityAndVoListMapper<>(problemSetEntity, ProblemBasicVO.class);
         return new UnifiedResponse(mapper.getItems());
+    }
+
+    /**
+     * @param problemSetDTO 题目集的数据传输对象
+     * @author yuzhanglong
+     * @date 2020-08-09 15:32:25
+     * @description 创建一个题目集
+     */
+    @PostMapping("/create_problem_set")
+    @AuthorizationRequired
+    public UnifiedResponse createProblemSet(@RequestBody @Validated ProblemSetDTO problemSetDTO) {
+        problemSetService.createProblemSet(problemSetDTO);
+        return new UnifiedResponse("创建题目集成功");
     }
 }
