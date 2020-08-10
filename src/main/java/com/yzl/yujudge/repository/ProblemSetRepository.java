@@ -19,18 +19,23 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
      * 分页获取题目集合
      *
      * @param pageable 分页配置
+     * @param name     关键字
      * @return ProblemSetEntity 的分页对象
      * @author yuzhanglong
      * @date 2020-08-08 21:40:03
      * @description 分页获取题目集合
      */
-    Page<ProblemSetEntity> findByOrderByCreateTimeDesc(Pageable pageable);
+    @Query("select p from ProblemSetEntity p " +
+            "where p.name like %?1% " +
+            "order by p.createTime desc")
+    Page<ProblemSetEntity> findByName(String name, Pageable pageable);
 
     /**
      * 分页获取题目集合
      *
      * @param currentTime 当前时间
      * @param pageable    分页对象
+     * @param name        名称
      * @return ProblemSetEntity 的分页对象
      * @author yuzhanglong
      * @date 2020-08-09 11:26:49
@@ -39,8 +44,12 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
      * 用来筛选当前时间介于开始时间和截止时间之间的题目
      */
 
-    @Query("select p from ProblemSetEntity p where p.startTime <= ?1 and p.deadline >= ?1 order by p.createTime desc")
-    Page<ProblemSetEntity> findBetweenCurrentTime(Date currentTime, Pageable pageable);
+    @Query("select p from ProblemSetEntity p " +
+            "where p.startTime <= ?1 " +
+            "and p.deadline >= ?1 " +
+            "and p.name like %?2%" +
+            "order by p.createTime desc")
+    Page<ProblemSetEntity> findByNameBetweenCurrentTime(Date currentTime, String name, Pageable pageable);
 
     /**
      * 根据ID 获取题目集

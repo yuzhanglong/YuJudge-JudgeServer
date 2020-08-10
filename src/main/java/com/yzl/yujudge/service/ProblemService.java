@@ -52,13 +52,14 @@ public class ProblemService {
     /**
      * @param pageAmount 页码数量
      * @param size       数据条数
+     * @param search     搜索关键字
      * @author yuzhanglong
      * @description 根据题目id来获取题目信息
      * @date 2020-7-18 04:57:55
      */
-    public Page<JudgeProblemEntity> getProblems(Integer pageAmount, Integer size) {
+    public Page<JudgeProblemEntity> getProblems(Integer pageAmount, Integer size, String search) {
         Pageable pageable = PageRequest.of(pageAmount, size);
-        return problemRepository.findAll(pageable);
+        return problemRepository.findByName(search, pageable);
     }
 
 

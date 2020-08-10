@@ -71,8 +71,9 @@ public class ProblemController {
 
 
     /**
-     * @param start 从第几条记录开始获取内容
-     * @param count 获取数据的数量
+     * @param start  从第几条记录开始获取内容
+     * @param count  获取数据的数量
+     * @param search 搜索关键字
      * @author yuzhanglong
      * @description 以分页的方式获取problem内容
      * @date 2020-7-20 10:48:34
@@ -80,8 +81,9 @@ public class ProblemController {
     @GetMapping("/get_problems")
     public UnifiedResponse getProblems(
             @RequestParam(defaultValue = "0") Integer start,
-            @RequestParam(defaultValue = "10") Integer count) {
-        Page<JudgeProblemEntity> problems = problemService.getProblems(start, count);
+            @RequestParam(defaultValue = "10") Integer count,
+            @RequestParam(defaultValue = "") String search) {
+        Page<JudgeProblemEntity> problems = problemService.getProblems(start, count, search);
         PaginationVO<JudgeProblemEntity, ProblemBasicVO> paginationVO = new PaginationVO<>(problems, ProblemBasicVO.class);
         return new UnifiedResponse(paginationVO);
     }

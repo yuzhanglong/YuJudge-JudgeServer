@@ -9,6 +9,7 @@ import com.yzl.yujudge.dto.ProblemSetDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.model.UserEntity;
+import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -28,45 +29,58 @@ import java.util.List;
 public class ProblemSetService {
     private final ProblemSetRepository problemSetRepository;
     private final UserRepository userRepository;
+    private final ProblemRepository problemRepository;
 
 
-    public ProblemSetService(ProblemSetRepository problemSetRepository, UserRepository userRepository) {
+    public ProblemSetService(ProblemSetRepository problemSetRepository, UserRepository userRepository, ProblemRepository problemRepository) {
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
+        this.problemRepository = problemRepository;
     }
 
     /**
      * @param isBeforeDeadline 限定截止时间，只选出活跃的题目集合
      * @param count            数量
      * @param start            页码
+     * @param search           关键词限制(搜索)
      * @return ProblemSetEntity 的分页对象
      * @author yuzhanglong
      * @date 2020-7-29 00:30:19
      * @description 题目集相关控制层
      */
-    public Page<ProblemSetEntity> getProblemSetInfo(Integer start, Integer count, Boolean isBeforeDeadline) {
+    public Page<ProblemSetEntity> getProblemSetInfo(
+            Integer start,
+            Integer count,
+            String search,
+            Boolean isBeforeDeadline) {
         Pageable pageable = PageRequest.of(start, count);
         if (!isBeforeDeadline) {
-            return problemSetRepository.findByOrderByCreateTimeDesc(pageable);
+            return problemSetRepository.findByName(search, pageable);
         } else {
             Date current = new Date();
-            return problemSetRepository.findBetweenCurrentTime(current, pageable);
+            return problemSetRepository.findByNameBetweenCurrentTime(current, search, pageable);
         }
     }
 
     /**
      * @param problemSetId 题目集id
+     * @param start        页码
+     * @param count        每页的个数
      * @return ProblemSetEntity 实体对象
      * @author yuzhanglong
-     * @date 2020-08-09 11:55:25
+     * @date 2020-08-10 18:49:35
      * @description 根据ID 获取题目集
      */
-    public List<JudgeProblemEntity> getProblemSetProblems(Long problemSetId) {
+    public Page<JudgeProblemEntity> getProblemSetProblems(
+            Integer start,
+            Integer count,
+            Long problemSetId) {
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
         if (problemSetEntity == null) {
             throw new NotFoundException("B0011");
         }
-        return problemSetEntity.getProblems();
+        Pageable pageable = PageRequest.of(start, count);
+        return problemRepository.findAllByProblemSetEntityList(problemSetEntity, pageable);
     }
 
 
@@ -84,6 +98,72 @@ public class ProblemSetService {
             throw new NotFoundException("A0001");
         }
         problemSetEntity.setCreator(user);
+        problemSetRepository.save(problemSetEntity);
+    }
+
+
+    /**
+     * @param problemSetId 目标题目集id
+     * @param problems     将要被田间进题目集的problem数组(id的形式)
+     * @author yuzhanglong
+     * @date 2020-08-10 23:11:27
+     * @description 题目id数组去重，防止重复添加
+     */
+    public void updateProblemSetProblem(Long problemSetId, List<Long> problems) {
+        System.out.println(problems);
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        List<Long> ps = cutProblemIdsList(problems, problemSetEntity.getProblems());
+        System.out.println(ps);
+        List<JudgeProblemEntity> problemEntityList = problemRepository.findAllById(ps);
+        problemSetEntity.getProblems().addAll(problemEntityList);
+        problemSetRepository.save(problemSetEntity);
+    }
+
+
+    /**
+     * @param problems           用户传入的题目id数组
+     * @param problemSetProblems 实际题目集中含有的problems
+     * @return List<Long> 去重之后的数组
+     * @author yuzhanglong
+     * @date 2020-08-10 23:09:36
+     * @description 题目id数组去重，防止重复添加
+     */
+    private List<Long> cutProblemIdsList(List<Long> problems, List<JudgeProblemEntity> problemSetProblems) {
+        problemSetProblems.forEach(res -> {
+            Long isContainProblemId = res.getId();
+            problems.remove(isContainProblemId);
+        });
+        return problems;
+    }
+
+
+    /**
+     * @param problemId    要从题目集中移除的问题id
+     * @param problemSetId 操作的题目集id
+     * @author yuzhanglong
+     * @date 2020-08-10 23:06:09
+     * @description 从题目集中移除某个问题(不删除问题)
+     * 如果这个题目集中没有这个问题，
+     * 则数据库内容不会发生改变，
+     * 并且我们会抛出一个全局异常 编号为 B0012
+     */
+    public void removeProblemFromProblemSet(Long problemSetId, Long problemId) {
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
+        if (problemEntity == null) {
+            throw new NotFoundException("B0002");
+        }
+        boolean isDeleted = problemSetEntity.getProblems().remove(problemEntity);
+        if (!isDeleted) {
+            // 走到这里说明这个题目集中没有这个问题
+            throw new NotFoundException("B0012");
+        }
         problemSetRepository.save(problemSetEntity);
     }
 }
