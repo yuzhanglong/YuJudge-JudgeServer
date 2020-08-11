@@ -2,6 +2,7 @@ package com.yzl.yujudge.vo;
 
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -16,6 +17,8 @@ public class ProblemSetVO {
     private Date startTime;
     private Date createTime;
     private Long id;
+    private List<String> allowedLanguage;
+    private String judgePreference;
 
     public String getName() {
         return name;
@@ -71,6 +74,22 @@ public class ProblemSetVO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<String> getAllowedLanguage() {
+        return allowedLanguage;
+    }
+
+    public void setAllowedLanguage(List<String> allowedLanguage) {
+        this.allowedLanguage = allowedLanguage;
+    }
+
+    public String getJudgePreference() {
+        return judgePreference;
+    }
+
+    public void setJudgePreference(String judgePreference) {
+        this.judgePreference = judgePreference;
     }
 
     @Override

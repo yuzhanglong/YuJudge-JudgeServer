@@ -9,7 +9,7 @@ import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
 import com.yzl.yujudge.service.ProblemService;
-import com.yzl.yujudge.utils.EntityAndVoListMapper;
+import com.yzl.yujudge.utils.EntityToVoListMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
 import com.yzl.yujudge.vo.ProblemDetailVO;
@@ -137,7 +137,7 @@ public class ProblemController {
     @GetMapping("/get_solutions/{problemId}")
     public UnifiedResponse getProblemSolutions(@PathVariable Long problemId) {
         List<JudgeSolutionEntity> solutionEntityList = problemService.getProblemSolutions(problemId);
-        EntityAndVoListMapper<JudgeSolutionEntity, SolutionVO> mapper = new EntityAndVoListMapper<>(solutionEntityList, SolutionVO.class);
+        EntityToVoListMapper<JudgeSolutionEntity, SolutionVO> mapper = new EntityToVoListMapper<>(solutionEntityList, SolutionVO.class);
         return new UnifiedResponse(mapper.getItems());
     }
 
@@ -217,7 +217,7 @@ public class ProblemController {
     @GetMapping("/get_recent_problem")
     public UnifiedResponse getRecentProblem(@RequestParam Integer size) {
         List<JudgeProblemEntity> res = problemService.getRecentProblem(size);
-        EntityAndVoListMapper<JudgeProblemEntity, ProblemBasicVO> mapper = new EntityAndVoListMapper<>(res, ProblemBasicVO.class);
+        EntityToVoListMapper<JudgeProblemEntity, ProblemBasicVO> mapper = new EntityToVoListMapper<>(res, ProblemBasicVO.class);
         List<ProblemBasicVO> problemBasicVOList = mapper.getItems();
         return new UnifiedResponse(problemBasicVOList);
     }

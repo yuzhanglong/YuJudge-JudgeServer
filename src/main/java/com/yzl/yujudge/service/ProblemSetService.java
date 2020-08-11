@@ -166,4 +166,22 @@ public class ProblemSetService {
         }
         problemSetRepository.save(problemSetEntity);
     }
+
+
+    /**
+     * @param problemSetId 操作的题目集id
+     * @author yuzhanglong
+     * @date 2020-08-11 16:56:36
+     * @description 从题目集中移除某个问题(不删除问题)
+     * 如果这个题目集中没有这个问题，
+     * 则数据库内容不会发生改变，
+     * 并且我们会抛出一个全局异常 编号为 B0012
+     */
+    public ProblemSetEntity getProblemSetById(Long problemSetId) {
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemRepository == null) {
+            throw new NotFoundException("B0011");
+        }
+        return problemSetEntity;
+    }
 }

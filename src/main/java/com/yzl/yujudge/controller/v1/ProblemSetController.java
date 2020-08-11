@@ -8,6 +8,7 @@ import com.yzl.yujudge.dto.UpdateProblemSetProblemDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.service.ProblemSetService;
+import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
 import com.yzl.yujudge.vo.ProblemSetVO;
@@ -113,5 +114,18 @@ public class ProblemSetController {
             @RequestParam Long problemId) {
         problemSetService.removeProblemFromProblemSet(problemSetId, problemId);
         return new UnifiedResponse("移除成功");
+    }
+
+    /**
+     * @param problemSetId 获取题目集信息
+     * @author yuzhanglong
+     * @date 2020-08-12 00:43:38
+     * @description 获取题目集信息
+     */
+    @GetMapping("/get_problem_set/{problemSetId}")
+    public UnifiedResponse getProblemSetById(@PathVariable Long problemSetId) {
+        ProblemSetEntity problemSet = problemSetService.getProblemSetById(problemSetId);
+        EntityToVoMapper<ProblemSetEntity, ProblemSetVO> mapper = new EntityToVoMapper<>(problemSet, ProblemSetVO.class);
+        return new UnifiedResponse(mapper.getViewObject());
     }
 }

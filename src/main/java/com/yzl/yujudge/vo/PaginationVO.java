@@ -1,9 +1,8 @@
 package com.yzl.yujudge.vo;
 
-import com.yzl.yujudge.utils.EntityAndVoListMapper;
+import com.yzl.yujudge.utils.EntityToVoListMapper;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ public class PaginationVO<T, K> {
         this.initPaginationData(pageItems);
 
         List<T> tList = pageItems.getContent();
-        EntityAndVoListMapper<T, K> mapper = new EntityAndVoListMapper<>(tList, targetClass);
+        EntityToVoListMapper<T, K> mapper = new EntityToVoListMapper<>(tList, targetClass);
         setItems(mapper.getItems());
     }
 

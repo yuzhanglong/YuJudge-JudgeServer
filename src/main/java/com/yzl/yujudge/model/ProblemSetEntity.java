@@ -1,5 +1,6 @@
 package com.yzl.yujudge.model;
 
+import com.yzl.yujudge.utils.converter.ListJsonConverter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -30,8 +31,6 @@ public class ProblemSetEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-
-
     @Basic
     @Column(name = "deadline")
     private Date deadline;
@@ -39,6 +38,14 @@ public class ProblemSetEntity extends BaseEntity {
     @Basic
     @Column(name = "start_time")
     private Date startTime;
+
+    @Basic
+    @Column(name = "judge_preference")
+    private String judgePreference;
+
+    @Convert(converter = ListJsonConverter.class)
+    @Column(name = "allowed_language")
+    private List<String> allowedLanguage;
 
 
     @ManyToMany
@@ -106,5 +113,21 @@ public class ProblemSetEntity extends BaseEntity {
 
     public void setProblems(List<JudgeProblemEntity> problems) {
         this.problems = problems;
+    }
+
+    public List<String> getAllowedLanguage() {
+        return allowedLanguage;
+    }
+
+    public void setAllowedLanguage(List<String> allowedLanguage) {
+        this.allowedLanguage = allowedLanguage;
+    }
+
+    public String getJudgePreference() {
+        return judgePreference;
+    }
+
+    public void setJudgePreference(String judgePreference) {
+        this.judgePreference = judgePreference;
     }
 }

@@ -11,10 +11,10 @@ import java.util.List;
  * @description 实体类转换成视图层列表的工具类
  * @date 2020-08-06 21:07:37
  */
-public class EntityAndVoListMapper<T, K> {
+public class EntityToVoListMapper<T, K> {
     private List<K> items;
 
-    public EntityAndVoListMapper(List<T> entityList, Class<K> targetVoClass) {
+    public EntityToVoListMapper(List<T> entityList, Class<K> targetVoClass) {
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         List<K> kArrayList = new ArrayList<>();
         entityList.forEach(res -> {

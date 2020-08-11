@@ -8,7 +8,7 @@ import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.service.UserService;
-import com.yzl.yujudge.utils.EntityAndVoListMapper;
+import com.yzl.yujudge.utils.EntityToVoListMapper;
 import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.AuthorizationVO;
 import com.yzl.yujudge.vo.UserInfoVO;
@@ -98,7 +98,7 @@ public class UserController {
     @AuthorizationRequired
     public UnifiedResponse getActiveUser(@RequestParam @NotNull Integer amount) {
         List<UserEntity> userEntities = userService.getActiveUser(amount);
-        EntityAndVoListMapper<UserEntity, UserInfoVO> mapper = new EntityAndVoListMapper<>(userEntities, UserInfoVO.class);
+        EntityToVoListMapper<UserEntity, UserInfoVO> mapper = new EntityToVoListMapper<>(userEntities, UserInfoVO.class);
         List<UserInfoVO> userInfoVOList = mapper.getItems();
         return new UnifiedResponse(userInfoVOList);
     }
