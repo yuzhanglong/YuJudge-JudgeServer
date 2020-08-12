@@ -19,6 +19,7 @@ public class ProblemSetVO {
     private Long id;
     private List<String> allowedLanguage;
     private String judgePreference;
+    private String condition;
 
     public String getName() {
         return name;
@@ -90,6 +91,14 @@ public class ProblemSetVO {
 
     public void setJudgePreference(String judgePreference) {
         this.judgePreference = judgePreference;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     @Override

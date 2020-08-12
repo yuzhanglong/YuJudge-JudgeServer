@@ -4,6 +4,7 @@ package com.yzl.yujudge.service;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.authorization.UserHolder;
+import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemSetDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
@@ -12,6 +13,7 @@ import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.repository.UserRepository;
+import com.yzl.yujudge.utils.DateTimeUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -183,5 +185,25 @@ public class ProblemSetService {
             throw new NotFoundException("B0011");
         }
         return problemSetEntity;
+    }
+
+    /**
+     * @param problemSetEntity 题目集实体类
+     * @author yuzhanglong
+     * @description ProblemSetConditionEnum 状态枚举类
+     * @date 2020-08-12 10:10:24
+     * @description 获取题目集的状态
+     */
+    public ProblemSetConditionEnum getProblemSetCondition(ProblemSetEntity problemSetEntity) {
+        Date startTime = problemSetEntity.getStartTime();
+        Date deadline = problemSetEntity.getDeadline();
+        Integer timeCondition = DateTimeUtil.checkTimeCondition(startTime, deadline);
+        if (timeCondition == DateTimeUtil.TOO_LATE) {
+            return ProblemSetConditionEnum.CLOSED;
+        }
+        if (timeCondition == DateTimeUtil.TOO_EARLY) {
+            return ProblemSetConditionEnum.NOT_STARTED;
+        }
+        return ProblemSetConditionEnum.RUNNING;
     }
 }

@@ -126,6 +126,8 @@ public class ProblemSetController {
     public UnifiedResponse getProblemSetById(@PathVariable Long problemSetId) {
         ProblemSetEntity problemSet = problemSetService.getProblemSetById(problemSetId);
         EntityToVoMapper<ProblemSetEntity, ProblemSetVO> mapper = new EntityToVoMapper<>(problemSet, ProblemSetVO.class);
+        ProblemSetVO problemSetVO = mapper.getViewObject();
+        problemSetVO.setCondition(problemSetService.getProblemSetCondition(problemSet).toString());
         return new UnifiedResponse(mapper.getViewObject());
     }
 }
