@@ -1,6 +1,8 @@
 package com.yzl.yujudge.vo;
 
 
+import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
+
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class ProblemSetVO {
     private Long id;
     private List<String> allowedLanguage;
     private String judgePreference;
-    private String condition;
+    private ProblemSetConditionEnum condition;
 
     public String getName() {
         return name;
@@ -93,11 +95,11 @@ public class ProblemSetVO {
         this.judgePreference = judgePreference;
     }
 
-    public String getCondition() {
+    public ProblemSetConditionEnum getCondition() {
         return condition;
     }
 
-    public void setCondition(String condition) {
+    public void setCondition(ProblemSetConditionEnum condition) {
         this.condition = condition;
     }
 

@@ -4,6 +4,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -44,6 +45,9 @@ public class UserEntity extends BaseEntity {
     @Basic
     @Column(name = "submission_amount")
     private Integer submissionAmount;
+
+    @ManyToMany(mappedBy = "participants")
+    private List<ProblemSetEntity> problemSetEntityList;
 
     public Long getId() {
         return id;
@@ -99,5 +103,13 @@ public class UserEntity extends BaseEntity {
 
     public void setSubmissionAmount(Integer submissionAmount) {
         this.submissionAmount = submissionAmount;
+    }
+
+    public List<ProblemSetEntity> getProblemSetEntityList() {
+        return problemSetEntityList;
+    }
+
+    public void setProblemSetEntityList(List<ProblemSetEntity> problemSetEntityList) {
+        this.problemSetEntityList = problemSetEntityList;
     }
 }

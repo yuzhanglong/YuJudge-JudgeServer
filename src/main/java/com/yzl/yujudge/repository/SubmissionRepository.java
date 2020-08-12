@@ -4,6 +4,7 @@ import com.yzl.yujudge.model.SubmissionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -77,4 +78,74 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @description 获取某天之后的所有submission数量
      */
     Long countAllByPkUserAndCreateTimeAfter(Long userId, Date time);
+
+
+    /**
+     * 根据题目集信息、题目信息、用户/队伍 信息寻找提交
+     *
+     * @param problemSetId 题目集id
+     * @param userId       用户/队伍id
+     * @param problemId    题目id
+     * @return SubmissionEntity 查询到的提交实体类对象
+     * @author yuzhanglong
+     * @date 2020-08-12 14:27:41
+     * @description 根据题目集信息、题目信息、用户/队伍 信息寻找提交
+     */
+    @Query("select submission from SubmissionEntity submission " +
+            "where submission.problemSet.id = ?1 " +
+            "and submission.pkUser = ?2 " +
+            "and submission.pkProblem = ?3 " +
+            "order by submission.createTime desc ")
+    List<SubmissionEntity> findAllByProblemSetAndPkUserAndPkProblem(Long problemSetId, Long userId, Long problemId);
+
+
+    /**
+     * 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
+     *
+     * @param problemSetId 题目集id
+     * @param userId       用户/队伍id
+     * @param problemId    题目id
+     * @return SubmissionEntity 查询到的提交实体类对象
+     * @author yuzhanglong
+     * @date 2020-08-13 01:00:23
+     * @description 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
+     * 注意：如果之前已经ac过，
+     * 之后的任何提交在这里都不会被计算进去，
+     * 详见submission的isAcBefore字段
+     */
+    @Query("select count(submission) from SubmissionEntity submission " +
+            "where submission.problemSet.id = ?1 " +
+            "and submission.pkUser = ?2 " +
+            "and submission.pkProblem = ?3 " +
+            "and submission.judgeCondition = 'ACCEPT' " +
+            "and submission.isAcBefore = false " +
+            "order by submission.createTime desc ")
+    Long getAcAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
+
+
+    /**
+     * 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
+     *
+     * @param problemSetId 题目集id
+     * @param userId       用户/队伍id
+     * @param problemId    题目id
+     * @return SubmissionEntity 查询到的提交实体类对象
+     * @author yuzhanglong
+     * @date 2020-08-13 01:01:19
+     * @description 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
+     * <p>
+     * 注意：如果之前已经ac过，
+     * 之后的任何提交在这里都不会被计算进去，
+     * 详见submission的isAcBefore字段
+     */
+    @Query("select count(submission) from SubmissionEntity submission " +
+            "where submission.problemSet.id = ?1 " +
+            "and submission.pkUser = ?2 " +
+            "and submission.pkProblem = ?3 " +
+            "and submission.judgeCondition <> 'ACCEPT' " +
+            "and submission.isAcBefore = false " +
+            "order by submission.createTime desc ")
+    Long getWaAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
+
+
 }

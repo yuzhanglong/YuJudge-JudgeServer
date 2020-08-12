@@ -47,12 +47,17 @@ public class ProblemSetEntity extends BaseEntity {
     @Column(name = "allowed_language")
     private List<String> allowedLanguage;
 
-
     @ManyToMany
     @JoinTable(name = "problem_set_problem",
             joinColumns = @JoinColumn(name = "pk_problem_set"),
             inverseJoinColumns = @JoinColumn(name = "pk_problem"))
     private List<JudgeProblemEntity> problems;
+
+    @ManyToMany
+    @JoinTable(name = "problem_set_user",
+            joinColumns = @JoinColumn(name = "pk_problem_set"),
+            inverseJoinColumns = @JoinColumn(name = "pk_user"))
+    private List<UserEntity> participants;
 
     @OneToOne
     @JoinColumn(name = "pk_user", referencedColumnName = "id")
@@ -129,5 +134,13 @@ public class ProblemSetEntity extends BaseEntity {
 
     public void setJudgePreference(String judgePreference) {
         this.judgePreference = judgePreference;
+    }
+
+    public List<UserEntity> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<UserEntity> participants) {
+        this.participants = participants;
     }
 }

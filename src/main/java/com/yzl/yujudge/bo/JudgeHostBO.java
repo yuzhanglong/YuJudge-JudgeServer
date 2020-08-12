@@ -3,7 +3,9 @@ package com.yzl.yujudge.bo;
 /**
  * @author yuzhanglong
  * @description 单个判题服务器信息的业务对象
+ * @date 2020-08-08 15:10
  */
+
 public class JudgeHostBO {
     private String name;
     private String address;

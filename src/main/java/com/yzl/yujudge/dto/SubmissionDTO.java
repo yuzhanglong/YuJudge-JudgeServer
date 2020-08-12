@@ -14,12 +14,18 @@ import javax.validation.constraints.NotNull;
 public class SubmissionDTO {
     @NotNull(message = "problemId 不得为空")
     private Long problemId;
+
     @NotNull(message = "用户代码不得为空")
     private String codeContent;
+
     @NotNull(message = "目标语言不得为空")
     private String language;
+
     @NotNull(message = "判题偏好不得为空")
     private String judgePreference;
+
+    @NotNull(message = "目标题目集不得为空")
+    private Long problemSetId;
 
 
     public Long getProblemId() {
@@ -52,6 +58,14 @@ public class SubmissionDTO {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public Long getProblemSetId() {
+        return problemSetId;
+    }
+
+    public void setProblemSetId(Long problemSetId) {
+        this.problemSetId = problemSetId;
     }
 
     @Override

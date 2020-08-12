@@ -2,12 +2,14 @@ package com.yzl.yujudge.repository;
 
 
 import com.yzl.yujudge.model.ProblemSetEntity;
+import com.yzl.yujudge.model.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -61,4 +63,13 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
      * @description 根据ID 获取题目集
      */
     ProblemSetEntity findOneById(Long problemSetId);
+
+    /**
+     * @param problemSetId 题目集id
+     * @return ProblemSetEntity 实体对象
+     * @author yuzhanglong
+     * @date 2020-08-12 21:38:00
+     * @description
+     */
+    Long countByIdAndParticipants(Long problemSetId, UserEntity userEntity);
 }

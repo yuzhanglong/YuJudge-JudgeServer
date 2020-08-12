@@ -1,8 +1,10 @@
 package com.yzl.yujudge.repository;
 
+import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.model.UserEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -51,7 +53,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 
     /**
-     * 获取活跃用户
+     * 通过用户id寻找对应的用户
      *
      * @param userId 要获取的用户id
      * @return UserEntity 用户实体对象

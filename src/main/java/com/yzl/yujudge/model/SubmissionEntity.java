@@ -59,6 +59,15 @@ public class SubmissionEntity extends BaseEntity {
     @Column(name = "judge_preference")
     private String judgePreference;
 
+    @Basic
+    @Column(name = "is_ac_before")
+    private Boolean isAcBefore;
+
+
+    @OneToOne
+    @JoinColumn(name = "pk_problem_set", referencedColumnName = "id")
+    private ProblemSetEntity problemSet;
+
     public Long getId() {
         return id;
     }
@@ -145,5 +154,21 @@ public class SubmissionEntity extends BaseEntity {
 
     public void setJudgeResult(JudgeResultDTO judgeResult) {
         this.judgeResult = judgeResult;
+    }
+
+    public ProblemSetEntity getProblemSet() {
+        return problemSet;
+    }
+
+    public void setProblemSet(ProblemSetEntity problemSet) {
+        this.problemSet = problemSet;
+    }
+
+    public Boolean getIsAcBefore() {
+        return isAcBefore;
+    }
+
+    public void setIsAcBefore(Boolean isAcBefore) {
+        this.isAcBefore = isAcBefore;
     }
 }

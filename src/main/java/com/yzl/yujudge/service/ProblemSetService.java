@@ -3,6 +3,8 @@ package com.yzl.yujudge.service;
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
+import com.yzl.yujudge.bo.ScoreBoardBO;
+import com.yzl.yujudge.bo.ScoreBoardItemBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -12,15 +14,16 @@ import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.ProblemSetRepository;
+import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.utils.DateTimeUtil;
+import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yuzhanglong
@@ -32,12 +35,18 @@ public class ProblemSetService {
     private final ProblemSetRepository problemSetRepository;
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
+    private final SubmissionRepository submissionRepository;
 
 
-    public ProblemSetService(ProblemSetRepository problemSetRepository, UserRepository userRepository, ProblemRepository problemRepository) {
+    public ProblemSetService(
+            ProblemSetRepository problemSetRepository,
+            UserRepository userRepository,
+            ProblemRepository problemRepository,
+            SubmissionRepository submissionRepository) {
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
         this.problemRepository = problemRepository;
+        this.submissionRepository = submissionRepository;
     }
 
     /**
@@ -118,7 +127,6 @@ public class ProblemSetService {
             throw new NotFoundException("B0011");
         }
         List<Long> ps = cutProblemIdsList(problems, problemSetEntity.getProblems());
-        System.out.println(ps);
         List<JudgeProblemEntity> problemEntityList = problemRepository.findAllById(ps);
         problemSetEntity.getProblems().addAll(problemEntityList);
         problemSetRepository.save(problemSetEntity);
@@ -173,11 +181,8 @@ public class ProblemSetService {
     /**
      * @param problemSetId 操作的题目集id
      * @author yuzhanglong
-     * @date 2020-08-11 16:56:36
-     * @description 从题目集中移除某个问题(不删除问题)
-     * 如果这个题目集中没有这个问题，
-     * 则数据库内容不会发生改变，
-     * 并且我们会抛出一个全局异常 编号为 B0012
+     * @date 2020-08-12 12:23:53
+     * @description 通过题目集id来获取某个题目集信息
      */
     public ProblemSetEntity getProblemSetById(Long problemSetId) {
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
@@ -205,5 +210,48 @@ public class ProblemSetService {
             return ProblemSetConditionEnum.NOT_STARTED;
         }
         return ProblemSetConditionEnum.RUNNING;
+    }
+
+
+    public ScoreBoardBO getProblemSetScoreBoard(Long problemSetId) {
+        // 获取题目集
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        List<JudgeProblemEntity> judgeProblemEntityList = problemSetEntity.getProblems();
+        List<UserEntity> participants = problemSetEntity.getParticipants();
+        // 遍历参与者
+        ScoreBoardBO scoreBoardBO = new ScoreBoardBO();
+        List<ScoreBoardItemBO> scoreBoardItemBOList = new ArrayList<>();
+        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        participants.forEach(res -> {
+            ScoreBoardItemBO item = new ScoreBoardItemBO();
+            item.setTeamInfo(mapper.map(res, UserInfoVO.class));
+            item.setSolutionInfo(countTeamProblemSolutionInfo(res.getId(), problemSetId, judgeProblemEntityList));
+            scoreBoardItemBOList.add(item);
+        });
+        scoreBoardBO.setParticipants(scoreBoardItemBOList);
+        return scoreBoardBO;
+    }
+
+
+    public List<Map<String, Object>> countTeamProblemSolutionInfo(Long userId, Long problemSetId, List<JudgeProblemEntity> problems) {
+        List<Map<String, Object>> problemList = new ArrayList<>(3);
+        problems.forEach(problemEntity -> {
+            long problemId = problemEntity.getId();
+            long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
+            long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
+            Map<String, Object> problemCondition = new HashMap<>(3);
+            problemCondition.put("isAccepted", acAmount > 0);
+            // 我们选择 wrongAnswerAmount + 1
+            // 而不是 wrongAnswerAmount + acceptAmount，
+            // 是因为一道题的ac次数不一定为 1
+            long tryAmount = acAmount > 0 ? (wrongAnswerAmount + 1) : wrongAnswerAmount;
+            problemCondition.put("tryAmount", tryAmount);
+            problemCondition.put("problemId", problemId);
+            problemList.add(problemCondition);
+        });
+        return problemList;
     }
 }

@@ -9,10 +9,14 @@ import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
+import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
+import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.network.JudgeHostJudgeRequest;
 import com.yzl.yujudge.repository.ProblemRepository;
+import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
+import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
@@ -35,23 +39,40 @@ import java.util.*;
 public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final ProblemRepository problemRepository;
+    private final ProblemSetRepository problemSetRepository;
+    private final UserRepository userRepository;
     private static final int COUNT_USER_RECENT_SUBMISSION_MAX_DAYS = 20;
     public static final String AC_AMOUNT_KEY_NAME = "acAmount";
     public static final String TOTAL_AMOUNT_KEY_NAME = "totalAmount";
 
-    public SubmissionService(SubmissionRepository submissionRepository, ProblemRepository problemRepository) {
+    public SubmissionService(
+            SubmissionRepository submissionRepository,
+            ProblemRepository problemRepository,
+            ProblemSetRepository problemSetRepository,
+            UserRepository userRepository) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
+        this.problemSetRepository = problemSetRepository;
+        this.userRepository = userRepository;
     }
 
     /**
+     * @param submissionDTO 提交相关的数据传输对象
      * @return SubmissionEntity 的实体对象，以供后续操作
      * @author yuzhanglong
      * @description 初始化用户的提交，包括二次验证、数据库写入
      * @date 2020-7-29 13:40:54
      */
-
     public SubmissionEntity initSubmission(SubmissionDTO submissionDTO) {
+        Long userId = UserHolder.getUserId();
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(submissionDTO.getProblemSetId());
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        UserEntity userEntity = userRepository.findOneById(userId);
+        if (!isUserInProblemSet(problemSetEntity.getId(), userEntity)) {
+            problemSetEntity.getParticipants().add(userEntity);
+        }
         validateSubmission(submissionDTO);
         SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO);
         // 我们将本次提交设为waiting（等待判题）
@@ -59,7 +80,8 @@ public class SubmissionService {
         submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
         submissionEntity.setCodeContent(submissionDTO.getCodeContent());
         submissionEntity.setCreateTime(new Date());
-        submissionEntity.setPkUser(UserHolder.getUserId());
+        submissionEntity.setPkUser(userId);
+        submissionEntity.setProblemSet(problemSetEntity);
         submissionRepository.save(submissionEntity);
         return submissionEntity;
     }
@@ -145,6 +167,7 @@ public class SubmissionService {
             submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
             submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));
             submissionEntity.setCondition(calculator.countJudgeResult().toString());
+            submissionEntity.setIsAcBefore(isAcBeforeInProblemSet(submissionEntity));
         } catch (JsonProcessingException e) {
             submissionEntity.setCondition(JudgeConditionEnum.ERROR.toString());
         }
@@ -217,5 +240,33 @@ public class SubmissionService {
             result.add(map);
         }
         return result;
+    }
+
+    /**
+     * @param problemSetId 题目集id
+     * @param userEntity   用户实体对象
+     * @return Boolean 用户是否在题目集中
+     * @author yuzhanglong
+     * @date 2020-08-12 21:33:53
+     * @description 判断用户是否在/参与了某个题目集
+     */
+    private Boolean isUserInProblemSet(Long problemSetId, UserEntity userEntity) {
+        Long entity = problemSetRepository.countByIdAndParticipants(problemSetId, userEntity);
+        return entity > 0;
+    }
+
+    /**
+     * @param submissionEntity 题目集实体对象
+     * @return Boolean 用户是否在题目集中
+     * @author yuzhanglong
+     * @date 2020-08-13 00:52:38
+     * @description 判断用户在本题目集中在此之前是否已经ac过了某一道题目
+     */
+    private Boolean isAcBeforeInProblemSet(SubmissionEntity submissionEntity) {
+        Long problemSetId = submissionEntity.getProblemSet().getId();
+        Long userId = submissionEntity.getPkUser();
+        Long problemId = submissionEntity.getPkProblem();
+        long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
+        return acAmount > 0;
     }
 }
