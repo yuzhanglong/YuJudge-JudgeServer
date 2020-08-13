@@ -42,18 +42,6 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
 
 
     /**
-     * 获取某天之后的所有submission
-     *
-     * @param time   开始时间
-     * @param userId 目标用户Id
-     * @return SubmissionEntity 解决方案实体类List
-     * @author yuzhanglong
-     * @date 2020-08-07 13:09:06
-     * @description 获取某天之后的所有submission
-     */
-    List<SubmissionEntity> findAllByPkUserAndCreateTimeAfter(Long userId, Date time);
-
-    /**
      * 获取某天之后的所有submission的数量（限定状态）
      *
      * @param time      开始时间
@@ -64,6 +52,11 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @date 2020-08-07 13:09:06
      * @description 获取某天之后的所有submission
      */
+    @Query("select count(submission) from SubmissionEntity submission " +
+            "where submission.creator.id = ?1 " +
+            "and submission.judgeCondition = ?2 " +
+            "and submission.createTime > ?3 " +
+            "order by submission.createTime desc ")
     Long countAllByPkUserAndJudgeConditionEqualsAndCreateTimeAfter(Long userId, String condition, Date time);
 
 
@@ -77,6 +70,10 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @date 2020-08-07 14:57:44
      * @description 获取某天之后的所有submission数量
      */
+    @Query("select count(submission) from SubmissionEntity submission " +
+            "where submission.creator.id = ?1 " +
+            "and submission.createTime > ?2 " +
+            "order by submission.createTime desc ")
     Long countAllByPkUserAndCreateTimeAfter(Long userId, Date time);
 
 
@@ -93,7 +90,7 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      */
     @Query("select submission from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
-            "and submission.pkUser = ?2 " +
+            "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
             "order by submission.createTime desc ")
     List<SubmissionEntity> findAllByProblemSetAndPkUserAndPkProblem(Long problemSetId, Long userId, Long problemId);
@@ -115,7 +112,7 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      */
     @Query("select count(submission) from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
-            "and submission.pkUser = ?2 " +
+            "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
             "and submission.judgeCondition = 'ACCEPT' " +
             "and submission.isAcBefore = false " +
@@ -140,12 +137,10 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      */
     @Query("select count(submission) from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
-            "and submission.pkUser = ?2 " +
+            "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
             "and submission.judgeCondition <> 'ACCEPT' " +
             "and submission.isAcBefore = false " +
             "order by submission.createTime desc ")
     Long getWaAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
-
-
 }

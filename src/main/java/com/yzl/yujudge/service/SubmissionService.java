@@ -80,9 +80,11 @@ public class SubmissionService {
         submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
         submissionEntity.setCodeContent(submissionDTO.getCodeContent());
         submissionEntity.setCreateTime(new Date());
-        submissionEntity.setPkUser(userId);
+        submissionEntity.setCreator(userEntity);
         submissionEntity.setProblemSet(problemSetEntity);
+        // 执行保存
         submissionRepository.save(submissionEntity);
+        problemSetRepository.save(problemSetEntity);
         return submissionEntity;
     }
 
@@ -264,7 +266,7 @@ public class SubmissionService {
      */
     private Boolean isAcBeforeInProblemSet(SubmissionEntity submissionEntity) {
         Long problemSetId = submissionEntity.getProblemSet().getId();
-        Long userId = submissionEntity.getPkUser();
+        Long userId = submissionEntity.getCreator().getId();
         Long problemId = submissionEntity.getPkProblem();
         long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
         return acAmount > 0;

@@ -11,6 +11,13 @@ import java.util.List;
 public class ScoreBoardBO {
     private Boolean isFrozen;
     private List<ScoreBoardItemBO> participants;
+    private Integer problemAmount;
+
+    public ScoreBoardBO(Boolean isFrozen, List<ScoreBoardItemBO> participants, Integer problemAmount) {
+        this.isFrozen = isFrozen;
+        this.participants = participants;
+        this.problemAmount = problemAmount;
+    }
 
     public Boolean getFrozen() {
         return isFrozen;
@@ -26,6 +33,14 @@ public class ScoreBoardBO {
 
     public void setParticipants(List<ScoreBoardItemBO> participants) {
         this.participants = participants;
+    }
+
+    public Integer getProblemAmount() {
+        return problemAmount;
+    }
+
+    public void setProblemAmount(Integer problemAmount) {
+        this.problemAmount = problemAmount;
     }
 
     @Override

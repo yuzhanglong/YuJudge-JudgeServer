@@ -5,6 +5,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.ScoreBoardBO;
 import com.yzl.yujudge.bo.ScoreBoardItemBO;
+import com.yzl.yujudge.bo.TeamProblemsSolutionBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -222,27 +223,34 @@ public class ProblemSetService {
         List<JudgeProblemEntity> judgeProblemEntityList = problemSetEntity.getProblems();
         List<UserEntity> participants = problemSetEntity.getParticipants();
         // 遍历参与者
-        ScoreBoardBO scoreBoardBO = new ScoreBoardBO();
         List<ScoreBoardItemBO> scoreBoardItemBOList = new ArrayList<>();
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-        participants.forEach(res -> {
+        for (int i = 0; i < participants.size(); i++) {
+            UserEntity user = participants.get(i);
             ScoreBoardItemBO item = new ScoreBoardItemBO();
-            item.setTeamInfo(mapper.map(res, UserInfoVO.class));
-            item.setSolutionInfo(countTeamProblemSolutionInfo(res.getId(), problemSetId, judgeProblemEntityList));
+            item.setTeamInfo(mapper.map(user, UserInfoVO.class));
+            TeamProblemsSolutionBO singleProblemSolutionInfo = countTeamProblemSolutionInfo(user.getId(), problemSetId, judgeProblemEntityList);
+            item.setSolutionInfo(singleProblemSolutionInfo.getProblemResult());
+            item.setRank(i + 1);
+            item.setTotalAcAmount(singleProblemSolutionInfo.getTotalAcAmount());
             scoreBoardItemBOList.add(item);
-        });
-        scoreBoardBO.setParticipants(scoreBoardItemBOList);
-        return scoreBoardBO;
+        }
+        return new ScoreBoardBO(false, scoreBoardItemBOList, judgeProblemEntityList.size());
     }
 
 
-    public List<Map<String, Object>> countTeamProblemSolutionInfo(Long userId, Long problemSetId, List<JudgeProblemEntity> problems) {
+    public TeamProblemsSolutionBO countTeamProblemSolutionInfo(Long userId, Long problemSetId, List<JudgeProblemEntity> problems) {
         List<Map<String, Object>> problemList = new ArrayList<>(3);
-        problems.forEach(problemEntity -> {
+        int totalAcAmount = 0;
+        for (JudgeProblemEntity problemEntity : problems) {
             long problemId = problemEntity.getId();
             long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
             long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
             Map<String, Object> problemCondition = new HashMap<>(3);
+            // 此题目拿到了AC
+            if (acAmount > 0) {
+                totalAcAmount += 1;
+            }
             problemCondition.put("isAccepted", acAmount > 0);
             // 我们选择 wrongAnswerAmount + 1
             // 而不是 wrongAnswerAmount + acceptAmount，
@@ -251,7 +259,7 @@ public class ProblemSetService {
             problemCondition.put("tryAmount", tryAmount);
             problemCondition.put("problemId", problemId);
             problemList.add(problemCondition);
-        });
-        return problemList;
+        }
+        return new TeamProblemsSolutionBO(problemList, totalAcAmount);
     }
 }

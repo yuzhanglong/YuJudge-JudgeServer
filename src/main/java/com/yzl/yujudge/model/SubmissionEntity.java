@@ -27,9 +27,6 @@ public class SubmissionEntity extends BaseEntity {
     @Column(name = "pk_problem")
     private Long pkProblem;
 
-    @Basic
-    @Column(name = "pk_user")
-    private Long pkUser;
 
     @Basic
     @Column(name = "language")
@@ -63,10 +60,13 @@ public class SubmissionEntity extends BaseEntity {
     @Column(name = "is_ac_before")
     private Boolean isAcBefore;
 
-
     @OneToOne
     @JoinColumn(name = "pk_problem_set", referencedColumnName = "id")
     private ProblemSetEntity problemSet;
+
+    @OneToOne
+    @JoinColumn(name = "pk_user", referencedColumnName = "id")
+    private UserEntity creator;
 
     public Long getId() {
         return id;
@@ -82,14 +82,6 @@ public class SubmissionEntity extends BaseEntity {
 
     public void setPkProblem(Long pkProblem) {
         this.pkProblem = pkProblem;
-    }
-
-    public Long getPkUser() {
-        return pkUser;
-    }
-
-    public void setPkUser(Long pkUser) {
-        this.pkUser = pkUser;
     }
 
     public String getLanguage() {
@@ -170,5 +162,21 @@ public class SubmissionEntity extends BaseEntity {
 
     public void setIsAcBefore(Boolean isAcBefore) {
         this.isAcBefore = isAcBefore;
+    }
+
+    public Boolean getAcBefore() {
+        return isAcBefore;
+    }
+
+    public void setAcBefore(Boolean acBefore) {
+        isAcBefore = acBefore;
+    }
+
+    public UserEntity getCreator() {
+        return creator;
+    }
+
+    public void setCreator(UserEntity creator) {
+        this.creator = creator;
     }
 }

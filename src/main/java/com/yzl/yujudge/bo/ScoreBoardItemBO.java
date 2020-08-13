@@ -14,6 +14,8 @@ import java.util.Map;
 public class ScoreBoardItemBO {
     private List<Map<String, Object>> solutionInfo;
     private UserInfoVO teamInfo;
+    private Integer rank;
+    private Integer totalAcAmount;
 
     public List<Map<String, Object>> getSolutionInfo() {
         return solutionInfo;
@@ -31,11 +33,28 @@ public class ScoreBoardItemBO {
         this.teamInfo = teamInfo;
     }
 
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Integer getTotalAcAmount() {
+        return totalAcAmount;
+    }
+
+    public void setTotalAcAmount(Integer totalAcAmount) {
+        this.totalAcAmount = totalAcAmount;
+    }
+
     @Override
     public String toString() {
         return "ScoreBoardItemBO{" +
                 "solutionInfo=" + solutionInfo +
                 ", teamInfo=" + teamInfo +
+                ", rank=" + rank +
                 '}';
     }
 }

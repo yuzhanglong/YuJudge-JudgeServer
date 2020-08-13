@@ -16,6 +16,7 @@ public class SubmissionVO {
     private Long memoryCost;
     private Date createTime;
     private String judgePreference;
+    private UserInfoVO creator;
 
     public String getLanguage() {
         return language;
@@ -71,6 +72,14 @@ public class SubmissionVO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public UserInfoVO getCreator() {
+        return creator;
+    }
+
+    public void setCreator(UserInfoVO creator) {
+        this.creator = creator;
     }
 
     @Override
