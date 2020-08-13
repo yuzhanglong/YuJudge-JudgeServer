@@ -2,14 +2,13 @@ package com.yzl.yujudge.vo;
 
 import com.yzl.yujudge.dto.JudgeResultDTO;
 
-import java.util.Map;
 
 /**
  * @author yuzhanglong
  * @description submission的细节内容的视图层对象
  * @date 2020-8-1 11:58:46
  */
-public class SubmissionDetailVO extends SubmissionVO{
+public class SubmissionDetailVO extends SubmissionVO {
     private JudgeResultDTO judgeResult;
     private String codeContent;
 

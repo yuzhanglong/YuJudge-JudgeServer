@@ -16,6 +16,7 @@ public class ScoreBoardItemBO {
     private UserInfoVO teamInfo;
     private Integer rank;
     private Integer totalAcAmount;
+    private Long totalTimePenalty;
 
     public List<Map<String, Object>> getSolutionInfo() {
         return solutionInfo;
@@ -47,6 +48,14 @@ public class ScoreBoardItemBO {
 
     public void setTotalAcAmount(Integer totalAcAmount) {
         this.totalAcAmount = totalAcAmount;
+    }
+
+    public Long getTotalTimePenalty() {
+        return totalTimePenalty;
+    }
+
+    public void setTotalTimePenalty(Long totalTimePenalty) {
+        this.totalTimePenalty = totalTimePenalty;
     }
 
     @Override

@@ -34,4 +34,17 @@ public class DateTimeUtil {
         return GOOD;
     }
 
+    /**
+     * @param start 开始时间
+     * @param end   结束时间
+     * @return Long 相差的分钟数目
+     * @author yuzhanglong
+     * @description 计算两时间之间相差的分钟数
+     * @date 2020-08-13 18:41:10
+     */
+    public static Long countTimeCostInMinute(Date start, Date end) {
+        long mSecond = end.getTime() - start.getTime();
+        return mSecond / (60 * 1000);
+    }
+
 }

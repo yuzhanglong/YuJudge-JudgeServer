@@ -1,6 +1,5 @@
 package com.yzl.yujudge.dto;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * @author yuzhanglong

@@ -12,6 +12,7 @@ import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemSetDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.ProblemSetEntity;
+import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.ProblemSetRepository;
@@ -214,6 +215,13 @@ public class ProblemSetService {
     }
 
 
+    /**
+     * @param problemSetId 题目集id
+     * @author yuzhanglong
+     * @description ScoreBoardBO 记分板相关业务对象
+     * @date 2020-08-13 17:44:56
+     * @description 获取题目集的状态
+     */
     public ScoreBoardBO getProblemSetScoreBoard(Long problemSetId) {
         // 获取题目集
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
@@ -229,37 +237,108 @@ public class ProblemSetService {
             UserEntity user = participants.get(i);
             ScoreBoardItemBO item = new ScoreBoardItemBO();
             item.setTeamInfo(mapper.map(user, UserInfoVO.class));
-            TeamProblemsSolutionBO singleProblemSolutionInfo = countTeamProblemSolutionInfo(user.getId(), problemSetId, judgeProblemEntityList);
+            TeamProblemsSolutionBO singleProblemSolutionInfo = countTeamProblemSolutionInfo(
+                    user.getId(),
+                    problemSetEntity,
+                    judgeProblemEntityList
+            );
             item.setSolutionInfo(singleProblemSolutionInfo.getProblemResult());
             item.setRank(i + 1);
             item.setTotalAcAmount(singleProblemSolutionInfo.getTotalAcAmount());
+            item.setTotalTimePenalty(singleProblemSolutionInfo.getTotalTimePenalty());
             scoreBoardItemBOList.add(item);
         }
         return new ScoreBoardBO(false, scoreBoardItemBOList, judgeProblemEntityList.size());
     }
 
-
-    public TeamProblemsSolutionBO countTeamProblemSolutionInfo(Long userId, Long problemSetId, List<JudgeProblemEntity> problems) {
+    /**
+     * @param userId     用户/队伍id
+     * @param problemSet 题目集实体对象
+     * @param problems   题目集所有的问题
+     * @author yuzhanglong
+     * @date 2020-08-13 22:50:28
+     * @description 获取题目集中一个团队的做题信息
+     * 这些信息包括：总罚时、各个题目的尝试次数、是否ac/一血等信息
+     */
+    private TeamProblemsSolutionBO countTeamProblemSolutionInfo(Long userId, ProblemSetEntity problemSet, List<JudgeProblemEntity> problems) {
         List<Map<String, Object>> problemList = new ArrayList<>(3);
+        // 总的ac个数
         int totalAcAmount = 0;
+        // 罚时
+        long totalTimePenalty = 0;
         for (JudgeProblemEntity problemEntity : problems) {
             long problemId = problemEntity.getId();
-            long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
-            long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
-            Map<String, Object> problemCondition = new HashMap<>(3);
-            // 此题目拿到了AC
-            if (acAmount > 0) {
+            SubmissionEntity firstAcSubmission = submissionRepository.getUserFirstAcInProblemSet(problemSet.getId(), userId, problemId);
+            long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemEntity.getId(), userId, problemId);
+            boolean isAc = firstAcSubmission != null;
+
+            if (isAc) {
+                // 此题目拿到了AC， 通过总数加一
                 totalAcAmount += 1;
+                // 计算总罚时
+                totalTimePenalty += countProblemPenalty(
+                        problemSet.getStartTime(),
+                        firstAcSubmission.getCreateTime(),
+                        problemSet.getTimePenalty(),
+                        wrongAnswerAmount
+                );
             }
-            problemCondition.put("isAccepted", acAmount > 0);
-            // 我们选择 wrongAnswerAmount + 1
-            // 而不是 wrongAnswerAmount + acceptAmount，
-            // 是因为一道题的ac次数不一定为 1
-            long tryAmount = acAmount > 0 ? (wrongAnswerAmount + 1) : wrongAnswerAmount;
-            problemCondition.put("tryAmount", tryAmount);
-            problemCondition.put("problemId", problemId);
-            problemList.add(problemCondition);
+            problemList.add(generateProblemCondition(isAc, wrongAnswerAmount, problemSet, firstAcSubmission, problemId));
         }
-        return new TeamProblemsSolutionBO(problemList, totalAcAmount);
+        return new TeamProblemsSolutionBO(problemList, totalAcAmount, totalTimePenalty);
+    }
+
+    /**
+     * @param isAc              是否通过
+     * @param wrongAnswerAmount 错误答案的数量
+     * @param problemSetEntity  题目集实体类
+     * @param firstAcSubmission 首次ac的提交
+     * @param problemId         题目id
+     * @author yuzhanglong
+     * @description ScoreBoardBO 记分板相关业务对象
+     * @date 2020-08-13 22:42:39
+     * @description 获取问题的解决状态，我们最终返回一个map，样例如下:
+     * {
+     * "tryAmount": 尝试的次数,
+     * "timeCost": 首次ac的时间，从题目集的开始时间算起,
+     * "isFirstAc": 是否是第一个ac的（一血）,
+     * "isAccepted": false（是否通过了这道题）
+     * },
+     */
+    private Map<String, Object> generateProblemCondition(Boolean isAc, Long wrongAnswerAmount, ProblemSetEntity problemSetEntity, SubmissionEntity firstAcSubmission, Long problemId) {
+        Map<String, Object> problemCondition = new HashMap<>(3);
+        // 是否 ac
+        problemCondition.put("isAccepted", isAc);
+        // 之前是否已经有人ac了
+        boolean hasEarlyAcBefore = false;
+        if (isAc) {
+            hasEarlyAcBefore = submissionRepository.countAcSubmissionEarlyThanGiven(problemSetEntity.getId(), problemId, firstAcSubmission.getCreateTime()) == 0;
+        }
+        problemCondition.put("isFirstAc", hasEarlyAcBefore);
+        // 尝试次数
+        // 需要注意的是，ac之后如果这道题再被提交，我们不会把这些「多余」的提交计算进去
+        long tryAmount = isAc ? (wrongAnswerAmount + 1) : wrongAnswerAmount;
+        problemCondition.put("tryAmount", tryAmount);
+        problemCondition.put("timeCost", isAc ? DateTimeUtil.countTimeCostInMinute(problemSetEntity.getStartTime(), firstAcSubmission.getCreateTime()) : 0);
+        return problemCondition;
+    }
+
+    /**
+     * @param timePenalty       每一次错误提交罚时
+     * @param wrongAnswerAmount 错误答案的数量
+     * @param acTime            首次ac的时间
+     * @param startTime         题目集开始时间
+     * @author yuzhanglong
+     * @date 2020-08-13 18:10:19
+     * @description 计算某道题的罚时
+     * penalty 的计算方法：
+     * 每道试题用时将从竞赛开始到试题解答被判定为正确（AC）为止，
+     * 其间每一次提交运行结果被判错误的话将被加罚20分钟时间，
+     * 未正确解答的试题不记时
+     */
+    private Long countProblemPenalty(Date startTime, Date acTime, Long timePenalty, Long wrongAnswerAmount) {
+        long timeBetweenAcTimeAndStartTime = DateTimeUtil.countTimeCostInMinute(startTime, acTime);
+        long res = timePenalty * wrongAnswerAmount + timeBetweenAcTimeAndStartTime;
+        return res >= 0 ? res : 0;
     }
 }

@@ -48,9 +48,9 @@ public class ToDtoUtil {
     public static List<SolutionDTO> solutionEntityListToSolutionDtoList(List<JudgeSolutionEntity> judgeSolutionEntities) {
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         List<SolutionDTO> solutionDTOList = new ArrayList<>();
-        judgeSolutionEntities.forEach(solution -> {
+        for (JudgeSolutionEntity solution : judgeSolutionEntities) {
             solutionDTOList.add(mapper.map(solution, SolutionDTO.class));
-        });
+        }
         return solutionDTOList;
     }
 }

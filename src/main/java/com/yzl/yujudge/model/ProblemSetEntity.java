@@ -43,6 +43,10 @@ public class ProblemSetEntity extends BaseEntity {
     @Column(name = "judge_preference")
     private String judgePreference;
 
+    @Basic
+    @Column(name = "time_penalty")
+    private Long timePenalty;
+
     @Convert(converter = ListJsonConverter.class)
     @Column(name = "allowed_language")
     private List<String> allowedLanguage;
@@ -142,5 +146,13 @@ public class ProblemSetEntity extends BaseEntity {
 
     public void setParticipants(List<UserEntity> participants) {
         this.participants = participants;
+    }
+
+    public Long getTimePenalty() {
+        return timePenalty;
+    }
+
+    public void setTimePenalty(Long timePenalty) {
+        this.timePenalty = timePenalty;
     }
 }

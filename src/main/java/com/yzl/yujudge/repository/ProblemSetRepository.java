@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -65,11 +64,14 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
     ProblemSetEntity findOneById(Long problemSetId);
 
     /**
+     * 用户是否参与了/加入了题目集
+     *
      * @param problemSetId 题目集id
-     * @return ProblemSetEntity 实体对象
+     * @param userEntity   用户实体对象
+     * @return 数量
      * @author yuzhanglong
-     * @date 2020-08-12 21:38:00
-     * @description
+     * @date 2020-08-13 22:52:44
+     * @description 用户是否参与了/加入了题目集
      */
     Long countByIdAndParticipants(Long problemSetId, UserEntity userEntity);
 }

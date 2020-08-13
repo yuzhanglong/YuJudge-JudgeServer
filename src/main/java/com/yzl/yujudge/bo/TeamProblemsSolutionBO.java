@@ -11,11 +11,14 @@ import java.util.Map;
 public class TeamProblemsSolutionBO {
     private List<Map<String, Object>> problemResult;
     private Integer totalAcAmount;
+    private Long totalTimePenalty;
 
-    public TeamProblemsSolutionBO(List<Map<String, Object>> problemResult, Integer totalAcAmount) {
+    public TeamProblemsSolutionBO(List<Map<String, Object>> problemResult, Integer totalAcAmount, Long totalTimePenalty) {
         this.problemResult = problemResult;
         this.totalAcAmount = totalAcAmount;
+        this.totalTimePenalty = totalTimePenalty;
     }
+
 
     public List<Map<String, Object>> getProblemResult() {
         return problemResult;
@@ -31,6 +34,14 @@ public class TeamProblemsSolutionBO {
 
     public void setTotalAcAmount(Integer totalAcAmount) {
         this.totalAcAmount = totalAcAmount;
+    }
+
+    public Long getTotalTimePenalty() {
+        return totalTimePenalty;
+    }
+
+    public void setTotalTimePenalty(Long totalTimePenalty) {
+        this.totalTimePenalty = totalTimePenalty;
     }
 
     @Override

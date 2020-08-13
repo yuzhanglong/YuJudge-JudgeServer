@@ -121,6 +121,48 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
 
 
     /**
+     * 根据题目集信息、题目信息、用户/队伍 信息寻找某个用户在某个题目上是否已经ac过
+     *
+     * @param problemSetId 题目集id
+     * @param userId       用户/队伍id
+     * @param problemId    题目id
+     * @return SubmissionEntity 查询到的提交实体类对象
+     * @author yuzhanglong
+     * @date 2020-08-13 22:36:12
+     * @description 根据题目集信息、题目信息、用户/队伍 信息寻找某个用户在某个题目上是否已经ac过
+     */
+    @Query("select submission from SubmissionEntity submission " +
+            "where submission.problemSet.id = ?1 " +
+            "and submission.creator.id = ?2 " +
+            "and submission.pkProblem = ?3 " +
+            "and submission.judgeCondition = 'ACCEPT' " +
+            "and submission.isAcBefore = false " +
+            "order by submission.createTime desc ")
+    SubmissionEntity getUserFirstAcInProblemSet(Long problemSetId, Long userId, Long problemId);
+
+
+    /**
+     * 统计出在给出的日期之前某个题目是否已经有AC提交
+     *
+     * @param problemSetId 题目集id
+     * @param problemId    题目id
+     * @param givenDate    给出的日期
+     * @return SubmissionEntity 查询到的提交实体类对象
+     * @author yuzhanglong
+     * @date 2020-08-13 22:38:38
+     * @description 根据题目集信息、题目信息
+     * 通过给出的日期，
+     * 统计出在给出的日期之前某个题目是否已经有AC提交
+     */
+    @Query("select count(submission) from SubmissionEntity submission " +
+            "where submission.problemSet.id = ?1 " +
+            "and submission.pkProblem = ?2 " +
+            "and submission.judgeCondition = 'ACCEPT' " +
+            "and submission.createTime < ?3 ")
+    Long countAcSubmissionEarlyThanGiven(Long problemSetId, Long problemId, Date givenDate);
+
+
+    /**
      * 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
      *
      * @param problemSetId 题目集id
