@@ -18,8 +18,9 @@ import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.repository.UserRepository;
-import com.yzl.yujudge.store.redis.RedisOperations;
+import com.yzl.yujudge.store.redis.ProblemSetCache;
 import com.yzl.yujudge.utils.DateTimeUtil;
+import com.yzl.yujudge.utils.compare.ScoreBoardItemComparator;
 import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.yzl.yujudge.core.task.ProblemSetTask.PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX;
 
 /**
  * @author yuzhanglong
@@ -41,7 +41,7 @@ public class ProblemSetService {
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final SubmissionRepository submissionRepository;
-    private final RedisOperations redisOperations;
+    private final ProblemSetCache problemSetCache;
 
 
     public ProblemSetService(
@@ -49,12 +49,12 @@ public class ProblemSetService {
             UserRepository userRepository,
             ProblemRepository problemRepository,
             SubmissionRepository submissionRepository,
-            RedisOperations redisOperations) {
+            ProblemSetCache problemSetCache) {
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
         this.problemRepository = problemRepository;
         this.submissionRepository = submissionRepository;
-        this.redisOperations = redisOperations;
+        this.problemSetCache = problemSetCache;
     }
 
     /**
@@ -252,6 +252,7 @@ public class ProblemSetService {
             item.setTotalTimePenalty(singleProblemSolutionInfo.getTotalTimePenalty());
             scoreBoardItemBOList.add(item);
         }
+        scoreBoardItemBOList.sort(new ScoreBoardItemComparator());
         return new ScoreBoardBO(false, scoreBoardItemBOList, judgeProblemEntityList.size());
     }
 
@@ -349,8 +350,16 @@ public class ProblemSetService {
         return res >= 0 ? res : 0;
     }
 
-    public Object getResult(Long problemSetId) {
-        String key = PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX + "_" + problemSetId.toString();
-        return redisOperations.get(key);
+
+    /**
+     * @param problemSetId 题目集id
+     * @author yuzhanglong
+     * @date 2020-08-15 00:08:49
+     * @description 通过题目集id
+     * 我们从缓存中获取题目集的记分板信息
+     * 记分板的大数据量、大计算量决定了我们必须使用缓存
+     */
+    public Object getProblemSetScoreBoardCache(Long problemSetId) {
+        return problemSetCache.getProblemSetScoreBoardCache(problemSetId);
     }
 }

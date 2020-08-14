@@ -1,7 +1,6 @@
 package com.yzl.yujudge.controller.v1;
 
 
-import com.yzl.yujudge.bo.ScoreBoardBO;
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.ProblemSetDTO;
@@ -135,6 +134,6 @@ public class ProblemSetController {
     @GetMapping("/get_score_board/{problemSetId}")
     @AuthorizationRequired
     public UnifiedResponse getProblemSetScoreBoard(@PathVariable Long problemSetId) {
-        return new UnifiedResponse(problemSetService.getResult(problemSetId));
+        return new UnifiedResponse(problemSetService.getProblemSetScoreBoardCache(problemSetId));
     }
 }

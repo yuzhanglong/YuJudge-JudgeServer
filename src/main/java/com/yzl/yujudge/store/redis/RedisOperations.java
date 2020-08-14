@@ -1,9 +1,13 @@
 package com.yzl.yujudge.store.redis;
 
+import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.query.SortQuery;
+import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -111,6 +115,38 @@ public class RedisOperations {
             for (String s : keys) {
                 redisTemplate.delete(s);
             }
+        }
+    }
+
+    /**
+     * @param key   键
+     * @param value 值
+     * @author yuzhanglong
+     * @description 向zSet中添加值
+     * @date 2020-08-14 21:27:47
+     */
+    public void setSortedSet(String key, Object value) {
+        try {
+            redisTemplate.opsForZSet().add(key, value, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setList(String key, Object value) {
+        try {
+            redisTemplate.opsForList().rightPush(key, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Object> getList(String key) {
+        try {
+            return redisTemplate.opsForList().range(key, 0, 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

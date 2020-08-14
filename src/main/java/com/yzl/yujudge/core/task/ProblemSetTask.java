@@ -6,6 +6,7 @@ import com.yzl.yujudge.bo.ScoreBoardBO;
 import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.service.ProblemSetService;
+import com.yzl.yujudge.store.redis.ProblemSetCache;
 import com.yzl.yujudge.store.redis.RedisOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,28 +23,25 @@ import java.util.List;
 public class ProblemSetTask {
     private final ProblemSetRepository problemSetRepository;
     private final ProblemSetService problemSetService;
-    private final RedisOperations redisOperations;
-    public static final String PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX = "problem_set_score_board";
+    private final ProblemSetCache problemSetCache;
 
     public ProblemSetTask(
             ProblemSetRepository problemSetRepository,
             ProblemSetService problemSetService,
-            RedisOperations redisOperations) {
+            ProblemSetCache problemSetCache) {
         this.problemSetRepository = problemSetRepository;
         this.problemSetService = problemSetService;
-        this.redisOperations = redisOperations;
+        this.problemSetCache = problemSetCache;
     }
 
     @Scheduled(cron = "*/5 * * * * ?")
-    private void renewActiveProblemSetScoreBoard() {
+    public void renewActiveProblemSetScoreBoard() {
         Date current = new Date();
         List<ProblemSetEntity> activeProblemSets = problemSetRepository.fineBetweenCurrentTime(current);
         for (ProblemSetEntity activeProblemSet : activeProblemSets) {
             ScoreBoardBO scoreBoardBO = problemSetService.getProblemSetScoreBoard(activeProblemSet);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.valueToTree(scoreBoardBO);
-            String key = PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX + "_" + activeProblemSet.getId().toString();
-            boolean isSet = redisOperations.set(key, jsonNode);
+            problemSetCache.setProblemSetScoreBoardCache(scoreBoardBO, activeProblemSet.getId().toString());
         }
+        System.out.println("OK");
     }
 }
