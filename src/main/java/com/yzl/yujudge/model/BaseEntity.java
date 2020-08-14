@@ -2,6 +2,7 @@ package com.yzl.yujudge.model;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;

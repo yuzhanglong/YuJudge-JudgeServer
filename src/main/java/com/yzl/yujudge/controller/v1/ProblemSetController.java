@@ -135,7 +135,6 @@ public class ProblemSetController {
     @GetMapping("/get_score_board/{problemSetId}")
     @AuthorizationRequired
     public UnifiedResponse getProblemSetScoreBoard(@PathVariable Long problemSetId) {
-        ScoreBoardBO scoreBoardBO = problemSetService.getProblemSetScoreBoard(problemSetId);
-        return new UnifiedResponse(scoreBoardBO);
+        return new UnifiedResponse(problemSetService.getResult(problemSetId));
     }
 }

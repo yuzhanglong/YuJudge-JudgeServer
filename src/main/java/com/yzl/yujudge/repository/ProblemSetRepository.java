@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -44,7 +45,6 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
      * 我们额外传入一个当前时间
      * 用来筛选当前时间介于开始时间和截止时间之间的题目
      */
-
     @Query("select p from ProblemSetEntity p " +
             "where p.startTime <= ?1 " +
             "and p.deadline >= ?1 " +
@@ -74,4 +74,21 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
      * @description 用户是否参与了/加入了题目集
      */
     Long countByIdAndParticipants(Long problemSetId, UserEntity userEntity);
+
+    /**
+     * 获取所有活跃的题目集
+     *
+     * @param currentTime 当前时间
+     * @return ProblemSetEntity 的分页对象
+     * @author yuzhanglong
+     * @date 2020-08-09 11:26:49
+     * @description 获取所有活跃的题目集
+     * 我们传入一个当前时间
+     * 用来筛选当前时间介于开始时间和截止时间之间的题目
+     */
+    @Query("select p from ProblemSetEntity p " +
+            "where p.startTime <= ?1 " +
+            "and p.deadline >= ?1 " +
+            "order by p.createTime desc")
+    List<ProblemSetEntity> fineBetweenCurrentTime(Date currentTime);
 }

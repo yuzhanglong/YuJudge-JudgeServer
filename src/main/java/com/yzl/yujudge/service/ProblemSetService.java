@@ -18,6 +18,7 @@ import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.repository.UserRepository;
+import com.yzl.yujudge.store.redis.RedisOperations;
 import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.yzl.yujudge.core.task.ProblemSetTask.PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX;
 
 /**
  * @author yuzhanglong
@@ -38,17 +41,20 @@ public class ProblemSetService {
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final SubmissionRepository submissionRepository;
+    private final RedisOperations redisOperations;
 
 
     public ProblemSetService(
             ProblemSetRepository problemSetRepository,
             UserRepository userRepository,
             ProblemRepository problemRepository,
-            SubmissionRepository submissionRepository) {
+            SubmissionRepository submissionRepository,
+            RedisOperations redisOperations) {
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
         this.problemRepository = problemRepository;
         this.submissionRepository = submissionRepository;
+        this.redisOperations = redisOperations;
     }
 
     /**
@@ -216,15 +222,13 @@ public class ProblemSetService {
 
 
     /**
-     * @param problemSetId 题目集id
+     * @param problemSetEntity 题目集
      * @author yuzhanglong
      * @description ScoreBoardBO 记分板相关业务对象
      * @date 2020-08-13 17:44:56
      * @description 获取题目集的状态
      */
-    public ScoreBoardBO getProblemSetScoreBoard(Long problemSetId) {
-        // 获取题目集
-        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+    public ScoreBoardBO getProblemSetScoreBoard(ProblemSetEntity problemSetEntity) {
         if (problemSetEntity == null) {
             throw new NotFoundException("B0011");
         }
@@ -238,7 +242,7 @@ public class ProblemSetService {
             ScoreBoardItemBO item = new ScoreBoardItemBO();
             item.setTeamInfo(mapper.map(user, UserInfoVO.class));
             TeamProblemsSolutionBO singleProblemSolutionInfo = countTeamProblemSolutionInfo(
-                    user.getId(),
+                    user,
                     problemSetEntity,
                     judgeProblemEntityList
             );
@@ -252,7 +256,7 @@ public class ProblemSetService {
     }
 
     /**
-     * @param userId     用户/队伍id
+     * @param user       用户/队伍
      * @param problemSet 题目集实体对象
      * @param problems   题目集所有的问题
      * @author yuzhanglong
@@ -260,7 +264,7 @@ public class ProblemSetService {
      * @description 获取题目集中一个团队的做题信息
      * 这些信息包括：总罚时、各个题目的尝试次数、是否ac/一血等信息
      */
-    private TeamProblemsSolutionBO countTeamProblemSolutionInfo(Long userId, ProblemSetEntity problemSet, List<JudgeProblemEntity> problems) {
+    private TeamProblemsSolutionBO countTeamProblemSolutionInfo(UserEntity user, ProblemSetEntity problemSet, List<JudgeProblemEntity> problems) {
         List<Map<String, Object>> problemList = new ArrayList<>(3);
         // 总的ac个数
         int totalAcAmount = 0;
@@ -268,8 +272,8 @@ public class ProblemSetService {
         long totalTimePenalty = 0;
         for (JudgeProblemEntity problemEntity : problems) {
             long problemId = problemEntity.getId();
-            SubmissionEntity firstAcSubmission = submissionRepository.getUserFirstAcInProblemSet(problemSet.getId(), userId, problemId);
-            long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemEntity.getId(), userId, problemId);
+            SubmissionEntity firstAcSubmission = submissionRepository.getUserFirstAcInProblemSet(problemSet.getId(), user.getId(), problemId);
+            long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemEntity.getId(), user.getId(), problemId);
             boolean isAc = firstAcSubmission != null;
 
             if (isAc) {
@@ -305,7 +309,10 @@ public class ProblemSetService {
      * "isAccepted": false（是否通过了这道题）
      * },
      */
-    private Map<String, Object> generateProblemCondition(Boolean isAc, Long wrongAnswerAmount, ProblemSetEntity problemSetEntity, SubmissionEntity firstAcSubmission, Long problemId) {
+    private Map<String, Object> generateProblemCondition(
+            Boolean isAc, Long wrongAnswerAmount,
+            ProblemSetEntity problemSetEntity,
+            SubmissionEntity firstAcSubmission, Long problemId) {
         Map<String, Object> problemCondition = new HashMap<>(3);
         // 是否 ac
         problemCondition.put("isAccepted", isAc);
@@ -340,5 +347,10 @@ public class ProblemSetService {
         long timeBetweenAcTimeAndStartTime = DateTimeUtil.countTimeCostInMinute(startTime, acTime);
         long res = timePenalty * wrongAnswerAmount + timeBetweenAcTimeAndStartTime;
         return res >= 0 ? res : 0;
+    }
+
+    public Object getResult(Long problemSetId) {
+        String key = PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX + "_" + problemSetId.toString();
+        return redisOperations.get(key);
     }
 }

@@ -14,7 +14,7 @@ import javax.persistence.*;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "judge_host", schema = "yu-judge")
-public class JudgeHostEntity {
+public class JudgeHostEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
