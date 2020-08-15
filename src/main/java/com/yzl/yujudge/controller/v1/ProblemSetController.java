@@ -131,9 +131,25 @@ public class ProblemSetController {
         return new UnifiedResponse(mapper.getViewObject());
     }
 
+
+    /**
+     * @param problemSetId 获取记分板信息
+     * @author yuzhanglong
+     * @date 2020-08-11 00:11:32
+     * @description 获取记分板信息
+     */
     @GetMapping("/get_score_board/{problemSetId}")
     @AuthorizationRequired
     public UnifiedResponse getProblemSetScoreBoard(@PathVariable Long problemSetId) {
         return new UnifiedResponse(problemSetService.getProblemSetScoreBoardCache(problemSetId));
+    }
+
+    @PutMapping("/update_problem_set_basic_info/{problemSetId}")
+    @AuthorizationRequired
+    public UnifiedResponse updateProblemSetBasicInfo(
+            @PathVariable Long problemSetId,
+            @RequestBody @Validated ProblemSetDTO problemSetDTO) {
+        problemSetService.updateProblemSetBasicInfo(problemSetId, problemSetDTO);
+        return new UnifiedResponse("编辑题目集基本信息成功");
     }
 }

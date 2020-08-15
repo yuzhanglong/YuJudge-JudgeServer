@@ -362,4 +362,23 @@ public class ProblemSetService {
     public Object getProblemSetScoreBoardCache(Long problemSetId) {
         return problemSetCache.getProblemSetScoreBoardCache(problemSetId);
     }
+
+    /**
+     * @param problemSetId 题目集id
+     * @param problemSetDTO 题目集相关数据传输对象
+     * @author yuzhanglong
+     * @date 2020-08-15 22:58:26
+     * @description 更新题目集的基本信息
+     */
+    public void updateProblemSetBasicInfo(Long problemSetId, ProblemSetDTO problemSetDTO) {
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        problemSetEntity.setName(problemSetDTO.getName());
+        problemSetEntity.setDescription(problemSetDTO.getDescription());
+        problemSetDTO.setStartTime(problemSetDTO.getStartTime());
+        problemSetDTO.setDeadline(problemSetDTO.getDeadline());
+        problemSetRepository.save(problemSetEntity);
+    }
 }
