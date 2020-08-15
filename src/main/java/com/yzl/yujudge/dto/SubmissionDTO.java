@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
  * @date 2020-7-29 00:59:51
  */
 
-@LanguageAccepted
 public class SubmissionDTO {
     @NotNull(message = "problemId 不得为空")
     private Long problemId;

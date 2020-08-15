@@ -15,16 +15,6 @@ public class SolutionVO {
     private Date createTime;
     private String description;
 
-    public List<String> getAllowedLanguage() {
-        return allowedLanguage;
-    }
-
-    public void setAllowedLanguage(List<String> allowedLanguage) {
-        this.allowedLanguage = allowedLanguage;
-    }
-
-    private List<String> allowedLanguage;
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -73,7 +63,6 @@ public class SolutionVO {
                 ", expectedStdOut='" + expectedStdOut + '\'' +
                 ", createTime=" + createTime +
                 ", description='" + description + '\'' +
-                ", allowedLanguage=" + allowedLanguage +
                 '}';
     }
 }

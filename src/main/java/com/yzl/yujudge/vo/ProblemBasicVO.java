@@ -13,7 +13,6 @@ public class ProblemBasicVO {
     private Long id;
     private String name;
     private List<String> characterTags;
-    private List<String> allowedLanguage;
     private Date createTime;
     private Boolean closed;
 
@@ -58,21 +57,12 @@ public class ProblemBasicVO {
         this.createTime = createTime;
     }
 
-    public List<String> getAllowedLanguage() {
-        return allowedLanguage;
-    }
-
-    public void setAllowedLanguage(List<String> allowedLanguage) {
-        this.allowedLanguage = allowedLanguage;
-    }
-
     @Override
     public String toString() {
         return "ProblemBasicVO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", characterTags=" + characterTags +
-                ", allowedLanguage=" + allowedLanguage +
                 ", createTime=" + createTime +
                 ", closed=" + closed +
                 '}';

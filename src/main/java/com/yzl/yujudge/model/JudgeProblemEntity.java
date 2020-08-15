@@ -47,11 +47,6 @@ public class JudgeProblemEntity extends BaseEntity {
     private List<String> characterTags;
 
 
-    @Convert(converter = ListJsonConverter.class)
-    @Column(name = "allowed_language")
-    private List<String> allowedLanguage;
-
-
     @Basic
     @Column(name = "is_closed")
     private Boolean closed;
@@ -145,14 +140,6 @@ public class JudgeProblemEntity extends BaseEntity {
 
     public void setCharacterTags(List<String> characterTags) {
         this.characterTags = characterTags;
-    }
-
-    public List<String> getAllowedLanguage() {
-        return allowedLanguage;
-    }
-
-    public void setAllowedLanguage(List<String> allowedLanguage) {
-        this.allowedLanguage = allowedLanguage;
     }
 
     public Integer getOutputLimit() {

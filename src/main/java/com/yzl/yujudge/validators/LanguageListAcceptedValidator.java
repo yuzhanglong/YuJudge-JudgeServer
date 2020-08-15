@@ -17,8 +17,7 @@ import java.util.List;
 public class LanguageListAcceptedValidator implements ConstraintValidator<LanguageListAccepted, ProblemLimitationDTO> {
     @Override
     public boolean isValid(ProblemLimitationDTO limitationDTO, ConstraintValidatorContext constraintValidatorContext) {
-        List<String> languages = limitationDTO.getAllowedLanguage();
-        return isInAcceptLanguage(languages) && isLanguageRepeat(languages);
+        return true;
     }
 
     /**

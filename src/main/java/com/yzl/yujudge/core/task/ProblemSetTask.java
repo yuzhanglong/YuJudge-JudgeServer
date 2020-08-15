@@ -1,13 +1,10 @@
 package com.yzl.yujudge.core.task;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.bo.ScoreBoardBO;
 import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.service.ProblemSetService;
 import com.yzl.yujudge.store.redis.ProblemSetCache;
-import com.yzl.yujudge.store.redis.RedisOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

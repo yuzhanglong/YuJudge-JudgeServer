@@ -107,12 +107,12 @@ public class ProblemController {
      * @description 编辑一个Problem
      * @date 2020-7-21 17:42:13
      */
-    @PostMapping("/edit_problem/{problemId}")
+    @PutMapping("/edit_problem/{problemId}")
     public UnifiedResponse editProblem(
             @PathVariable Long problemId,
             @RequestBody @Validated ProblemDTO problemDTO) {
         problemService.editProblem(problemId, problemDTO);
-        return new UnifiedResponse();
+        return new UnifiedResponse("编辑题目信息成功");
     }
 
     /**
@@ -187,7 +187,7 @@ public class ProblemController {
      * @description 修改Problem限制
      * @date 2020-7-26 17:54:45
      */
-    @PostMapping("/set_limitation/{problemId}")
+    @PutMapping("/set_limitation/{problemId}")
     public UnifiedResponse setLimitation(
             @PathVariable Long problemId,
             @RequestBody @Validated ProblemLimitationDTO limitation) {
@@ -195,19 +195,6 @@ public class ProblemController {
         return new UnifiedResponse("修改题目限制成功");
     }
 
-    /**
-     * @param problemId 目标problemId
-     * @author yuzhanglong
-     * @description 修改Problem限制
-     * @date 2020-7-26 17:54:45
-     */
-    @PostMapping("/set_basic_info/{problemId}")
-    public UnifiedResponse setLimitation(
-            @PathVariable Long problemId,
-            @RequestBody ProblemDTO problemDTO) {
-        problemService.setProblemBasicInfo(problemId, problemDTO);
-        return new UnifiedResponse("编辑题目基本信息成功");
-    }
 
     /**
      * @author yuzhanglong

@@ -3,6 +3,7 @@ package com.yzl.yujudge.dto;
 import com.yzl.yujudge.validators.annotations.LanguageListAccepted;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -11,15 +12,15 @@ import java.util.List;
  * @date 2020-7-26 17:56:26
  */
 
-@LanguageListAccepted
 public class ProblemLimitationDTO {
+    @NotNull(message = "时间限制不得为空")
     private Integer timeLimit;
+    @NotNull(message = "内存限制不得为空")
     private Integer memoryLimit;
     private Integer cpuTimeLimit;
+    @NotNull(message = "输出限制不得为空")
     private Integer outputLimit;
 
-    @Valid
-    private List<String> allowedLanguage;
 
     public Integer getTimeLimit() {
         return timeLimit;
@@ -51,14 +52,6 @@ public class ProblemLimitationDTO {
 
     public void setOutputLimit(Integer outputLimit) {
         this.outputLimit = outputLimit;
-    }
-
-    public List<String> getAllowedLanguage() {
-        return allowedLanguage;
-    }
-
-    public void setAllowedLanguage(List<String> allowedLanguage) {
-        this.allowedLanguage = allowedLanguage;
     }
 
     @Override

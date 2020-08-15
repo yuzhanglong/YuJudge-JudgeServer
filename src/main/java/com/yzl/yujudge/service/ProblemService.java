@@ -171,7 +171,6 @@ public class ProblemService {
         problemEntity.setCpuTimeLimit(limitation.getCpuTimeLimit());
         problemEntity.setOutputLimit(limitation.getOutputLimit());
         problemEntity.setMemoryLimit(limitation.getMemoryLimit());
-        problemEntity.setAllowedLanguage(limitation.getAllowedLanguage());
         problemRepository.save(problemEntity);
     }
 

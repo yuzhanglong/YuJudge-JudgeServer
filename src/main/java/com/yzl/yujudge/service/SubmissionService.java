@@ -101,13 +101,6 @@ public class SubmissionService {
         if (judgeProblemEntity == null) {
             throw new NotFoundException("B0002");
         }
-
-        // 验证语言是否在允许的范围内
-        List<String> language = judgeProblemEntity.getAllowedLanguage();
-        boolean isLanguageAccept = language.contains(submissionDTO.getLanguage());
-        if (!isLanguageAccept) {
-            throw new NotFoundException("B0004");
-        }
     }
 
     /**

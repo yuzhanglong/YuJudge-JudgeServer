@@ -16,9 +16,9 @@ public class ProblemDetailVO {
     private Integer memoryLimit;
     private Integer cpuTimeLimit;
     private List<String> characterTags;
+    private Integer outputLimit;
     private Date createTime;
     private Boolean closed;
-    private List<String> allowedLanguage;
 
     public String getContent() {
         return content;
@@ -92,17 +92,18 @@ public class ProblemDetailVO {
         this.closed = closed;
     }
 
-    public List<String> getAllowedLanguage() {
-        return allowedLanguage;
+
+    public Integer getOutputLimit() {
+        return outputLimit;
     }
 
-    public void setAllowedLanguage(List<String> allowedLanguage) {
-        this.allowedLanguage = allowedLanguage;
+    public void setOutputLimit(Integer outputLimit) {
+        this.outputLimit = outputLimit;
     }
 
     @Override
     public String toString() {
-        return "ProblemDetailedVO{" +
+        return "ProblemDetailVO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", content='" + content + '\'' +
@@ -110,9 +111,9 @@ public class ProblemDetailVO {
                 ", memoryLimit=" + memoryLimit +
                 ", cpuTimeLimit=" + cpuTimeLimit +
                 ", characterTags=" + characterTags +
+                ", outputLimit=" + outputLimit +
                 ", createTime=" + createTime +
                 ", closed=" + closed +
-                ", allowedLanguage=" + allowedLanguage +
                 '}';
     }
 }
