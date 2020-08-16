@@ -52,7 +52,7 @@ public class ProblemSetEntity extends BaseEntity {
     @Column(name = "allowed_language")
     private List<String> allowedLanguage;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "problem_set_problem",
             joinColumns = @JoinColumn(name = "pk_problem_set"),
             inverseJoinColumns = @JoinColumn(name = "pk_problem"))

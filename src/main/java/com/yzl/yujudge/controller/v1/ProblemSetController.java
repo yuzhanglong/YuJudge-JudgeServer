@@ -144,6 +144,12 @@ public class ProblemSetController {
         return new UnifiedResponse(problemSetService.getProblemSetScoreBoardCache(problemSetId));
     }
 
+    /**
+     * @param problemSetId 更新题目集的基本信息
+     * @author yuzhanglong
+     * @date 2020-08-16 00:02:14
+     * @description 更新某个题目集的基本信息
+     */
     @PutMapping("/update_problem_set_basic_info/{problemSetId}")
     @AuthorizationRequired
     public UnifiedResponse updateProblemSetBasicInfo(

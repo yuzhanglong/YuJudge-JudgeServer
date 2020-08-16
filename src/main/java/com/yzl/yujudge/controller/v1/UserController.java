@@ -11,7 +11,9 @@ import com.yzl.yujudge.service.UserService;
 import com.yzl.yujudge.utils.EntityToVoListMapper;
 import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.AuthorizationVO;
+import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.UserInfoVO;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -119,5 +121,23 @@ public class UserController {
         UserEntity user = userService.getUserInfo(userId);
         EntityToVoMapper<UserEntity, UserInfoVO> mapper = new EntityToVoMapper<>(user, UserInfoVO.class);
         return new UnifiedResponse(mapper.getViewObject());
+    }
+
+    /**
+     * @param count 单页数量
+     * @param start 页码
+     * @param scope 权限限制
+     * @author yuzhanglong
+     * @description 分页获取所有用户的基本信息
+     * @date 2020-08-16 13:02:20
+     */
+    @GetMapping("/get_users")
+    public UnifiedResponse getUsers(
+            @RequestParam(defaultValue = "0") Integer start,
+            @RequestParam(defaultValue = "10") Integer count,
+            @RequestParam(defaultValue = "") String scope) {
+        Page<UserEntity> userEntities = userService.getUsers(start, count, scope);
+        PaginationVO<UserEntity, UserInfoVO> paginationVO = new PaginationVO<>(userEntities, UserInfoVO.class);
+        return new UnifiedResponse(paginationVO);
     }
 }

@@ -1,8 +1,10 @@
 package com.yzl.yujudge.repository;
 
 import com.yzl.yujudge.model.UserEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -60,4 +62,20 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @date 2020-08-08 12:58:04
      */
     UserEntity findOneById(Long userId);
+
+
+    /**
+     * 通过用户权限寻找对应的用户
+     *
+     * @param scope    用户权限
+     * @param pageable 分页对象
+     * @return UserEntity 用户实体对象
+     * @author yuzhanglong
+     * @description 通过用户权限寻找对应的用户
+     * @date 2020-08-16 13:48:19
+     */
+    @Query("select user from UserEntity user " +
+            "where user.scope = ?1 " +
+            "order by user.createTime desc ")
+    Page<UserEntity> findUsersByScope(String scope, Pageable pageable);
 }

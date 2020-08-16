@@ -1,6 +1,7 @@
 package com.yzl.yujudge.service;
 
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
+import com.yzl.yujudge.core.enumeration.UserScopeEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.LoginDTO;
@@ -12,9 +13,11 @@ import com.yzl.yujudge.utils.CheckCodeUtil;
 import com.yzl.yujudge.utils.SecurityUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import com.yzl.yujudge.utils.TokenUtil;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -175,4 +178,29 @@ public class UserService {
         }
         return userEntity;
     }
+
+    /**
+     * @param count 单页数量
+     * @param start 页码
+     * @param scope 权限限制
+     * @author yuzhanglong
+     * @description 获取用户信息分页对象
+     * @date 2020-08-16 13:53:33
+     */
+    public Page<UserEntity> getUsers(Integer start, Integer count, String scope) {
+        Pageable pageable = PageRequest.of(start, count);
+        // 当没有传入权限时，直接查找所有用户
+
+        if (!"".equals(scope)) {
+            // 权限名称不存在时
+            if (!UserScopeEnum.isCorrectScope(scope)) {
+                throw new NotFoundException("A0007");
+            }
+            return userRepository.findUsersByScope(scope, pageable);
+        }
+        return userRepository.findAll(pageable);
+
+    }
+
+
 }

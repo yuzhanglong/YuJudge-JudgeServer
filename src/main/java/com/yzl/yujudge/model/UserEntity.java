@@ -43,11 +43,18 @@ public class UserEntity extends BaseEntity {
     private Integer acAmount;
 
     @Basic
+    @Column(name = "scope")
+    private String scope;
+
+    @Basic
     @Column(name = "submission_amount")
     private Integer submissionAmount;
 
     @ManyToMany(mappedBy = "participants")
     private List<ProblemSetEntity> problemSetEntityList;
+
+    @ManyToMany(mappedBy = "users")
+    private List<UserGroupEntity> userGroupEntityList;
 
     public Long getId() {
         return id;
@@ -111,5 +118,21 @@ public class UserEntity extends BaseEntity {
 
     public void setProblemSetEntityList(List<ProblemSetEntity> problemSetEntityList) {
         this.problemSetEntityList = problemSetEntityList;
+    }
+
+    public List<UserGroupEntity> getUserGroupEntityList() {
+        return userGroupEntityList;
+    }
+
+    public void setUserGroupEntityList(List<UserGroupEntity> userGroupEntityList) {
+        this.userGroupEntityList = userGroupEntityList;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

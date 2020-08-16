@@ -7,6 +7,7 @@ judge-server-exceptions:
     A0004: token无效
     A0005: GET请求参数为空
     A0006: POST请求参数为空
+    A0007: 不合法的权限名称
     B0001: 服务器错误
     B0002: 找不到对应Problem
     B0003: 找不到对应solution
