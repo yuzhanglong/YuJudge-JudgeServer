@@ -11,7 +11,6 @@ public class JudgeHostResponseDTO {
     private String code;
     private String message;
     private String request;
-    private Object data;
 
     public String getCode() {
         return code;
@@ -35,14 +34,6 @@ public class JudgeHostResponseDTO {
 
     public void setRequest(String request) {
         this.request = request;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
     }
 
     @Override

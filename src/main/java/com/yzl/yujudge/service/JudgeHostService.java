@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
+import com.yzl.yujudge.dto.JudgeHostConditionDTO;
+import com.yzl.yujudge.dto.JudgeHostConnectionDTO;
 import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.dto.JudgeHostResponseDTO;
 import com.yzl.yujudge.model.JudgeHostEntity;
@@ -53,7 +55,7 @@ public class JudgeHostService {
             JudgeHostCommonRequest request = new JudgeHostCommonRequest(address);
             String testResponse = request.testJudgeConnection();
             try {
-                JudgeHostResponseDTO responseDTO = objectMapper.readValue(testResponse, JudgeHostResponseDTO.class);
+                JudgeHostConnectionDTO responseDTO = objectMapper.readValue(testResponse, JudgeHostConnectionDTO.class);
                 boolean isSuccess = isConnectSuccess(responseDTO);
                 judgeHost.setConnection(isSuccess);
             } catch (JsonProcessingException e) {
@@ -78,14 +80,14 @@ public class JudgeHostService {
 
 
     /**
-     * @param responseDTO judgeHost response数据传输对象
+     * @param connectionDTO judgeHost response数据传输对象
      * @return Boolean 是否连接正常
      * @author yuzhanglong
      * @description 判断是否连接正常
      * @date 2020-7-30 23:53
      */
-    private Boolean isConnectSuccess(JudgeHostResponseDTO responseDTO) {
-        String code = responseDTO.getCode();
+    private Boolean isConnectSuccess(JudgeHostConnectionDTO connectionDTO) {
+        String code = connectionDTO.getCode();
         return "00000".equals(code);
     }
 
