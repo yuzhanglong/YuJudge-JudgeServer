@@ -57,6 +57,7 @@ public class JudgeHostService {
             try {
                 JudgeHostConnectionDTO responseDTO = objectMapper.readValue(testResponse, JudgeHostConnectionDTO.class);
                 boolean isSuccess = isConnectSuccess(responseDTO);
+                judgeHost.setCondition(responseDTO.getData());
                 judgeHost.setConnection(isSuccess);
             } catch (JsonProcessingException e) {
                 // TODO: 走到这里说明judgeHost没有响应，需要日志记录

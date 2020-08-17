@@ -1,5 +1,7 @@
 package com.yzl.yujudge.bo;
 
+import com.yzl.yujudge.dto.JudgeHostConditionDTO;
+
 import java.util.Date;
 
 /**
@@ -13,9 +15,17 @@ public class JudgeHostBO {
     private String address;
     private Boolean active;
     private Date createTime;
+    private JudgeHostConditionDTO condition;
     private Boolean connection;
-    private Integer cpuCostPercentage;
-    private Integer memoryPercentage;
+
+
+    public Boolean getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Boolean connection) {
+        this.connection = connection;
+    }
 
     public String getName() {
         return name;
@@ -49,28 +59,12 @@ public class JudgeHostBO {
         this.createTime = createTime;
     }
 
-    public Boolean getConnection() {
-        return connection;
+    public JudgeHostConditionDTO getCondition() {
+        return condition;
     }
 
-    public void setConnection(Boolean connection) {
-        this.connection = connection;
-    }
-
-    public Integer getCpuCostPercentage() {
-        return cpuCostPercentage;
-    }
-
-    public void setCpuCostPercentage(Integer cpuCostPercentage) {
-        this.cpuCostPercentage = cpuCostPercentage;
-    }
-
-    public Integer getMemoryPercentage() {
-        return memoryPercentage;
-    }
-
-    public void setMemoryPercentage(Integer memoryPercentage) {
-        this.memoryPercentage = memoryPercentage;
+    public void setCondition(JudgeHostConditionDTO condition) {
+        this.condition = condition;
     }
 
     @Override
@@ -80,7 +74,7 @@ public class JudgeHostBO {
                 ", address='" + address + '\'' +
                 ", active=" + active +
                 ", createTime=" + createTime +
-                ", connection=" + connection +
+                ", condition=" + condition +
                 '}';
     }
 }
