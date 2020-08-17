@@ -42,6 +42,7 @@ public class ProblemSetService {
     private final ProblemRepository problemRepository;
     private final SubmissionRepository submissionRepository;
     private final ProblemSetCache problemSetCache;
+    private final Mapper mapper;
 
 
     public ProblemSetService(
@@ -49,12 +50,14 @@ public class ProblemSetService {
             UserRepository userRepository,
             ProblemRepository problemRepository,
             SubmissionRepository submissionRepository,
-            ProblemSetCache problemSetCache) {
+            ProblemSetCache problemSetCache,
+            Mapper mapper) {
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
         this.problemRepository = problemRepository;
         this.submissionRepository = submissionRepository;
         this.problemSetCache = problemSetCache;
+        this.mapper = mapper;
     }
 
     /**
@@ -110,7 +113,6 @@ public class ProblemSetService {
      * @description 创建一个题目集
      */
     public void createProblemSet(ProblemSetDTO problemSetDTO) {
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         ProblemSetEntity problemSetEntity = mapper.map(problemSetDTO, ProblemSetEntity.class);
         UserEntity user = userRepository.findOneById(UserHolder.getUserId());
         if (user == null) {
@@ -236,7 +238,6 @@ public class ProblemSetService {
         List<UserEntity> participants = problemSetEntity.getParticipants();
         // 遍历参与者
         List<ScoreBoardItemBO> scoreBoardItemBOList = new ArrayList<>();
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         for (int i = 0; i < participants.size(); i++) {
             UserEntity user = participants.get(i);
             ScoreBoardItemBO item = new ScoreBoardItemBO();
@@ -364,7 +365,7 @@ public class ProblemSetService {
     }
 
     /**
-     * @param problemSetId 题目集id
+     * @param problemSetId  题目集id
      * @param problemSetDTO 题目集相关数据传输对象
      * @author yuzhanglong
      * @date 2020-08-15 22:58:26

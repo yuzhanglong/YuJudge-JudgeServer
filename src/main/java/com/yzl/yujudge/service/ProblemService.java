@@ -1,6 +1,5 @@
 package com.yzl.yujudge.service;
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemDTO;
@@ -28,11 +27,13 @@ import java.util.List;
 public class ProblemService {
     private final ProblemRepository problemRepository;
     private final SolutionRepository solutionRepository;
+    private final Mapper mapper;
     public static final int RECENT_PROBLEM_SEARCH_MAX_SIZE = 15;
 
-    public ProblemService(ProblemRepository problemRepository, SolutionRepository solutionRepository) {
+    public ProblemService(ProblemRepository problemRepository, SolutionRepository solutionRepository, Mapper mapper) {
         this.problemRepository = problemRepository;
         this.solutionRepository = solutionRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -125,7 +126,6 @@ public class ProblemService {
      */
     public void createSolution(Long problemId, SolutionDTO solution) {
         JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         JudgeSolutionEntity solutionEntity = mapper.map(solution, JudgeSolutionEntity.class);
         problemEntity.getJudgeSolutionEntityList().add(solutionEntity);
         solutionRepository.save(solutionEntity);

@@ -16,7 +16,6 @@ import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,12 +28,15 @@ import java.util.List;
 public class JudgeHostService {
     private final JudgeHostRepository judgeHostRepository;
     private final JudgeHostCache judgeHostCache;
+    private final Mapper mapper;
 
     public JudgeHostService(
             JudgeHostRepository judgeHostRepository,
-            JudgeHostCache judgeHostCache) {
+            JudgeHostCache judgeHostCache,
+            Mapper mapper) {
         this.judgeHostRepository = judgeHostRepository;
         this.judgeHostCache = judgeHostCache;
+        this.mapper = mapper;
     }
 
     /**
@@ -42,12 +44,10 @@ public class JudgeHostService {
      * @description 获取所有判题服务器信息
      * @date 2020-7-30 19:06
      */
-
     public List<JudgeHostBO> inspectJudgeHosts(List<JudgeHostEntity> judgeHostEntityList) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<JudgeHostBO> judgeHostBOList = new ArrayList<>();
         for (JudgeHostEntity res : judgeHostEntityList) {
-            Mapper mapper = DozerBeanMapperBuilder.buildDefault();
             JudgeHostBO judgeHost = mapper.map(res, JudgeHostBO.class);
             String address = res.getAddress();
             JudgeHostCommonRequest request = new JudgeHostCommonRequest(address);
@@ -72,7 +72,6 @@ public class JudgeHostService {
      * @date 2020-7-30 18:34
      */
     public void createJudgeHost(JudgeHostDTO judgeHostDTO) {
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         JudgeHostEntity judgeHostEntity = mapper.map(judgeHostDTO, JudgeHostEntity.class);
         judgeHostRepository.save(judgeHostEntity);
     }
@@ -119,7 +118,6 @@ public class JudgeHostService {
      */
     public List<JudgeHostBO> getJudgeConditionCache() {
         List<Object> rawList = judgeHostCache.getJudgeConditionCache();
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         List<JudgeHostBO> judgeHostBOList = new ArrayList<>();
         for (Object o : rawList) {
             judgeHostBOList.add(mapper.map(o, JudgeHostBO.class));

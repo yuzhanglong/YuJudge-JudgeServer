@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 30/07/2020 23:16:24
+ Date: 17/08/2020 16:46:07
 */
 
 SET NAMES utf8mb4;
@@ -25,7 +25,10 @@ CREATE TABLE `judge_host` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `is_active` tinyint DEFAULT '0',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `delete_time` datetime DEFAULT NULL,
+  `is_active` tinyint DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -33,8 +36,8 @@ CREATE TABLE `judge_host` (
 -- Records of judge_host
 -- ----------------------------
 BEGIN;
-INSERT INTO `judge_host` VALUES (1, 'test1', 'http://47.106.202.255:8080', 0);
-INSERT INTO `judge_host` VALUES (2, 'test2', 'http://182.254.197.28:8080', 0);
+INSERT INTO `judge_host` VALUES (1, 'JudgeHost1', 'http://47.106.202.255:8080', '2020-08-16 21:04:13', '2020-08-17 14:45:41', NULL, 0);
+INSERT INTO `judge_host` VALUES (2, 'JudgeHost2', 'http://182.254.197.28:8080', '2020-08-16 21:04:14', '2020-08-17 14:45:42', NULL, 1);
 COMMIT;
 
 -- ----------------------------
@@ -54,18 +57,18 @@ CREATE TABLE `judge_problem` (
   `character_tags` json DEFAULT NULL COMMENT '题目标签',
   `accept_amount` int unsigned DEFAULT '0' COMMENT '通过数量',
   `total_submisstion_amount` int unsigned DEFAULT '0' COMMENT '总提交数目',
-  `allowed_language` json DEFAULT NULL COMMENT '支持的语言',
   `is_closed` tinyint unsigned DEFAULT '0',
   `output_limit` int DEFAULT '50000',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3243389 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=3243509 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of judge_problem
 -- ----------------------------
 BEGIN;
-INSERT INTO `judge_problem` VALUES (3243290, 'A+B Problem', '窗口前设一条黄线假设银行有*K*个窗口提供服务，窗口前设一条黄线，所有顾客按到达时间在黄线后排成一条长龙。当有窗口空闲时，下一位顾客即去该窗口处理事务。当有多个窗口可选择时，假设顾客总是选择编号最小的窗口。\r\n\r\n本题要求输出前来等待服务的*N*位顾客的平均等待时间、最长等待时间、最后完成时间，并且统计每个窗口服务了多少名顾客。\r\n\r\n### 输入格式:\r\n\r\n输入第1行给出正整数*N*（≤1000），为顾客总人数；随后*N*行，每行给出一位顾客的到达时间`T`和事务处理时间`P`，并且假设输入数据已经按到达时间先后排好了顺序；最后一行给出正整数*K*（≤10），为开设的营业窗口数。这里假设每位顾客事务被处理的最长时间为60分钟。\r\n\r\n### 输出格式:\r\n\r\n在第一行中输出平均等待时间（输出到小数点后1位）、最长等待时间、最后完成时间，之间用1个空格分隔，行末不能有多余空格。\r\n\r\n在第二行中按编号递增顺序输出每个窗口服务了多少名顾客，数字之间用1个空格分隔，行末不能有多余空格。\r\n\r\n### 输入样例：\r\n\r\n```in\r\n9\r\n0 20\r\n1 15\r\n1 61\r\n2 10\r\n10 5\r\n10 3\r\n30 18\r\n31 25\r\n31 2\r\n3\r\n```\r\n\r\n### 输出样例：\r\n\r\n```out\r\n6.2 17 61\r\n5 3 1\r\n```', 5, 32768, 5, '2020-07-30 10:27:21.439', NULL, '2020-07-30 14:32:11.027', NULL, 0, 0, '[\"C\", \"JAVA\", \"PYTHON\", \"C_PLUS_PLUS\"]', 0, 50000);
-INSERT INTO `judge_problem` VALUES (3243388, 'get the longest string', '测试', 5, 32768, 5, '2020-07-30 18:13:22.325', NULL, '2020-07-30 18:33:40.294', NULL, 0, 0, '[\"C_PLUS_PLUS\"]', 0, 50000);
+INSERT INTO `judge_problem` VALUES (3243388, '字符串匹配 ', '## 字符串匹配 \n\n给出一个最大长度为10^6的母串t，请你在t里面找到长度为len的出现次数最多的子串，如果找到多个出现次数一样的子串，请你输出字典序最小的。\n\n### 输入格式:\n\n在第一行输入一个正整数Len（Len<=10^6），第二行输入一个母串t，t的长度小于等于10^6。\n\n### 输出格式:\n\n输出答案子串和它在t中的出现次数，用一个空格分隔，行末尾没有多余空格！\n\n### 输入样例:\n\n在这里给出一组输入。例如：\n\n```in\n3\naba ababababababaaababababa\n```\n\n### 输出样例:\n\n在这里给出相应的输出。例如：\n\n```out\naba 11\n```', 5, 32768, 5, '2020-07-30 18:13:22.325', NULL, '2020-08-12 01:10:41.082', '[\"测试\"]', 0, 0, 0, 50000);
+INSERT INTO `judge_problem` VALUES (3243409, 'A+B Problem', '## 两数之和\n\n输入两个整数 a,b，输出它们的和（|a|,|b|\\leq 10^9∣*a*∣,∣*b*∣≤109）。\n\n## 输入格式\n\n两个整数以空格分开。\n\n## 输出格式\n\n一个整数。\n\n## 输入输出样例\n\n**输入 #1**\n\n```\n20 30\n```\n\n**输出 #1**\n\n```\n50\n```\n\n## 说明/提示\n\n本题各种语言的程序范例：\n\nC\n\n```c\n#include <stdio.h>\n\nint main() {\n    int a,b;\n    scanf(\"%d%d\",&a,&b);\n    printf(\"%d\", a+b);\n    return 0;\n}\n```\n\n\n\nC++\n\n```cpp\n#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    int a,b;\n    cin >> a >> b;\n    cout << a+b;\n    return 0;\n}\n```\n\n\n\nPython3\n\n```cpp\ns = input().split()\nprint(int(s[0]) + int(s[1]))\n```\n\n\n\n', 5, 32768, 5, '2020-08-06 20:41:18.026', NULL, '2020-08-11 10:37:05.141', '[\"EASY\"]', 0, 0, 0, 50000);
+INSERT INTO `judge_problem` VALUES (3243505, '两数之和', '## 两数之和\n\n输入两个整数 a,b，输出它们的和（|a|,|b|\\leq 10^9∣*a*∣,∣*b*∣≤109）。\n\n## 输入格式\n\n两个整数以空格分开。\n\n## 输出格式\n\n一个整数。\n\n## 输入输出样例\n\n**输入 #1**\n\n```\n20 30\n```\n\n**输出 #1**\n\n```\n50\n```\n\n## 说明/提示\n\n本题各种语言的程序范例：\n\nC\n\n```c\n#include <stdio.h>\n\nint main() {\n    int a,b;\n    scanf(\"%d%d\",&a,&b);\n    printf(\"%d\", a+b);\n    return 0;\n}\n```\n\n\n\nC++\n\n```cpp\n#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    int a,b;\n    cin >> a >> b;\n    cout << a+b;\n    return 0;\n}\n```\n\n\n\nPython3\n\n```cpp\ns = input().split()\nprint(int(s[0]) + int(s[1]))\n```\n\n\n\n', 6, 30000, NULL, '2020-08-13 10:50:40.015', NULL, '2020-08-15 18:51:43.517', '[\"入门\", \"测试\", \"demo\"]', 0, 0, 0, 50000);
 COMMIT;
 
 -- ----------------------------
@@ -82,19 +85,16 @@ CREATE TABLE `judge_solution` (
   `pk_problem` int DEFAULT NULL,
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of judge_solution
 -- ----------------------------
 BEGIN;
-INSERT INTO `judge_solution` VALUES (75, 'http://cdn.yuzzl.top/a_add_b_1.in', 'http://cdn.yuzzl.top/a_add_b_1.out', '2020-07-29 23:32:32.002', NULL, '2020-07-29 23:32:32.043', 3243290, NULL);
-INSERT INTO `judge_solution` VALUES (76, 'http://cdn.yuzzl.top/a_add_b_2.in', 'http://cdn.yuzzl.top/a_add_b_2.out', '2020-07-29 23:32:43.076', NULL, '2020-07-29 23:32:43.120', 3243290, NULL);
-INSERT INTO `judge_solution` VALUES (78, 'http://cdn.yuzzl.top/map_test_0.in', 'http://cdn.yuzzl.top/map_test_0.out', '2020-07-30 18:15:25.918', NULL, '2020-07-30 18:15:25.937', 3243388, NULL);
-INSERT INTO `judge_solution` VALUES (79, 'http://cdn.yuzzl.top/map_test_1.in', 'http://cdn.yuzzl.top/map_test_1.out', '2020-07-30 18:15:32.928', NULL, '2020-07-30 18:15:32.931', 3243388, NULL);
-INSERT INTO `judge_solution` VALUES (80, 'http://cdn.yuzzl.top/map_test_2.in', 'http://cdn.yuzzl.top/map_test_2.out', '2020-07-30 18:15:36.301', NULL, '2020-07-30 18:15:36.303', 3243388, NULL);
-INSERT INTO `judge_solution` VALUES (81, 'http://cdn.yuzzl.top/map_test_3.in', 'http://cdn.yuzzl.top/map_test_3.out', '2020-07-30 18:15:42.705', NULL, '2020-07-30 18:15:42.710', 3243388, NULL);
-INSERT INTO `judge_solution` VALUES (82, 'http://cdn.yuzzl.top/map_test_4.in', 'http://cdn.yuzzl.top/map_test_4.out', '2020-07-30 18:15:46.678', NULL, '2020-07-30 18:15:46.680', 3243388, NULL);
+INSERT INTO `judge_solution` VALUES (91, 'http://cdn.yuzzl.top/1596680709217.in', 'http://cdn.yuzzl.top/1596680709217.out', '2020-08-06 10:25:33.722', NULL, '2020-08-06 22:40:36.477', 3243409, '小数字');
+INSERT INTO `judge_solution` VALUES (92, 'http://cdn.yuzzl.top/1596680895742.in', 'http://cdn.yuzzl.top/1596680895742.out', '2020-08-06 10:28:28.435', NULL, '2020-08-06 22:40:35.219', 3243409, '大数字');
+INSERT INTO `judge_solution` VALUES (94, 'http://cdn.yuzzl.top/1596680709217.in', 'http://cdn.yuzzl.top/1596680709217.out', '2020-08-13 21:42:11.984', NULL, '2020-08-13 21:42:12.006', 3243505, '1');
+INSERT INTO `judge_solution` VALUES (95, 'http://cdn.yuzzl.top/1596680709217.in', 'http://cdn.yuzzl.top/1596680709217.out', '2020-08-13 21:42:13.291', NULL, '2020-08-13 21:42:13.333', 3243505, '1');
 COMMIT;
 
 -- ----------------------------
@@ -102,21 +102,26 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `problem_set`;
 CREATE TABLE `problem_set` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `creator` int DEFAULT NULL,
+  `pk_user` int DEFAULT NULL,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `delete_time` datetime DEFAULT NULL,
+  `deadline` datetime DEFAULT NULL,
+  `start_time` datetime DEFAULT NULL,
+  `allowed_language` json DEFAULT NULL,
+  `judge_preference` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'ACM',
+  `time_penalty` int DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of problem_set
 -- ----------------------------
 BEGIN;
-INSERT INTO `problem_set` VALUES (1, '1212', '121', 212, '2020-07-27 10:23:38', '2020-07-27 10:23:44', NULL);
+INSERT INTO `problem_set` VALUES (100, '测试题目集', 'test!aaa', 10007, '2020-07-27 10:23:38', '2020-08-15 23:14:09', NULL, '2020-08-15 11:35:55', '2020-08-13 18:00:00', '[\"C\", \"C_PLUS_PLUS\", \"PYTHON\", \"JAVA\"]', 'ACM', 20);
 COMMIT;
 
 -- ----------------------------
@@ -128,13 +133,34 @@ CREATE TABLE `problem_set_problem` (
   `pk_problem_set` int DEFAULT NULL,
   `pk_problem` int DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=560 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of problem_set_problem
 -- ----------------------------
 BEGIN;
-INSERT INTO `problem_set_problem` VALUES (1, 1, 3243290);
+INSERT INTO `problem_set_problem` VALUES (557, 100, 3243388);
+INSERT INTO `problem_set_problem` VALUES (558, 100, 3243409);
+INSERT INTO `problem_set_problem` VALUES (559, 100, 3243505);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for problem_set_user
+-- ----------------------------
+DROP TABLE IF EXISTS `problem_set_user`;
+CREATE TABLE `problem_set_user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pk_user` int DEFAULT NULL COMMENT '排名信息对应的用户ID',
+  `pk_problem_set` int DEFAULT NULL COMMENT '排名信息对应的题目集ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of problem_set_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `problem_set_user` VALUES (2, 10007, 100);
+INSERT INTO `problem_set_user` VALUES (3, 10011, 100);
 COMMIT;
 
 -- ----------------------------
@@ -155,14 +181,79 @@ CREATE TABLE `submission` (
   `judge_result` json DEFAULT NULL,
   `code_content` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `judge_preference` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'ACM',
+  `pk_problem_set` int DEFAULT NULL COMMENT '对应的题目集',
+  `is_ac_before` tinyint DEFAULT '0' COMMENT '本次提交之前是否已经AC了',
+  `pk_judge_host` int DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=379 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of submission
 -- ----------------------------
 BEGIN;
-INSERT INTO `submission` VALUES (236, 3243388, NULL, '2020-07-30 18:34:41', NULL, NULL, 'C_PLUS_PLUS', 'SUCCESS', 1129, 10996, '{\"extraInfo\": [\"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/Main.cpp: In function ‘int main()’:\", \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/Main.cpp:15:41: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]\", \"     for(int i = 0; i < s.length() - n + 1; i++) mp[s.substr(i, n)]++;\", \"                                         ^\", \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/Main.cpp:12:10: warning: unused variable ‘c’ [-Wunused-variable]\", \"     char c;\", \"          ^\"], \"judgeEndTime\": 1596105281721, \"judgeResults\": [{\"message\": \"ACCEPT\", \"condition\": 0, \"stdinPath\": \"/home/judgeEnvironment/resolutions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/3738d9d1-810d-4d41-8220-f8d2195cd168.in\", \"memoryCost\": \"1464\", \"stderrPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/d1d2ab07-5ec6-4639-a4db-968d19060ae8.err\", \"stdoutPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/dc807f88-ae5c-4e56-94c3-63dc02506d3b.out\", \"cpuTimeCost\": \"2\", \"realTimeCost\": \"3\"}, {\"message\": \"ACCEPT\", \"condition\": 0, \"stdinPath\": \"/home/judgeEnvironment/resolutions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/e65758a6-d33d-4c33-9d3e-95c7a2bdcf3a.in\", \"memoryCost\": \"10996\", \"stderrPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/28d0e697-d9d1-4342-9d4b-0e3e03a18fc1.err\", \"stdoutPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/19074e5b-c614-42f1-a726-1f7154fe0a5c.out\", \"cpuTimeCost\": \"9\", \"realTimeCost\": \"18\"}, {\"message\": \"ACCEPT\", \"condition\": 0, \"stdinPath\": \"/home/judgeEnvironment/resolutions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/9101b832-3173-436d-b773-7331ba6f308c.in\", \"memoryCost\": \"1500\", \"stderrPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/8e246b08-3fc8-4c99-b5c3-04c2eb017e73.err\", \"stdoutPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/25e22921-4e73-46c1-8159-7c4e64c0b62a.out\", \"cpuTimeCost\": \"23\", \"realTimeCost\": \"24\"}, {\"message\": \"ACCEPT\", \"condition\": 0, \"stdinPath\": \"/home/judgeEnvironment/resolutions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/089ed8b6-1ab6-464f-9757-83705ba00b02.in\", \"memoryCost\": \"4544\", \"stderrPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/34dc9154-0967-4405-a629-207696bb9456.err\", \"stdoutPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/37610d09-a4ed-4ca3-9f79-56639e48cb0a.out\", \"cpuTimeCost\": \"53\", \"realTimeCost\": \"64\"}, {\"message\": \"ACCEPT\", \"condition\": 0, \"stdinPath\": \"/home/judgeEnvironment/resolutions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/0773d7ac-cc0f-4a90-b46b-04d8e5c9318d.in\", \"memoryCost\": \"3704\", \"stderrPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/8026c76d-4279-4e7a-9584-46adb906c004.err\", \"stdoutPath\": \"/home/judgeEnvironment/submissions/904112f9-0527-44bc-8ed0-eaf3c6e085a7/59be8f30-050e-4682-89c6-7639d15fe16d.out\", \"cpuTimeCost\": \"1126\", \"realTimeCost\": \"1129\"}], \"submissionId\": \"904112f9-0527-44bc-8ed0-eaf3c6e085a7\"}', '#include <iostream>\n#include<map>\n#include <cstdio>\nusing namespace std;\n\nint main()\n{\n    int n;\n    scanf(\"%d\", &n);\n    map<string, int>mp;\n    string s;\n    char c;\n    getchar();\n    getline(cin, s);\n    for(int i = 0; i < s.length() - n + 1; i++) mp[s.substr(i, n)]++;\n    map<string,int>::iterator pointer;\n    string resolution;\n    int max = 0;\n    for(pointer = mp.begin(); pointer != mp.end(); pointer++)\n    {\n        if(pointer -> second > max)\n        {\n            max = pointer -> second;\n            resolution = pointer -> first;\n        }\n    }\n    printf(\"%s %d\", resolution.c_str(), max);\n    return 0;\n}', 'ACM');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `nickname` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户昵称',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '加密后的用户密码',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `delete_time` datetime DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户头像地址',
+  `ac_amount` int DEFAULT '0',
+  `submission_amount` int DEFAULT '0',
+  `scope` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'COMMON',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10012 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+BEGIN;
+INSERT INTO `user` VALUES (10007, 'admin', '4fa8d6515821cdbb82631985611f437a', '2020-08-03 18:46:00', '2020-08-16 15:35:13', NULL, 'yuzl1123@163.com', NULL, 100, 400, 'ADMIN');
+INSERT INTO `user` VALUES (10011, 'yzl', '4fa8d6515821cdbb82631985611f437a', '2020-08-13 09:47:23', '2020-08-16 15:35:17', NULL, 'yuzl1123@163.com', NULL, 0, 0, 'MANAGER');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for user_group
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group`;
+CREATE TABLE `user_group` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) DEFAULT NULL,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `delete_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of user_group
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for user_user_group
+-- ----------------------------
+DROP TABLE IF EXISTS `user_user_group`;
+CREATE TABLE `user_user_group` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pk_user` int DEFAULT NULL,
+  `pk_user_group` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of user_user_group
+-- ----------------------------
+BEGIN;
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

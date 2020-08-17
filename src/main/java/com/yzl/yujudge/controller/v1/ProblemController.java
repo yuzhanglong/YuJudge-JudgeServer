@@ -33,9 +33,13 @@ import java.util.List;
 @RequestMapping("/problem")
 public class ProblemController {
     private final ProblemService problemService;
+    private final Mapper mapper;
 
-    public ProblemController(ProblemService problemService) {
+    public ProblemController(
+            ProblemService problemService,
+            Mapper mapper) {
         this.problemService = problemService;
+        this.mapper = mapper;
     }
 
     /**
@@ -64,7 +68,6 @@ public class ProblemController {
     @GetMapping("/get_problem_detailed_by_id/{problemId}")
     public UnifiedResponse getProblemDetailedInfoById(@PathVariable Long problemId) {
         JudgeProblemEntity problem = problemService.getProblemInfoById(problemId);
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
         ProblemDetailVO problemDetailed = mapper.map(problem, ProblemDetailVO.class);
         return new UnifiedResponse(problemDetailed);
     }

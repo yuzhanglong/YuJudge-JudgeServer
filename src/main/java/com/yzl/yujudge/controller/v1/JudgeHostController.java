@@ -43,7 +43,7 @@ public class JudgeHostController {
      * @date 2020-08-16 21:02:54
      */
     @GetMapping("/get_judge_hosts_info")
-    public UnifiedResponse getJudgeHostInfo() {
+    public UnifiedResponse getJudgeHostsInfo() {
         List<JudgeHostBO> judgeHostVOList = judgeHostService.getJudgeConditionCache();
         return new UnifiedResponse(judgeHostVOList);
     }

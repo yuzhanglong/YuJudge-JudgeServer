@@ -4,11 +4,9 @@ import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.model.JudgeHostEntity;
 import com.yzl.yujudge.repository.JudgeHostRepository;
 import com.yzl.yujudge.service.JudgeHostService;
-import com.yzl.yujudge.store.redis.RedisOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
