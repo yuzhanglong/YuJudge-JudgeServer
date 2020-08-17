@@ -61,6 +61,10 @@ public class SubmissionEntity extends BaseEntity {
     private Boolean isAcBefore;
 
     @OneToOne
+    @JoinColumn(name = "pk_judge_host")
+    private JudgeHostEntity judgeHost;
+
+    @OneToOne
     @JoinColumn(name = "pk_problem_set", referencedColumnName = "id")
     private ProblemSetEntity problemSet;
 
@@ -178,5 +182,13 @@ public class SubmissionEntity extends BaseEntity {
 
     public void setCreator(UserEntity creator) {
         this.creator = creator;
+    }
+
+    public JudgeHostEntity getJudgeHost() {
+        return judgeHost;
+    }
+
+    public void setJudgeHost(JudgeHostEntity judgeHost) {
+        this.judgeHost = judgeHost;
     }
 }

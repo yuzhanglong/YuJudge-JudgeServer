@@ -1,9 +1,6 @@
 package com.yzl.yujudge.store.redis;
 
-import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.query.SortQuery;
-import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -120,33 +117,34 @@ public class RedisOperations {
 
     /**
      * @param key   键
-     * @param value 值
-     * @author yuzhanglong
-     * @description 向zSet中添加值
-     * @date 2020-08-14 21:27:47
+     * @param start 开始
+     * @param end   结束  0到-1代表所有值
+     * @return List<Object> list内容
+     * @description 获取list缓存的内容
      */
-    public void setSortedSet(String key, Object value) {
+    public List<Object> getList(String key, long start, long end) {
         try {
-            redisTemplate.opsForZSet().add(key, value, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setList(String key, Object value) {
-        try {
-            redisTemplate.opsForList().rightPush(key, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Object> getList(String key) {
-        try {
-            return redisTemplate.opsForList().range(key, 0, 2);
+            return redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+    /**
+     * @param key   键
+     * @param value 值
+     * @return Boolean 是否成功
+     * @description 将list放入缓存
+     */
+    public Boolean setList(String key, List<Object> value) {
+        try {
+            redisTemplate.opsForList().rightPushAll(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

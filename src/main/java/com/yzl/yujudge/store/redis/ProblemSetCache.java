@@ -29,8 +29,7 @@ public class ProblemSetCache {
     public void setProblemSetScoreBoardCache(ScoreBoardBO scoreBoardInfo, String problemSetId) {
         // 生成key
         String key = PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX + "_" + problemSetId;
-        ObjectMapper mapper = new ObjectMapper();
-        redisOperations.set(key, mapper.valueToTree(scoreBoardInfo));
+        redisOperations.set(key, scoreBoardInfo);
     }
 
     /**

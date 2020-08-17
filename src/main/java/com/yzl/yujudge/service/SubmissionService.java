@@ -2,6 +2,7 @@ package com.yzl.yujudge.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -41,6 +42,7 @@ public class SubmissionService {
     private final ProblemRepository problemRepository;
     private final ProblemSetRepository problemSetRepository;
     private final UserRepository userRepository;
+    private final JudgeHostService judgeHostService;
     private static final int COUNT_USER_RECENT_SUBMISSION_MAX_DAYS = 20;
     public static final String AC_AMOUNT_KEY_NAME = "acAmount";
     public static final String TOTAL_AMOUNT_KEY_NAME = "totalAmount";
@@ -49,11 +51,13 @@ public class SubmissionService {
             SubmissionRepository submissionRepository,
             ProblemRepository problemRepository,
             ProblemSetRepository problemSetRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            JudgeHostService judgeHostService) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
+        this.judgeHostService = judgeHostService;
     }
 
     /**
@@ -64,6 +68,8 @@ public class SubmissionService {
      * @date 2020-7-29 13:40:54
      */
     public SubmissionEntity initSubmission(SubmissionDTO submissionDTO) {
+        // TODO: 不要对数据库直接操作, 可以考虑放入线程池异步操作或者使用缓存?
+
         Long userId = UserHolder.getUserId();
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(submissionDTO.getProblemSetId());
         if (problemSetEntity == null) {
@@ -120,8 +126,10 @@ public class SubmissionService {
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
         JudgeHostJudgeRequestDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
 
+        // 选择一个合适的服务器
+        JudgeHostBO judgeHostToRequest = judgeHostService.chooseJudgeHostToRequest();
         // 执行判题请求
-        JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest();
+        JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(judgeHostToRequest.getAddress());
         try {
             String res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
             System.out.println(res);
@@ -146,7 +154,8 @@ public class SubmissionService {
     }
 
     /**
-     * @param submissionEntity 提交的实体对象
+     * @param submissionEntity      提交的实体对象
+     * @param judgeResultJsonString 判题结果的json字符串
      * @author yuzhanglong
      * @description 保存判题服务器的判题结果
      * @date 2020-7-30 10:34

@@ -28,18 +28,6 @@ public class JudgeHostController {
 
     /**
      * @author yuzhanglong
-     * @description 查看所有判题服务器信息
-     * @date 2020-7-30 18:20
-     */
-    @GetMapping("/inspect_all")
-    public UnifiedResponse inspectJudgeHost() {
-        List<JudgeHostBO> judgeHostBOList = judgeHostService.inspectJudgeHosts();
-        // TODO: BO转化为VO，觉得这里意义不大.....
-        return new UnifiedResponse(judgeHostBOList);
-    }
-
-    /**
-     * @author yuzhanglong
      * @description 添加一个judgeHost记录
      * @date 2020-7-30 18:31
      */
@@ -47,5 +35,16 @@ public class JudgeHostController {
     public UnifiedResponse createJudgeHost(@RequestBody @Validated JudgeHostDTO judgeHostDTO) {
         judgeHostService.createJudgeHost(judgeHostDTO);
         return new UnifiedResponse("添加判题服务器信息成功");
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取当前所有判题服务器信息
+     * @date 2020-08-16 21:02:54
+     */
+    @GetMapping("/get_judge_hosts_info")
+    public UnifiedResponse getJudgeHostInfo() {
+        List<JudgeHostBO> judgeHostVOList = judgeHostService.getJudgeConditionCache();
+        return new UnifiedResponse(judgeHostVOList);
     }
 }

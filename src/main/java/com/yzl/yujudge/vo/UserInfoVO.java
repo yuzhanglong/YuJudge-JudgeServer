@@ -11,6 +11,7 @@ public class UserInfoVO {
     private String avatar;
     private Integer acAmount;
     private Integer submissionAmount;
+    private String scope;
 
     public String getNickname() {
         return nickname;
@@ -52,6 +53,14 @@ public class UserInfoVO {
         this.submissionAmount = submissionAmount;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
     @Override
     public String toString() {
         return "UserInfoVO{" +
@@ -60,6 +69,7 @@ public class UserInfoVO {
                 ", avatar='" + avatar + '\'' +
                 ", acAmount=" + acAmount +
                 ", submissionAmount=" + submissionAmount +
+                ", scope='" + scope + '\'' +
                 '}';
     }
 }
