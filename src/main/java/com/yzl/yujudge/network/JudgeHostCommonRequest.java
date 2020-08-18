@@ -21,7 +21,7 @@ public class JudgeHostCommonRequest extends HttpRequest{
      * @date 2020-7-30 23:17
      * @description 发送用户提交到judgeHost
      */
-    public String testJudgeConnection(){
+    public String testJudgeConnection() {
         WebClient webClient = getWebClient();
         Mono<String> responseMono = webClient.get()
                 .uri("/common/test_connection")

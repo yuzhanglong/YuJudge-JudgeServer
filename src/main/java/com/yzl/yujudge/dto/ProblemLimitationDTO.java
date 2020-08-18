@@ -1,10 +1,7 @@
 package com.yzl.yujudge.dto;
 
-import com.yzl.yujudge.validators.annotations.LanguageListAccepted;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * @author yuzhanglong

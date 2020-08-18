@@ -3,7 +3,6 @@ package com.yzl.yujudge.model;
 import com.yzl.yujudge.utils.converter.ListJsonConverter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.Date;

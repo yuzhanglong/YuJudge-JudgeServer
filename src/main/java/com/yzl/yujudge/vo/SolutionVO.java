@@ -1,7 +1,6 @@
 package com.yzl.yujudge.vo;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author yuzhanglong

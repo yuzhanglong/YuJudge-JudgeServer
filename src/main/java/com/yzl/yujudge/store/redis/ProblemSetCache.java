@@ -1,6 +1,5 @@
 package com.yzl.yujudge.store.redis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.bo.ScoreBoardBO;
 import org.springframework.stereotype.Component;
 

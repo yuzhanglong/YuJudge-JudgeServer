@@ -1,7 +1,6 @@
 package com.yzl.yujudge.service;
 
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.ScoreBoardBO;
 import com.yzl.yujudge.bo.ScoreBoardItemBO;

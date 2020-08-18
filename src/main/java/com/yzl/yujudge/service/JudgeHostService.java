@@ -11,6 +11,7 @@ import com.yzl.yujudge.model.JudgeHostEntity;
 import com.yzl.yujudge.network.JudgeHostCommonRequest;
 import com.yzl.yujudge.repository.JudgeHostRepository;
 import com.yzl.yujudge.store.redis.JudgeHostCache;
+import com.yzl.yujudge.utils.compare.BestJudgeHostComparator;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,14 +28,16 @@ public class JudgeHostService {
     private final JudgeHostRepository judgeHostRepository;
     private final JudgeHostCache judgeHostCache;
     private final Mapper mapper;
+    private final ObjectMapper objectMapper;
 
     public JudgeHostService(
             JudgeHostRepository judgeHostRepository,
             JudgeHostCache judgeHostCache,
-            Mapper mapper) {
+            Mapper mapper, ObjectMapper objectMapper) {
         this.judgeHostRepository = judgeHostRepository;
         this.judgeHostCache = judgeHostCache;
         this.mapper = mapper;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -43,21 +46,21 @@ public class JudgeHostService {
      * @date 2020-7-30 19:06
      */
     public List<JudgeHostBO> inspectJudgeHosts(List<JudgeHostEntity> judgeHostEntityList) {
-        ObjectMapper objectMapper = new ObjectMapper();
         List<JudgeHostBO> judgeHostBOList = new ArrayList<>();
         for (JudgeHostEntity res : judgeHostEntityList) {
             JudgeHostBO judgeHost = mapper.map(res, JudgeHostBO.class);
             String address = res.getAddress();
             JudgeHostCommonRequest request = new JudgeHostCommonRequest(address);
-            String testResponse = request.testJudgeConnection();
             try {
+                String testResponse = request.testJudgeConnection();
                 JudgeHostConnectionDTO responseDTO = objectMapper.readValue(testResponse, JudgeHostConnectionDTO.class);
                 boolean isSuccess = isConnectSuccess(responseDTO);
                 judgeHost.setCondition(responseDTO.getData());
                 judgeHost.setConnection(isSuccess);
             } catch (JsonProcessingException e) {
-                // TODO: 走到这里说明judgeHost没有响应，需要日志记录
-                // 顺便告诉前端这个服务器处于非正常状态
+                e.printStackTrace();
+            } catch (Exception e) {
+                // 此处为连接错误(响应超时等)
                 judgeHost.setConnection(false);
             }
             judgeHostBOList.add(judgeHost);
@@ -113,9 +116,9 @@ public class JudgeHostService {
         return judgeHostBOList;
     }
 
-    public JudgeHostBO getJudgeHostConditionById(Long judgeHostId){
+    public JudgeHostBO getJudgeHostConditionById(Long judgeHostId) {
         Object judgeHost = judgeHostCache.getJudgeHostsConditionByJudgeHostId(judgeHostId.toString());
-        if(judgeHost == null){
+        if (judgeHost == null) {
             throw new NotFoundException("B0013");
         }
         return mapper.map(judgeHost, JudgeHostBO.class);
@@ -134,8 +137,25 @@ public class JudgeHostService {
      */
     public JudgeHostBO chooseJudgeHostToRequest() {
         // 从缓存中获取所有判题机的信息
-        List<JudgeHostBO> res = getJudgeHostsCondition();
+        List<JudgeHostBO> judgeHosts = getJudgeHostsCondition();
         // TODO: 设计一个负载均衡的算法，最终返回一个可以请求的判题机信息
-        return res.get(0);
+        int finalIndex = -1;
+        int judgeHostAmount = judgeHosts.size();
+        judgeHosts.sort(new BestJudgeHostComparator());
+        for (int i = 0; i < judgeHostAmount; i++) {
+            JudgeHostBO judgeHost = judgeHosts.get(i);
+            // isActive 由系统管理员控制，表示判题机是否开启
+            boolean isActive = judgeHost.getActive();
+            // isConnected 由服务端定时请求判题机得来，如果为真表示连接正常
+            boolean isConnected = judgeHost.getConnection();
+            if (isActive && isConnected) {
+                finalIndex = i;
+                break;
+            }
+        }
+        if (finalIndex == -1) {
+            return null;
+        }
+        return judgeHosts.get(finalIndex);
     }
 }

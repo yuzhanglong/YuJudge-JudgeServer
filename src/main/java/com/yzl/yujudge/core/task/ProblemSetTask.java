@@ -38,13 +38,11 @@ public class ProblemSetTask {
      */
     @Scheduled(fixedDelay = 5 * 1_000)
     public void renewActiveProblemSetScoreBoard() {
-        System.out.println("====scoreboard-start====");
         Date current = new Date();
         List<ProblemSetEntity> activeProblemSets = problemSetRepository.fineBetweenCurrentTime(current);
         for (ProblemSetEntity activeProblemSet : activeProblemSets) {
             ScoreBoardBO scoreBoardBO = problemSetService.getProblemSetScoreBoard(activeProblemSet);
             problemSetCache.setProblemSetScoreBoardCache(scoreBoardBO, activeProblemSet.getId().toString());
         }
-        System.out.println("====scoreboard-end====");
     }
 }

@@ -128,15 +128,16 @@ public class SubmissionService {
 
         // 选择一个合适的服务器
         JudgeHostBO judgeHostToRequest = judgeHostService.chooseJudgeHostToRequest();
+
         // 执行判题请求
         JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(judgeHostToRequest.getAddress());
         try {
             String res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
-            System.out.println(res);
             // 保存判题结果
             saveJudgeResult(submission, res);
         } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
+            System.out.println("连接失败");
         }
     }
 
