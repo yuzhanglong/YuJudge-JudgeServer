@@ -11,12 +11,14 @@ import java.util.Date;
  */
 
 public class JudgeHostBO {
+    private Long id;
     private String name;
     private String address;
     private Boolean active;
     private Date createTime;
     private JudgeHostConditionDTO condition;
     private Boolean connection;
+
 
 
     public Boolean getConnection() {
@@ -65,6 +67,14 @@ public class JudgeHostBO {
 
     public void setCondition(JudgeHostConditionDTO condition) {
         this.condition = condition;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

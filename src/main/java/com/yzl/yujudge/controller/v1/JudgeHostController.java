@@ -1,9 +1,11 @@
 package com.yzl.yujudge.controller.v1;
 
+import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.service.JudgeHostService;
+import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +23,11 @@ import java.util.List;
 @RequestMapping("/judge_host")
 public class JudgeHostController {
     private final JudgeHostService judgeHostService;
+    private final Mapper mapper;
 
-    public JudgeHostController(JudgeHostService judgeHostService) {
+    public JudgeHostController(JudgeHostService judgeHostService, Mapper mapper) {
         this.judgeHostService = judgeHostService;
+        this.mapper = mapper;
     }
 
     /**
@@ -44,7 +48,18 @@ public class JudgeHostController {
      */
     @GetMapping("/get_judge_hosts_info")
     public UnifiedResponse getJudgeHostsInfo() {
-        List<JudgeHostBO> judgeHostVOList = judgeHostService.getJudgeConditionCache();
+        List<JudgeHostBO> judgeHostVOList = judgeHostService.getJudgeHostsCondition();
         return new UnifiedResponse(judgeHostVOList);
+    }
+
+    /**
+     * @author yuzhanglong
+     * @description 获取当前所有判题服务器信息
+     * @date 2020-08-16 21:02:54
+     */
+    @GetMapping("/get_judge_host_by_id/{judgeHostId}")
+    public UnifiedResponse getJudgeHostById(@PathVariable Long judgeHostId) {
+        JudgeHostBO judgeHostBO = judgeHostService.getJudgeHostConditionById(judgeHostId);
+        return new UnifiedResponse(mapper.map(judgeHostBO, JudgeHostVO.class));
     }
 }

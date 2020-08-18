@@ -2,19 +2,15 @@ package com.yzl.yujudge.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
-import com.yzl.yujudge.dto.JudgeHostConditionDTO;
+import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostConnectionDTO;
 import com.yzl.yujudge.dto.JudgeHostDTO;
-import com.yzl.yujudge.dto.JudgeHostResponseDTO;
 import com.yzl.yujudge.model.JudgeHostEntity;
 import com.yzl.yujudge.network.JudgeHostCommonRequest;
 import com.yzl.yujudge.repository.JudgeHostRepository;
 import com.yzl.yujudge.store.redis.JudgeHostCache;
-import com.yzl.yujudge.utils.EntityToVoListMapper;
-import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -93,18 +89,6 @@ public class JudgeHostService {
     }
 
     /**
-     * @author yuzhanglong
-     * @description 获取当前所有判题服务器信息
-     * @date 2020-08-16 21:01:41
-     */
-    public List<JudgeHostVO> getJudgeHostsInfo() {
-        List<JudgeHostEntity> judgeHostEntities = judgeHostRepository.findAll();
-        EntityToVoListMapper<JudgeHostEntity, JudgeHostVO> mapper = new EntityToVoListMapper<>(judgeHostEntities, JudgeHostVO.class);
-        return mapper.getItems();
-    }
-
-
-    /**
      * @param judgeHostBOList 判题机相关业务对象
      * @author yuzhanglong
      * @description 判题机状态的信息, 存入redis中
@@ -115,18 +99,28 @@ public class JudgeHostService {
     }
 
     /**
+     * @return List<JudgeHostBO> 判题机相关业务对象
      * @author yuzhanglong
      * @description 获取缓存中判题机状态的信息
      * @date 2020-08-17 14:24:55
      */
-    public List<JudgeHostBO> getJudgeConditionCache() {
-        List<Object> rawList = judgeHostCache.getJudgeConditionCache();
+    public List<JudgeHostBO> getJudgeHostsCondition() {
+        List<Object> rawList = judgeHostCache.getJudgeHostsConditionListCache();
         List<JudgeHostBO> judgeHostBOList = new ArrayList<>();
         for (Object o : rawList) {
             judgeHostBOList.add(mapper.map(o, JudgeHostBO.class));
         }
         return judgeHostBOList;
     }
+
+    public JudgeHostBO getJudgeHostConditionById(Long judgeHostId){
+        Object judgeHost = judgeHostCache.getJudgeHostsConditionByJudgeHostId(judgeHostId.toString());
+        if(judgeHost == null){
+            throw new NotFoundException("B0013");
+        }
+        return mapper.map(judgeHost, JudgeHostBO.class);
+    }
+
 
     /**
      * @return 可以请求的judgeHostBO
@@ -140,7 +134,7 @@ public class JudgeHostService {
      */
     public JudgeHostBO chooseJudgeHostToRequest() {
         // 从缓存中获取所有判题机的信息
-        List<JudgeHostBO> res = getJudgeConditionCache();
+        List<JudgeHostBO> res = getJudgeHostsCondition();
         // TODO: 设计一个负载均衡的算法，最终返回一个可以请求的判题机信息
         return res.get(0);
     }

@@ -5,6 +5,7 @@ import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.repository.ProblemSetRepository;
 import com.yzl.yujudge.service.ProblemSetService;
 import com.yzl.yujudge.store.redis.ProblemSetCache;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -35,7 +36,7 @@ public class ProblemSetTask {
      * @description 更新活跃题目集记分板的信息
      * @date 2020-08-14 14:32:12
      */
-//    @Scheduled(fixedDelay = 5 * 1_000)
+    @Scheduled(fixedDelay = 5 * 1_000)
     public void renewActiveProblemSetScoreBoard() {
         System.out.println("====scoreboard-start====");
         Date current = new Date();

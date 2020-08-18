@@ -3,8 +3,9 @@ package com.yzl.yujudge.store.redis;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yuzhanglong
@@ -29,16 +30,36 @@ public class JudgeHostCache {
     public void setJudgeConditionCache(List<JudgeHostBO> judgeHostBOList) {
         // 删除旧数据
         redisOperations.remove(JUDGE_HOST_INFO_SAVE_PREFIX);
-        // 遍历判断过的judgeHostBO
+        // 遍历判断过的judgeHostBO,并将每一项存入hashMap
         for (JudgeHostBO judgeHostBO : judgeHostBOList) {
-            boolean isSet = redisOperations.setList(
+            boolean isSet = redisOperations.setHashMap(
                     JUDGE_HOST_INFO_SAVE_PREFIX,
-                    Collections.singletonList(judgeHostBO)
+                    judgeHostBO.getId().toString(),
+                    judgeHostBO
             );
         }
     }
 
-    public List<Object> getJudgeConditionCache() {
-        return redisOperations.getList(JUDGE_HOST_INFO_SAVE_PREFIX, 0, -1);
+    /**
+     * @return List<Object> 判题机信息列表
+     * @author yuzhanglong
+     * @description 获取缓存中redis状态的信息
+     * @date 2020-8-18 14:30:40
+     */
+    public List<Object> getJudgeHostsConditionListCache() {
+        Map<Object, Object> res = redisOperations.getHashMap(JUDGE_HOST_INFO_SAVE_PREFIX);
+        return new ArrayList<>(res.values());
+    }
+
+
+    /**
+     * @return Object 判题机信息列表 / null 如果判题机信息不存在的话
+     * @author yuzhanglong
+     * @description 通过id 获取缓存中redis状态的信息（单个判题机）
+     * @date 2020-8-18 14:32:39
+     */
+    public Object getJudgeHostsConditionByJudgeHostId(String key) {
+        Map<Object, Object> res = redisOperations.getHashMap(JUDGE_HOST_INFO_SAVE_PREFIX);
+        return res.get(key);
     }
 }

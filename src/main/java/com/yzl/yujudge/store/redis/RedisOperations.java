@@ -1,10 +1,11 @@
 package com.yzl.yujudge.store.redis;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,8 +18,12 @@ import java.util.concurrent.TimeUnit;
 public class RedisOperations {
     private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+
+    private final RedisTemplate<Object, Object> redisTemplate;
+
+    public RedisOperations(RedisTemplate<Object, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * @param key   键
@@ -146,5 +151,50 @@ public class RedisOperations {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * @param key   键
+     * @param item  项
+     * @param value 值
+     * @return true 成功 false失败
+     * @description 向一张hash表中放入数据, 如果不存在将创建
+     */
+    public Boolean setHashMap(String key, String item, Object value) {
+        try {
+            redisTemplate.opsForHash().put(key, item, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * @param key  键 不能为null
+     * @param item 项 可以使多个 不能为null
+     * @description 删除hash表中的值
+     */
+    public void deleteHashMapItem(String key, Object... item) {
+        redisTemplate.opsForHash().delete(key, item);
+    }
+
+    /**
+     * @param key  键 不能为null
+     * @param item 项 不能为null
+     * @return 值
+     * @description 获取hash表中的值
+     */
+    public Object getHashMapByItemKey(String key, String item) {
+        return redisTemplate.opsForHash().get(key, item);
+    }
+
+    /**
+     * 获取hashKey对应的所有键值
+     * @param key 键
+     * @return 对应的多个键值
+     */
+    public Map<Object, Object> getHashMap(String key) {
+        return redisTemplate.opsForHash().entries(key);
     }
 }
