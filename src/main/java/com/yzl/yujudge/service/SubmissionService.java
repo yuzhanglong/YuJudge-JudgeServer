@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
+import com.yzl.yujudge.core.enumeration.JudgeResultEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
@@ -131,14 +132,18 @@ public class SubmissionService {
 
         // 执行判题请求
         JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(judgeHostToRequest.getAddress());
+        String res;
+        boolean isJudgeSuccess = false;
         try {
-            String res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
-            // 保存判题结果
-            saveJudgeResult(submission, res);
+            res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
+            isJudgeSuccess = true;
         } catch (WebClientResponseException e) {
-            System.out.println(e.getResponseBodyAsString());
-            System.out.println("连接失败");
+            // 不是正常的200返回会执行下面的代码，本次判题无效，结果将被置为 UNKNOWN_ERROR -- 未知错误
+            // 非200返回的原因一般来自出题者，例如限制大小不合规范、没有添加测试点（期望输入、输出）
+            res = new String(e.getResponseBodyAsByteArray());
         }
+        // 保存判题结果
+        saveJudgeResult(submission, res, isJudgeSuccess);
     }
 
     /**
@@ -156,25 +161,35 @@ public class SubmissionService {
 
     /**
      * @param submissionEntity      提交的实体对象
-     * @param judgeResultJsonString 判题结果的json字符串
+     * @param judgeResultString 判题结果的json字符串
+     * @param isJudgeSuccess        是否成功完成判题
      * @author yuzhanglong
      * @description 保存判题服务器的判题结果
      * @date 2020-7-30 10:34
      */
-    private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultJsonString) {
+    private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultString, Boolean isJudgeSuccess) {
         submissionEntity.setCondition(JudgeConditionEnum.SUCCESS.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            JudgeResultDTO judgeResult = objectMapper.readValue(judgeResultJsonString, JudgeResultDTO.class);
-            JudgeResultCalculateUtil calculator = new JudgeResultCalculateUtil(judgeResult);
-            submissionEntity.setJudgeResult(judgeResult);
-            calculator.executeCalculate();
-            submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
-            submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));
-            submissionEntity.setCondition(calculator.countJudgeResult().toString());
-            submissionEntity.setIsAcBefore(isAcBeforeInProblemSet(submissionEntity));
+            if (isJudgeSuccess) {
+                JudgeResultDTO judgeResult = objectMapper.readValue(judgeResultString, JudgeResultDTO.class);
+                JudgeResultCalculateUtil calculator = new JudgeResultCalculateUtil(judgeResult);
+                submissionEntity.setJudgeResult(judgeResult);
+                calculator.executeCalculate();
+                submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
+                submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));
+                submissionEntity.setCondition(calculator.countJudgeResult().toString());
+                submissionEntity.setIsAcBefore(isAcBeforeInProblemSet(submissionEntity));
+            } else {
+                JudgeResultDTO judgeResult = new JudgeResultDTO();
+                List<String> res = new ArrayList<>();
+                res.add(judgeResultString);
+                judgeResult.setExtraInfo(res);
+                submissionEntity.setJudgeResult(judgeResult);
+                submissionEntity.setCondition(JudgeResultEnum.UNKNOWN_ERROR.toString());
+            }
         } catch (JsonProcessingException e) {
-            submissionEntity.setCondition(JudgeConditionEnum.ERROR.toString());
+            submissionEntity.setCondition(JudgeResultEnum.UNKNOWN_ERROR.toString());
         }
         submissionRepository.save(submissionEntity);
     }
