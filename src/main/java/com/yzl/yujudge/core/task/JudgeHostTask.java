@@ -1,13 +1,8 @@
 package com.yzl.yujudge.core.task;
 
-import com.yzl.yujudge.bo.JudgeHostBO;
-import com.yzl.yujudge.model.JudgeHostEntity;
-import com.yzl.yujudge.repository.JudgeHostRepository;
 import com.yzl.yujudge.service.JudgeHostService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @author yuzhanglong
@@ -17,13 +12,10 @@ import java.util.List;
 
 @Component
 public class JudgeHostTask {
-    private final JudgeHostRepository judgeHostRepository;
     private final JudgeHostService judgeHostService;
 
     public JudgeHostTask(
-            JudgeHostRepository judgeHostRepository,
             JudgeHostService judgeHostService) {
-        this.judgeHostRepository = judgeHostRepository;
         this.judgeHostService = judgeHostService;
     }
 
@@ -34,9 +26,6 @@ public class JudgeHostTask {
      */
     @Scheduled(fixedDelay = 5 * 1_000)
     public void testJudgeHostConnection() {
-        // 从数据库中找出所有判题机信息
-        List<JudgeHostEntity> judgeHostEntities = judgeHostRepository.findAll();
-        List<JudgeHostBO> judgeHostBOList = judgeHostService.inspectJudgeHosts(judgeHostEntities);
-        judgeHostService.setJudgeConditionCache(judgeHostBOList);
+        judgeHostService.setJudgeConditionCache();
     }
 }

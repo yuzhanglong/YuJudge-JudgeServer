@@ -92,12 +92,14 @@ public class JudgeHostService {
     }
 
     /**
-     * @param judgeHostBOList 判题机相关业务对象
      * @author yuzhanglong
      * @description 判题机状态的信息, 存入redis中
      * @date 2020-08-17 14:18:59
      */
-    public void setJudgeConditionCache(List<JudgeHostBO> judgeHostBOList) {
+    public void setJudgeConditionCache() {
+        // 从数据库中找出所有判题机信息
+        List<JudgeHostEntity> judgeHostEntities = judgeHostRepository.findAll();
+        List<JudgeHostBO> judgeHostBOList = inspectJudgeHosts(judgeHostEntities);
         judgeHostCache.setJudgeConditionCache(judgeHostBOList);
     }
 
@@ -157,5 +159,29 @@ public class JudgeHostService {
             return null;
         }
         return judgeHosts.get(finalIndex);
+    }
+
+
+    /**
+     * @return boolean 当前该判题机状态
+     * @author yuzhanglong
+     * @date 2020-8-18 23:46:27
+     * @description 改变某个判题服务器活跃状态【isActive】
+     * 如果当前为【活跃】状态，将被替换为【非活跃状态】，反之亦然
+     * 值得注意的是, 改变活跃状态并不是停止判题服务器的服务
+     * 但是，接下来执行判题操作时，
+     * 我们不会再请求【非活跃】的服务器，直至状态被重置为【活跃】
+     */
+    public Boolean makeJudgeHostActiveOrUnActive(Long judgeHostId) {
+        JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
+        if(judgeHostEntity == null){
+            throw new NotFoundException("B0013");
+        }
+        boolean isActive = judgeHostEntity.getActive();
+        judgeHostEntity.setActive(!isActive);
+        judgeHostRepository.save(judgeHostEntity);
+        // 更新缓存
+        setJudgeConditionCache();
+        return !isActive;
     }
 }

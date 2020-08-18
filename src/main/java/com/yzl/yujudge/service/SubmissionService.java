@@ -15,10 +15,7 @@ import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.network.JudgeHostJudgeRequest;
-import com.yzl.yujudge.repository.ProblemRepository;
-import com.yzl.yujudge.repository.ProblemSetRepository;
-import com.yzl.yujudge.repository.SubmissionRepository;
-import com.yzl.yujudge.repository.UserRepository;
+import com.yzl.yujudge.repository.*;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
@@ -44,6 +41,7 @@ public class SubmissionService {
     private final ProblemSetRepository problemSetRepository;
     private final UserRepository userRepository;
     private final JudgeHostService judgeHostService;
+    private final JudgeHostRepository judgeHostRepository;
     private static final int COUNT_USER_RECENT_SUBMISSION_MAX_DAYS = 20;
     public static final String AC_AMOUNT_KEY_NAME = "acAmount";
     public static final String TOTAL_AMOUNT_KEY_NAME = "totalAmount";
@@ -53,12 +51,14 @@ public class SubmissionService {
             ProblemRepository problemRepository,
             ProblemSetRepository problemSetRepository,
             UserRepository userRepository,
-            JudgeHostService judgeHostService) {
+            JudgeHostService judgeHostService,
+            JudgeHostRepository judgeHostRepository) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
         this.judgeHostService = judgeHostService;
+        this.judgeHostRepository = judgeHostRepository;
     }
 
     /**
@@ -120,9 +120,6 @@ public class SubmissionService {
         // 获取这个submission对应的problem实体
         JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionEntity.getPkProblem());
 
-        // TODO: 如果目标problem不存在,需要记录错误（不是返回异常，因为这是异步操作）
-        // TODO: 对于某段时间内大量的提交，有一定的并发量，我们直接在数据库save有些不妥，需要使用缓存
-
         // 进入这个方法说明已经完成了排队操作，我们将状态置为【PENDING -- 判题中】
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
         JudgeHostJudgeRequestDTO judgeHostDTO = ToDtoUtil.submissionToJudgeHostDTO(judgeProblemEntity, submission);
@@ -142,6 +139,7 @@ public class SubmissionService {
             // 非200返回的原因一般来自出题者，例如限制大小不合规范、没有添加测试点（期望输入、输出）
             res = new String(e.getResponseBodyAsByteArray());
         }
+        submissionEntity.setJudgeHost(judgeHostRepository.findOneById(judgeHostToRequest.getId()));
         // 保存判题结果
         saveJudgeResult(submission, res, isJudgeSuccess);
     }
@@ -160,9 +158,9 @@ public class SubmissionService {
     }
 
     /**
-     * @param submissionEntity      提交的实体对象
+     * @param submissionEntity  提交的实体对象
      * @param judgeResultString 判题结果的json字符串
-     * @param isJudgeSuccess        是否成功完成判题
+     * @param isJudgeSuccess    是否成功完成判题
      * @author yuzhanglong
      * @description 保存判题服务器的判题结果
      * @date 2020-7-30 10:34

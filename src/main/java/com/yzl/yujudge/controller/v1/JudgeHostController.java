@@ -53,6 +53,7 @@ public class JudgeHostController {
     }
 
     /**
+     * @param judgeHostId 判题机id
      * @author yuzhanglong
      * @description 获取当前所有判题服务器信息
      * @date 2020-08-16 21:02:54
@@ -61,5 +62,18 @@ public class JudgeHostController {
     public UnifiedResponse getJudgeHostById(@PathVariable Long judgeHostId) {
         JudgeHostBO judgeHostBO = judgeHostService.getJudgeHostConditionById(judgeHostId);
         return new UnifiedResponse(mapper.map(judgeHostBO, JudgeHostVO.class));
+    }
+
+    /**
+     * @param judgeHostId 判题机id
+     * @author yuzhanglong
+     * @description 修改判题机状态，
+     * 相关解释请参考 makeJudgeHostActiveOrUnActive方法
+     * @date 2020-8-19 00:18:05
+     */
+    @PutMapping("/reset_active_condition/{judgeHostId}")
+    public UnifiedResponse makeJudgeHostActiveOrUnActive(@PathVariable Long judgeHostId) {
+        Boolean isActive = judgeHostService.makeJudgeHostActiveOrUnActive(judgeHostId);
+        return new UnifiedResponse("状态修改成功，当前状态: " + (isActive ? "运行中" : "已暂停"));
     }
 }
