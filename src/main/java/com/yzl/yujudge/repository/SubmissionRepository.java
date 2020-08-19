@@ -210,7 +210,8 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
             "FROM submission s " +
             "WHERE s.create_time BETWEEN ?1 and ?2 " +
             "and s.pk_judge_host = ?3 " +
-            "GROUP BY DATE(s.create_time), HOUR(s.create_time)",
+            "GROUP BY DATE(s.create_time), HOUR(s.create_time) " +
+            "ORDER BY DATE(s.create_time), HOUR(s.create_time)",
             nativeQuery = true)
     Set<List<Object>> countSubmissionGroupByHoursByJudgeHostId(Date start, Date end, Long judgeHostId);
 }

@@ -1,4 +1,4 @@
-package com.yzl.yujudge.utils.compare;
+package com.yzl.yujudge.utils.comparator;
 
 
 import com.yzl.yujudge.bo.JudgeHostBO;
@@ -16,13 +16,13 @@ public class BestJudgeHostComparator implements Comparator<JudgeHostBO> {
     @Override
     public int compare(JudgeHostBO o1, JudgeHostBO o2) {
         // 当前工作数少的优先
-        if (o1.getCondition().getWorkingAmount() < o2.getCondition().getWorkingAmount()) {
+        if (o1.getCondition().getWorkingAmount() > o2.getCondition().getWorkingAmount()) {
             return 1;
-        } else if (o1.getCondition().getWorkingAmount() > o2.getCondition().getWorkingAmount()) {
+        } else if (o1.getCondition().getWorkingAmount() < o2.getCondition().getWorkingAmount()) {
             return -1;
         } else {
             // 当前排队数少的优先
-            return o2.getCondition().getQueueAmount() - o1.getCondition().getQueueAmount();
+            return o1.getCondition().getQueueAmount() - o2.getCondition().getQueueAmount();
         }
     }
 }

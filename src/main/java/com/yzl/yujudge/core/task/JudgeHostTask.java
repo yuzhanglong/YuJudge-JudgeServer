@@ -24,7 +24,7 @@ public class JudgeHostTask {
      * @description 更新判题机状态的信息, 最终这些信息会被存入redis中
      * @date 2020-08-17 12:25:40
      */
-    @Scheduled(fixedDelay = 5 * 1_000)
+    @Scheduled(fixedDelay = 1_000)
     public void testJudgeHostConnection() {
         judgeHostService.setJudgeConditionCache();
     }

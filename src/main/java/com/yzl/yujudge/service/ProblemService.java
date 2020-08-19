@@ -129,6 +129,7 @@ public class ProblemService {
         JudgeSolutionEntity solutionEntity = mapper.map(solution, JudgeSolutionEntity.class);
         problemEntity.getJudgeSolutionEntityList().add(solutionEntity);
         solutionRepository.save(solutionEntity);
+        problemRepository.save(problemEntity);
     }
 
 

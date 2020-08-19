@@ -19,7 +19,7 @@ import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.store.redis.ProblemSetCache;
 import com.yzl.yujudge.utils.DateTimeUtil;
-import com.yzl.yujudge.utils.compare.ScoreBoardItemComparator;
+import com.yzl.yujudge.utils.comparator.ScoreBoardItemComparator;
 import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

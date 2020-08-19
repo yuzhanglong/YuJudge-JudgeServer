@@ -2,6 +2,7 @@ package com.yzl.yujudge;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author yuzhanglong
@@ -10,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-//@EnableScheduling
+@EnableScheduling
 public class YuJudgeJudgeServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(YuJudgeJudgeServerApplication.class, args);

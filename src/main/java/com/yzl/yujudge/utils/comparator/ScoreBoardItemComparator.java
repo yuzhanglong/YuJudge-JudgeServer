@@ -1,4 +1,4 @@
-package com.yzl.yujudge.utils.compare;
+package com.yzl.yujudge.utils.comparator;
 
 import com.yzl.yujudge.bo.ScoreBoardItemBO;
 

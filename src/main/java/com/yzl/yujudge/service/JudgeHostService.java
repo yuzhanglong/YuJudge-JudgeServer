@@ -13,7 +13,7 @@ import com.yzl.yujudge.network.JudgeHostCommonRequest;
 import com.yzl.yujudge.repository.JudgeHostRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.store.redis.JudgeHostCache;
-import com.yzl.yujudge.utils.compare.BestJudgeHostComparator;
+import com.yzl.yujudge.utils.comparator.BestJudgeHostComparator;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
 import org.springframework.stereotype.Service;
 
@@ -151,6 +151,7 @@ public class JudgeHostService {
         int finalIndex = -1;
         int judgeHostAmount = judgeHosts.size();
         judgeHosts.sort(new BestJudgeHostComparator());
+
         for (int i = 0; i < judgeHostAmount; i++) {
             JudgeHostBO judgeHost = judgeHosts.get(i);
             // isActive 由系统管理员控制，表示判题机是否开启
