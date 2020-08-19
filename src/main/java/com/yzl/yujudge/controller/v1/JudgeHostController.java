@@ -3,12 +3,16 @@ package com.yzl.yujudge.controller.v1;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.service.JudgeHostService;
+import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
 import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -31,6 +35,7 @@ public class JudgeHostController {
     }
 
     /**
+     * @param judgeHostDTO 判题机信息数据传输对象
      * @author yuzhanglong
      * @description 添加一个judgeHost记录
      * @date 2020-7-30 18:31
@@ -75,5 +80,32 @@ public class JudgeHostController {
     public UnifiedResponse makeJudgeHostActiveOrUnActive(@PathVariable Long judgeHostId) {
         Boolean isActive = judgeHostService.makeJudgeHostActiveOrUnActive(judgeHostId);
         return new UnifiedResponse("状态修改成功，当前状态: " + (isActive ? "运行中" : "已暂停"));
+    }
+
+
+    /**
+     * @param judgeHostId 判题机id
+     * @param begin       开始时间
+     * @param end         结束时间
+     * @author yuzhanglong
+     * @description 统计某个时间段内某个判题机的提交数据
+     * @date 2020-8-19 17:04:47
+     */
+    @GetMapping("/count_judge_host_submission")
+    public UnifiedResponse countJudgeHostSubmission(
+            @RequestParam String begin,
+            @RequestParam String end,
+            @RequestParam Long judgeHostId) {
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            CountSubmissionByTimeVO res = judgeHostService.countJudgeHostsSubmissionByTimeBetween(
+                    dateformat.parse(begin),
+                    dateformat.parse(end),
+                    judgeHostId
+            );
+            return new UnifiedResponse(res);
+        } catch (ParseException e) {
+            throw new ForbiddenException("A0008");
+        }
     }
 }

@@ -5,17 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
+import com.yzl.yujudge.dto.JudgeHostConditionDTO;
 import com.yzl.yujudge.dto.JudgeHostConnectionDTO;
 import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.model.JudgeHostEntity;
 import com.yzl.yujudge.network.JudgeHostCommonRequest;
 import com.yzl.yujudge.repository.JudgeHostRepository;
+import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.store.redis.JudgeHostCache;
 import com.yzl.yujudge.utils.compare.BestJudgeHostComparator;
+import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yuzhanglong
@@ -29,15 +31,18 @@ public class JudgeHostService {
     private final JudgeHostCache judgeHostCache;
     private final Mapper mapper;
     private final ObjectMapper objectMapper;
+    private final SubmissionRepository submissionRepository;
 
     public JudgeHostService(
             JudgeHostRepository judgeHostRepository,
             JudgeHostCache judgeHostCache,
-            Mapper mapper, ObjectMapper objectMapper) {
+            Mapper mapper, ObjectMapper objectMapper,
+            SubmissionRepository submissionRepository) {
         this.judgeHostRepository = judgeHostRepository;
         this.judgeHostCache = judgeHostCache;
         this.mapper = mapper;
         this.objectMapper = objectMapper;
+        this.submissionRepository = submissionRepository;
     }
 
     /**
@@ -61,6 +66,7 @@ public class JudgeHostService {
                 e.printStackTrace();
             } catch (Exception e) {
                 // 此处为连接错误(响应超时等)
+                judgeHost.setCondition(new JudgeHostConditionDTO());
                 judgeHost.setConnection(false);
             }
             judgeHostBOList.add(judgeHost);
@@ -69,6 +75,7 @@ public class JudgeHostService {
     }
 
     /**
+     * @param judgeHostDTO 判题机相关数据传输对象
      * @author yuzhanglong
      * @description 添加一个judgeHost记录
      * @date 2020-7-30 18:34
@@ -174,7 +181,7 @@ public class JudgeHostService {
      */
     public Boolean makeJudgeHostActiveOrUnActive(Long judgeHostId) {
         JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
-        if(judgeHostEntity == null){
+        if (judgeHostEntity == null) {
             throw new NotFoundException("B0013");
         }
         boolean isActive = judgeHostEntity.getActive();
@@ -183,5 +190,32 @@ public class JudgeHostService {
         // 更新缓存
         setJudgeConditionCache();
         return !isActive;
+    }
+
+    /**
+     * @param judgeHostId 判题机id
+     * @param begin       开始时间
+     * @param end         结束时间
+     * @author yuzhanglong
+     * @description 查询、序列化某个时间段内某个判题机的提交数据
+     * @date 2020-8-19 17:09:33
+     * {【单个示例】
+     * "submissionAmount": 1,
+     * "hour": 0,
+     * "time": 1597680000000
+     * }
+     */
+    public CountSubmissionByTimeVO countJudgeHostsSubmissionByTimeBetween(Date begin, Date end, Long judgeHostId) {
+        // 查询结果
+        Set<List<Object>> results = submissionRepository.countSubmissionGroupByHoursByJudgeHostId(begin, end, judgeHostId);
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (List<Object> result : results) {
+            Map<String, Object> itemForOneHour = new HashMap<>(12);
+            itemForOneHour.put("time", result.get(0));
+            itemForOneHour.put("hour", result.get(1));
+            itemForOneHour.put("submissionAmount", result.get(2));
+            items.add(itemForOneHour);
+        }
+        return new CountSubmissionByTimeVO((long) results.size(), items);
     }
 }

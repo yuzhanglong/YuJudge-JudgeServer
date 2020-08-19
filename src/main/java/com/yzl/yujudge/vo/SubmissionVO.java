@@ -17,6 +17,7 @@ public class SubmissionVO {
     private Date createTime;
     private String judgePreference;
     private UserInfoVO creator;
+    private JudgeHostBasicVO judgeHost;
 
     public String getLanguage() {
         return language;
@@ -80,6 +81,14 @@ public class SubmissionVO {
 
     public void setCreator(UserInfoVO creator) {
         this.creator = creator;
+    }
+
+    public JudgeHostBasicVO getJudgeHost() {
+        return judgeHost;
+    }
+
+    public void setJudgeHost(JudgeHostBasicVO judgeHost) {
+        this.judgeHost = judgeHost;
     }
 
     @Override

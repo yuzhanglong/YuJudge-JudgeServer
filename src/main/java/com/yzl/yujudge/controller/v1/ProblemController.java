@@ -11,7 +11,7 @@ import com.yzl.yujudge.service.ProblemService;
 import com.yzl.yujudge.utils.EntityToVoListMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.ProblemBasicVO;
-import com.yzl.yujudge.vo.ProblemDetailVO;
+import com.yzl.yujudge.vo.ProblemVO;
 import com.yzl.yujudge.vo.SolutionVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -67,7 +67,7 @@ public class ProblemController {
     @GetMapping("/get_problem_detailed_by_id/{problemId}")
     public UnifiedResponse getProblemDetailedInfoById(@PathVariable Long problemId) {
         JudgeProblemEntity problem = problemService.getProblemInfoById(problemId);
-        ProblemDetailVO problemDetailed = mapper.map(problem, ProblemDetailVO.class);
+        ProblemVO problemDetailed = mapper.map(problem, ProblemVO.class);
         return new UnifiedResponse(problemDetailed);
     }
 

@@ -90,5 +90,5 @@ public interface ProblemSetRepository extends JpaRepository<ProblemSetEntity, Lo
             "where p.startTime <= ?1 " +
             "and p.deadline >= ?1 " +
             "order by p.createTime desc")
-    List<ProblemSetEntity> fineBetweenCurrentTime(Date currentTime);
+    List<ProblemSetEntity> findBetweenCurrentTime(Date currentTime);
 }

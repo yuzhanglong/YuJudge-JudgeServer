@@ -39,7 +39,7 @@ public class ProblemSetTask {
     @Scheduled(fixedDelay = 5 * 1_000)
     public void renewActiveProblemSetScoreBoard() {
         Date current = new Date();
-        List<ProblemSetEntity> activeProblemSets = problemSetRepository.fineBetweenCurrentTime(current);
+        List<ProblemSetEntity> activeProblemSets = problemSetRepository.findBetweenCurrentTime(current);
         for (ProblemSetEntity activeProblemSet : activeProblemSets) {
             ScoreBoardBO scoreBoardBO = problemSetService.getProblemSetScoreBoard(activeProblemSet);
             problemSetCache.setProblemSetScoreBoardCache(scoreBoardBO, activeProblemSet.getId().toString());
