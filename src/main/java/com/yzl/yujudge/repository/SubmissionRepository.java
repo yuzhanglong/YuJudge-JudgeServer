@@ -225,11 +225,22 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
 
     /**
      * 获取某个用户在本平台内的所有提交统计
+     * 【查询结果示例】
+     * +--------------------+------+
+     * | 结果描述            | 数量  |
+     * +--------------------+------+
+     * | UNKNOWN_ERROR      |   31 |
+     * | ACCEPT             |  338 |
+     * | RUNTIME_ERROR      |   16 |
+     * | COMPILE_ERROR      |   52 |
+     * | SEGMENTATION_FAULT |   12 |
+     * | WRONG_ANSWER       |   16 |
+     * +--------------------+------+
      *
      * @param userId 目标用户id
      * @return 提交数据统计的集合
      * @author yuzhanglong
-     * @date 2020-8-19 17:05:29
+     * @date 2020-8-21 00:47:29
      */
     @Query(value = "SELECT judge_condition, COUNT(*) " +
             "FROM submission s " +

@@ -198,8 +198,5 @@ public class UserService {
             return userRepository.findUsersByScope(scope, pageable);
         }
         return userRepository.findAll(pageable);
-
     }
-
-
 }

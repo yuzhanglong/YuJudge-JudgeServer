@@ -45,6 +45,7 @@ public class SubmissionService {
     private final JudgeHostService judgeHostService;
     private final JudgeHostRepository judgeHostRepository;
     public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
+    public static final int MAX_SUBMISSION_COUNT_DATE = 40;
 
     public SubmissionService(
             SubmissionRepository submissionRepository,
@@ -242,6 +243,8 @@ public class SubmissionService {
      * 获取某用户最近的提交, 包括每一天的ac个数等资料
      *
      * @param userId 需要查询的用户Id
+     * @param end    结束时间
+     * @param begin  开始时间
      * @return 每一天的提交情况，详见@description
      * @author yuzhanglong
      * @date 2020-08-07 12:19:37
@@ -255,8 +258,10 @@ public class SubmissionService {
         c2.setTime(b);
         c2.add(Calendar.DAY_OF_MONTH, 1);
         List<Map<String, Object>> results = new ArrayList<>();
-        // 按天进行时间推移、并记录数据
-        while (!c1.getTime().equals(end)) {
+        int cnt = 0;
+        Date publishedEnd = DateTimeUtil.removeTimeFromDateObject(end);
+        // 按天进行时间推移、并记录数据 同时限制了天数
+        while (!c1.getTime().equals(publishedEnd) || cnt > MAX_SUBMISSION_COUNT_DATE) {
             Long acceptAmount = submissionRepository.getUserSubmissionTotalAmountByJudgeResult(userId, c1.getTime(), c2.getTime(), JudgeResultEnum.ACCEPT.name());
             Long totalAmount = submissionRepository.getUserSubmissionTotalAmount(userId, c1.getTime(), c2.getTime());
             Map<String, Object> m = new HashMap<>(4);
@@ -267,6 +272,7 @@ public class SubmissionService {
             // 推移时间
             c2.add(Calendar.DAY_OF_MONTH, 1);
             c1.add(Calendar.DAY_OF_MONTH, 1);
+            cnt++;
         }
         return results;
     }
@@ -300,5 +306,23 @@ public class SubmissionService {
         Long problemId = submissionEntity.getPkProblem();
         long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
         return acAmount > 0;
+    }
+
+    /**
+     * 获取用户判题结果的相关信息，例如wa数目、ac数目、tle数目等
+     *
+     * @author yuzhanglong
+     * @date 2020-8-21 00:43:23
+     */
+    public List<Map<String, Object>> countUserJudgeResult(Long userId) {
+        Set<List<Object>> counts = submissionRepository.countUserTotalSubmissionCountDate(userId);
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (List<Object> count : counts) {
+            Map<String, Object> tmp = new HashMap<>(5);
+            tmp.put("type", count.get(0));
+            tmp.put("amount", count.get(1));
+            res.add(tmp);
+        }
+        return res;
     }
 }

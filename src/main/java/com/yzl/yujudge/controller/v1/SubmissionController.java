@@ -124,4 +124,18 @@ public class SubmissionController {
                 DateTimeUtil.formatDateTimeString(end));
         return new UnifiedResponse(res);
     }
+
+    /**
+     * 获取用户判题结果的相关信息，例如wa数目、ac数目、tle数目等
+     *
+     * @author yuzhanglong
+     * @date 2020-8-21 00:43:32
+     */
+    @GetMapping("/get_user_judge_result_count")
+    @AuthorizationRequired
+    public UnifiedResponse getUserJudgeResultCount() {
+        Long userId = UserHolder.getUserId();
+        List<Map<String, Object>> res = submissionService.countUserJudgeResult(userId);
+        return new UnifiedResponse(res);
+    }
 }
