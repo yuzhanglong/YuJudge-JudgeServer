@@ -32,17 +32,20 @@ public class JudgeHostService {
     private final Mapper mapper;
     private final ObjectMapper objectMapper;
     private final SubmissionRepository submissionRepository;
+    private final ProblemSetService problemSetService;
 
     public JudgeHostService(
             JudgeHostRepository judgeHostRepository,
             JudgeHostCache judgeHostCache,
             Mapper mapper, ObjectMapper objectMapper,
-            SubmissionRepository submissionRepository) {
+            SubmissionRepository submissionRepository,
+            ProblemSetService problemSetService) {
         this.judgeHostRepository = judgeHostRepository;
         this.judgeHostCache = judgeHostCache;
         this.mapper = mapper;
         this.objectMapper = objectMapper;
         this.submissionRepository = submissionRepository;
+        this.problemSetService = problemSetService;
     }
 
     /**
@@ -200,23 +203,11 @@ public class JudgeHostService {
      * @author yuzhanglong
      * @description 查询、序列化某个时间段内某个判题机的提交数据
      * @date 2020-8-19 17:09:33
-     * {【单个示例】
-     * "submissionAmount": 1,
-     * "hour": 0,
-     * "time": 1597680000000
-     * }
      */
     public CountSubmissionByTimeVO countJudgeHostsSubmissionByTimeBetween(Date begin, Date end, Long judgeHostId) {
         // 查询结果
         Set<List<Object>> results = submissionRepository.countSubmissionGroupByHoursByJudgeHostId(begin, end, judgeHostId);
-        List<Map<String, Object>> items = new ArrayList<>();
-        for (List<Object> result : results) {
-            Map<String, Object> itemForOneHour = new HashMap<>(12);
-            itemForOneHour.put("time", result.get(0));
-            itemForOneHour.put("hour", result.get(1));
-            itemForOneHour.put("submissionAmount", result.get(2));
-            items.add(itemForOneHour);
-        }
+        List<Map<String, Object>> items = problemSetService.publishSubmissionHourlyCount(results);
         return new CountSubmissionByTimeVO((long) results.size(), items);
     }
 }

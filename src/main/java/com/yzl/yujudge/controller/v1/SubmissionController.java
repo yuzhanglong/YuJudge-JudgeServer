@@ -7,6 +7,7 @@ import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
+import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.SubmissionDetailVO;
@@ -21,9 +22,10 @@ import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
+ * 提交相关控制层
+ *
  * @author yuzhanglong
  * @date 2020-7-29 00:29:59
- * @description 提交相关控制层
  */
 
 @RestController
@@ -41,9 +43,10 @@ public class SubmissionController {
 
 
     /**
+     * 提交代码
+     *
      * @author yuzhanglong
      * @date 2020-7-29 12:57:00
-     * @description 提交代码
      */
     @PostMapping("/submit_code")
     @AuthorizationRequired
@@ -55,9 +58,10 @@ public class SubmissionController {
     }
 
     /**
+     * 查看submission调度的线程池状态
+     *
      * @author yuzhanglong
      * @date 2020-8-2 18:00
-     * @description 查看submission调度的线程池状态
      */
     @GetMapping("/get_submit_condition")
     public UnifiedResponse getSubmitCondition() {
@@ -68,10 +72,11 @@ public class SubmissionController {
 
 
     /**
+     * 获取某个problem下的用户提交(分页)
+     *
      * @param start     开始的条目
      * @param problemId 目标问题id
      * @author yuzhanglong
-     * @description 获取某个problem下的用户提交(分页)
      * @date 2020-7-31 20:06:36
      */
     @GetMapping("/get_submissions")
@@ -85,9 +90,10 @@ public class SubmissionController {
     }
 
     /**
+     * 获取某个submission的详细信息
+     *
      * @param submissionId 某次提交的id
      * @author yuzhanglong
-     * @description 获取某个submission的详细信息
      * @date 2020-8-1 11:42:46
      */
     @GetMapping("/get_submission_detail")
@@ -99,16 +105,23 @@ public class SubmissionController {
     }
 
     /**
+     * 获取某用户某个时间段内的提交, 按天为单位分割
+     *
+     * @param begin 开始时间
+     * @param end   结束时间
      * @author yuzhanglong
-     * @description 获取某用户最近的提交, 包括每一天的ac个数等资料
-     * 注意: 天数不得小于20天
-     * @date 2020-08-07 12:19:37
+     * @date 2020-8-20 19:17:26
      */
     @GetMapping("/get_user_recent_submission")
     @AuthorizationRequired
-    public UnifiedResponse getUserRecentSubmission(@RequestParam @NotNull Integer days) {
+    public UnifiedResponse getUserRecentSubmission(
+            @RequestParam String begin,
+            @RequestParam String end) {
         Long userId = UserHolder.getUserId();
-        List<Map<String, Long>> res = submissionService.countUserRecentSubmission(userId, days);
+        List<Map<String, Object>> res = submissionService.countUserRecentSubmission(
+                userId,
+                DateTimeUtil.formatDateTimeString(begin),
+                DateTimeUtil.formatDateTimeString(end));
         return new UnifiedResponse(res);
     }
 }

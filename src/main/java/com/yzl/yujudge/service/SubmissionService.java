@@ -16,6 +16,7 @@ import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.network.JudgeHostJudgeRequest;
 import com.yzl.yujudge.repository.*;
+import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
@@ -29,8 +30,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.*;
 
 /**
+ * 处理提交相关的业务逻辑
+ *
  * @author yuzhanglong
- * @description 处理提交相关的业务逻辑
  * @date 2020-7-29 00:32:32
  */
 
@@ -42,9 +44,6 @@ public class SubmissionService {
     private final UserRepository userRepository;
     private final JudgeHostService judgeHostService;
     private final JudgeHostRepository judgeHostRepository;
-    private static final int COUNT_USER_RECENT_SUBMISSION_MAX_DAYS = 20;
-    public static final String AC_AMOUNT_KEY_NAME = "acAmount";
-    public static final String TOTAL_AMOUNT_KEY_NAME = "totalAmount";
     public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
 
     public SubmissionService(
@@ -63,10 +62,11 @@ public class SubmissionService {
     }
 
     /**
+     * 初始化用户的提交，包括二次验证、数据库写入
+     *
      * @param submissionDTO 提交相关的数据传输对象
      * @return SubmissionEntity 的实体对象，以供后续操作
      * @author yuzhanglong
-     * @description 初始化用户的提交，包括二次验证、数据库写入
      * @date 2020-7-29 13:40:54
      */
     public SubmissionEntity initSubmission(SubmissionDTO submissionDTO) {
@@ -97,8 +97,10 @@ public class SubmissionService {
     }
 
     /**
+     * 业务层面的提交相关验证
+     *
+     * @param submissionDTO 提交相关数据传输对象
      * @author yuzhanglong
-     * @description 业务层面的提交相关验证
      * @date 2020-7-29 14:21:59
      */
     private void validateSubmission(SubmissionDTO submissionDTO) {
@@ -112,10 +114,12 @@ public class SubmissionService {
     }
 
     /**
+     * 将submission添加到任务队列中，并执行判题
+     * 注意: 如果一次判题失败，我们会进行多次尝试，这个尝试的次数由 MAX_SUBMISSION_TRY_AMOUNT 决定
+     *
      * @param submissionEntity 本次提交对应的实体类
      * @param tryAmount        尝试次数
      * @author yuzhanglong
-     * @description 将submission添加到任务队列中
      * @date 2020-7-29 14:21:59
      */
     @Async(value = "submissionAsyncServiceExecutor")
@@ -154,10 +158,11 @@ public class SubmissionService {
     }
 
     /**
+     * 将submission 状态置为【PENDING -- 判题中】
+     *
      * @param submissionEntity 提交的实体对象
      * @return SubmissionEntity 更新后的实体对象
      * @author yuzhanglong
-     * @description 将submission 状态置为【PENDING -- 判题中】
      * @date 2020-7-29 19:45:32
      */
     private SubmissionEntity setSubmissionPendingCondition(SubmissionEntity submissionEntity) {
@@ -167,11 +172,12 @@ public class SubmissionService {
     }
 
     /**
+     * 保存判题服务器的判题结果
+     *
      * @param submissionEntity  提交的实体对象
      * @param judgeResultString 判题结果的json字符串
      * @param isJudgeSuccess    是否成功完成判题
      * @author yuzhanglong
-     * @description 保存判题服务器的判题结果
      * @date 2020-7-30 10:34
      */
     private void saveJudgeResult(SubmissionEntity submissionEntity, String judgeResultString, Boolean isJudgeSuccess) {
@@ -202,12 +208,13 @@ public class SubmissionService {
     }
 
     /**
+     * 获取某个problem下的用户提交(分页)
+     *
      * @param start     开始的条目
      * @param problemId 目标问题id
      * @param size      条目数量
-     * @return Page<SubmissionEntity> 提交实体的分页对象
+     * @return 提交实体的分页对象
      * @author yuzhanglong
-     * @description 获取某个problem下的用户提交(分页)
      * @date 2020-7-31 19:56:19
      */
     public Page<SubmissionEntity> getSubmissionByProblemId(Integer start, Integer size, Long problemId) {
@@ -216,10 +223,11 @@ public class SubmissionService {
     }
 
     /**
+     * 获取某个submission的详细信息，如果找不到，我们会抛出异常
+     *
      * @param submissionId 某次提交的id
      * @return SubmissionEntity 找到的submission的实体对象
      * @author yuzhanglong
-     * @description 获取某个submission的详细信息，如果找不到，我们会抛出异常
      * @date 2020-8-1 11:51:18
      */
     public SubmissionEntity getSubmissionDataById(Long submissionId) {
@@ -231,51 +239,47 @@ public class SubmissionService {
     }
 
     /**
+     * 获取某用户最近的提交, 包括每一天的ac个数等资料
+     *
      * @param userId 需要查询的用户Id
-     * @param days   查询的天数(从当前时间往前推移)
-     * @return List<Map < String, Long>> 每一天的提交情况，详见@description
+     * @return 每一天的提交情况，详见@description
      * @author yuzhanglong
-     * @description 获取某用户最近的提交, 包括每一天的ac个数等资料
-     * 注意: 天数不得小于20天
-     * 返回内容的格式：map数组，单个map包括: 当天的ac数量以及总的提交数量
-     * 例如：(单个map)
-     * {
-     * "acAmount": 2,
-     * "totalAmount": 6
-     * }
      * @date 2020-08-07 12:19:37
      */
-    public List<Map<String, Long>> countUserRecentSubmission(Long userId, Integer days) {
-        int finalDay = days > COUNT_USER_RECENT_SUBMISSION_MAX_DAYS ? COUNT_USER_RECENT_SUBMISSION_MAX_DAYS : days;
-        List<Map<String, Long>> result = new ArrayList<>(finalDay);
-
-        // TODO:下面的代码可以在sql查询层面上进行优化
-        long lastAc = 0;
-        long lastTotal = 0;
-        for (int i = 1; i <= finalDay; i++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, i * -1);
-            long acAmount = submissionRepository.countAllByPkUserAndJudgeConditionEqualsAndCreateTimeAfter(userId, "ACCEPT", calendar.getTime()) - lastAc;
-            long totAmount = submissionRepository.countAllByPkUserAndCreateTimeAfter(userId, calendar.getTime()) - lastTotal;
-            Map<String, Long> map = new HashMap<>(3);
-            map.put(AC_AMOUNT_KEY_NAME, acAmount);
-            map.put(TOTAL_AMOUNT_KEY_NAME, totAmount);
-            map.put("time", calendar.getTime().getTime());
-            System.out.println(map.get("time"));
-            lastAc += acAmount;
-            lastTotal += totAmount;
-            result.add(map);
+    public List<Map<String, Object>> countUserRecentSubmission(Long userId, Date begin, Date end) {
+        // 统计所有提交
+        Date b = DateTimeUtil.removeTimeFromDateObject(begin);
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(b);
+        c2.setTime(b);
+        c2.add(Calendar.DAY_OF_MONTH, 1);
+        List<Map<String, Object>> results = new ArrayList<>();
+        // 按天进行时间推移、并记录数据
+        while (!c1.getTime().equals(end)) {
+            Long acceptAmount = submissionRepository.getUserSubmissionTotalAmountByJudgeResult(userId, c1.getTime(), c2.getTime(), JudgeResultEnum.ACCEPT.name());
+            Long totalAmount = submissionRepository.getUserSubmissionTotalAmount(userId, c1.getTime(), c2.getTime());
+            Map<String, Object> m = new HashMap<>(4);
+            m.put("acceptAmount", acceptAmount);
+            m.put("totalAmount", totalAmount);
+            m.put("time", c1.getTime());
+            results.add(m);
+            // 推移时间
+            c2.add(Calendar.DAY_OF_MONTH, 1);
+            c1.add(Calendar.DAY_OF_MONTH, 1);
         }
-        return result;
+        return results;
     }
 
+
     /**
+     * 判断用户是否在/参与了某个题目集
+     *
      * @param problemSetId 题目集id
      * @param userEntity   用户实体对象
      * @return Boolean 用户是否在题目集中
      * @author yuzhanglong
      * @date 2020-08-12 21:33:53
-     * @description 判断用户是否在/参与了某个题目集
      */
     private Boolean isUserInProblemSet(Long problemSetId, UserEntity userEntity) {
         Long entity = problemSetRepository.countByIdAndParticipants(problemSetId, userEntity);
@@ -283,11 +287,12 @@ public class SubmissionService {
     }
 
     /**
+     * 判断用户在本题目集中在此之前是否已经ac过了某一道题目
+     *
      * @param submissionEntity 题目集实体对象
      * @return Boolean 用户是否在题目集中
      * @author yuzhanglong
      * @date 2020-08-13 00:52:38
-     * @description 判断用户在本题目集中在此之前是否已经ac过了某一道题目
      */
     private Boolean isAcBeforeInProblemSet(SubmissionEntity submissionEntity) {
         Long problemSetId = submissionEntity.getProblemSet().getId();

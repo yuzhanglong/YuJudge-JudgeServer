@@ -3,16 +3,14 @@ package com.yzl.yujudge.controller.v1;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.common.UnifiedResponse;
-import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.service.JudgeHostService;
+import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
 import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -96,16 +94,11 @@ public class JudgeHostController {
             @RequestParam String begin,
             @RequestParam String end,
             @RequestParam Long judgeHostId) {
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
             CountSubmissionByTimeVO res = judgeHostService.countJudgeHostsSubmissionByTimeBetween(
-                    dateformat.parse(begin),
-                    dateformat.parse(end),
+                    DateTimeUtil.formatDateTimeString(begin),
+                    DateTimeUtil.formatDateTimeString(end),
                     judgeHostId
             );
             return new UnifiedResponse(res);
-        } catch (ParseException e) {
-            throw new ForbiddenException("A0008");
-        }
     }
 }
