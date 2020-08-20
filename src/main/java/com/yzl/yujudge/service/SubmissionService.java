@@ -45,6 +45,7 @@ public class SubmissionService {
     private static final int COUNT_USER_RECENT_SUBMISSION_MAX_DAYS = 20;
     public static final String AC_AMOUNT_KEY_NAME = "acAmount";
     public static final String TOTAL_AMOUNT_KEY_NAME = "totalAmount";
+    public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
 
     public SubmissionService(
             SubmissionRepository submissionRepository,
@@ -111,12 +112,14 @@ public class SubmissionService {
     }
 
     /**
+     * @param submissionEntity 本次提交对应的实体类
+     * @param tryAmount        尝试次数
      * @author yuzhanglong
      * @description 将submission添加到任务队列中
      * @date 2020-7-29 14:21:59
      */
     @Async(value = "submissionAsyncServiceExecutor")
-    public void addSubmissionTask(SubmissionEntity submissionEntity) {
+    public void addSubmissionTask(SubmissionEntity submissionEntity, Integer tryAmount) {
         // 获取这个submission对应的problem实体
         JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionEntity.getPkProblem());
 
@@ -130,18 +133,24 @@ public class SubmissionService {
         // 执行判题请求
         JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(judgeHostToRequest.getAddress());
         String res;
-        boolean isJudgeSuccess = false;
         try {
             res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
-            isJudgeSuccess = true;
+            submissionEntity.setJudgeHost(judgeHostRepository.findOneById(judgeHostToRequest.getId()));
+            // 保存判题结果
+            saveJudgeResult(submission, res, true);
         } catch (WebClientResponseException e) {
             // 不是正常的200返回会执行下面的代码，本次判题无效，结果将被置为 UNKNOWN_ERROR -- 未知错误
             // 非200返回的原因一般来自出题者，例如限制大小不合规范、没有添加测试点（期望输入、输出）
             res = new String(e.getResponseBodyAsByteArray());
+            // 递归，继续尝试判题，知道达到最大尝试次数为止
+            if (tryAmount < MAX_SUBMISSION_TRY_AMOUNT) {
+                // 没有达到规定的尝试次数，继续尝试
+                addSubmissionTask(submissionEntity, tryAmount + 1);
+            } else {
+                submissionEntity.setJudgeHost(judgeHostRepository.findOneById(judgeHostToRequest.getId()));
+                saveJudgeResult(submission, res, false);
+            }
         }
-        submissionEntity.setJudgeHost(judgeHostRepository.findOneById(judgeHostToRequest.getId()));
-        // 保存判题结果
-        saveJudgeResult(submission, res, isJudgeSuccess);
     }
 
     /**

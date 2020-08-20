@@ -50,7 +50,7 @@ public class SubmissionController {
     public UnifiedResponse submitCode(@Validated @RequestBody SubmissionDTO submissionDTO) {
         // 获取submission实体对象，当我们拿到它之后，说明这个submission已经被保存了
         SubmissionEntity submissionEntity = submissionService.initSubmission(submissionDTO);
-        submissionService.addSubmissionTask(submissionEntity);
+        submissionService.addSubmissionTask(submissionEntity, 0);
         return new UnifiedResponse("提交已经开始处理");
     }
 
