@@ -21,12 +21,16 @@ public class JudgeHostEntity extends BaseEntity {
     private String name;
 
     @Basic
-    @Column(name = "address")
-    private String address;
+    @Column(name = "base_url")
+    private String baseUrl;
 
     @Basic
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Basic
+    @Column(name = "port")
+    private Integer port;
 
     public String getName() {
         return name;
@@ -36,12 +40,12 @@ public class JudgeHostEntity extends BaseEntity {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setBaseUrl(String ipAddress) {
+        this.baseUrl = ipAddress;
     }
 
     public Boolean getActive() {
@@ -52,12 +56,21 @@ public class JudgeHostEntity extends BaseEntity {
         isActive = active;
     }
 
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
     @Override
     public String toString() {
         return "JudgeHostEntity{" +
                 "name='" + name + '\'' +
-                ", address='" + address + '\'' +
+                ", ipAddress='" + baseUrl + '\'' +
                 ", isActive=" + isActive +
+                ", port=" + port +
                 '}';
     }
 }

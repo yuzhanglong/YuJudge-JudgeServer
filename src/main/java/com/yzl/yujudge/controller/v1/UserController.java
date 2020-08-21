@@ -75,7 +75,6 @@ public class UserController {
     @AuthorizationRequired
     public UnifiedResponse checkToken() {
         Long userId = UserHolder.getUserId();
-        System.out.println(userId);
         return new UnifiedResponse("验证成功,本接口仅用于token的测试");
     }
 

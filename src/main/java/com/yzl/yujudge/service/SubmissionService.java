@@ -134,7 +134,10 @@ public class SubmissionService {
         JudgeHostBO judgeHostToRequest = judgeHostService.chooseJudgeHostToRequest();
 
         // 执行判题请求
-        JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(judgeHostToRequest.getAddress());
+        JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(
+                judgeHostToRequest.getBaseUrl(),
+                judgeHostToRequest.getCondition().getPort()
+        );
         String res;
         try {
             res = judgeHostJudgeRequest.judgeSubmission(judgeHostDTO);
@@ -191,7 +194,6 @@ public class SubmissionService {
                 submissionEntity.setTimeCost(Long.valueOf(calculator.getTimeCost()));
                 submissionEntity.setMemoryCost(Long.valueOf(calculator.getMemoryCost()));
                 submissionEntity.setCondition(calculator.countJudgeResult().toString());
-                submissionEntity.setIsAcBefore(isAcBeforeInProblemSet(submissionEntity));
             } else {
                 JudgeResultDTO judgeResult = new JudgeResultDTO();
                 List<String> res = new ArrayList<>();

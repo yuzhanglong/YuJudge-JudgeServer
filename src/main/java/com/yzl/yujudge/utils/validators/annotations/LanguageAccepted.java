@@ -1,6 +1,6 @@
-package com.yzl.yujudge.validators.annotations;
+package com.yzl.yujudge.utils.validators.annotations;
 
-import com.yzl.yujudge.validators.LanguageAcceptedValidator;
+import com.yzl.yujudge.utils.validators.LanguageAcceptedValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

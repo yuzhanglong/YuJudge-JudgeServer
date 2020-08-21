@@ -1,6 +1,6 @@
 package com.yzl.yujudge.dto;
 
-import com.yzl.yujudge.validators.annotations.LoginFormValidated;
+import com.yzl.yujudge.utils.validators.annotations.LoginFormValidated;
 
 import javax.validation.constraints.NotNull;
 

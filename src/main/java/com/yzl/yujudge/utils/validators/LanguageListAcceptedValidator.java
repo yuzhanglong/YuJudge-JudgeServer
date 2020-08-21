@@ -1,8 +1,8 @@
-package com.yzl.yujudge.validators;
+package com.yzl.yujudge.utils.validators;
 
 import com.yzl.yujudge.core.enumeration.LanguageEnum;
 import com.yzl.yujudge.dto.ProblemLimitationDTO;
-import com.yzl.yujudge.validators.annotations.LanguageListAccepted;
+import com.yzl.yujudge.utils.validators.annotations.LanguageListAccepted;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

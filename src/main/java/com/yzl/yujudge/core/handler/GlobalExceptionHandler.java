@@ -47,7 +47,6 @@ public class GlobalExceptionHandler {
         String requestUrl = request.getRequestURI();
         String method = request.getMethod();
         String requestString = getRequestUrlString(method, requestUrl);
-        exception.printStackTrace();
         //TODO: 日志记录
         return new UnifiedResponse("B0001", "SERVER_ERROR", requestString);
     }

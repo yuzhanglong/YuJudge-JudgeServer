@@ -9,6 +9,8 @@ judge-server-exceptions:
     A0006: POST请求参数为空
     A0007: 不合法的权限名称
     A0008: 错误的时间格式
+    A0009: 无效的URL
+    A0010: 无效的端口号
     B0001: 服务器错误
     B0002: 找不到对应Problem
     B0003: 找不到对应solution
@@ -22,3 +24,4 @@ judge-server-exceptions:
     B0011: 找不到对应题目集
     B0012: 题目集中不存在这个问题
     B0013: 找不到目标判题机
+    B0014: 这个判题机IP已经存在

@@ -1,7 +1,7 @@
-package com.yzl.yujudge.validators;
+package com.yzl.yujudge.utils.validators;
 
 import com.yzl.yujudge.dto.LoginDTO;
-import com.yzl.yujudge.validators.annotations.LoginFormValidated;
+import com.yzl.yujudge.utils.validators.annotations.LoginFormValidated;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

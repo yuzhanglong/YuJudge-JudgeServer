@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
+import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostConditionDTO;
 import com.yzl.yujudge.dto.JudgeHostConnectionDTO;
@@ -14,6 +15,7 @@ import com.yzl.yujudge.repository.JudgeHostRepository;
 import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.store.redis.JudgeHostCache;
 import com.yzl.yujudge.utils.comparator.BestJudgeHostComparator;
+import com.yzl.yujudge.utils.validators.PublicValidator;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +59,7 @@ public class JudgeHostService {
         List<JudgeHostBO> judgeHostBOList = new ArrayList<>();
         for (JudgeHostEntity res : judgeHostEntityList) {
             JudgeHostBO judgeHost = mapper.map(res, JudgeHostBO.class);
-            String address = res.getAddress();
-            JudgeHostCommonRequest request = new JudgeHostCommonRequest(address);
+            JudgeHostCommonRequest request = new JudgeHostCommonRequest(res.getBaseUrl(), res.getPort());
             try {
                 String testResponse = request.testJudgeConnection();
                 JudgeHostConnectionDTO responseDTO = objectMapper.readValue(testResponse, JudgeHostConnectionDTO.class);
@@ -78,22 +79,41 @@ public class JudgeHostService {
     }
 
     /**
+     * 添加一个judgeHost
+     *
      * @param judgeHostDTO 判题机相关数据传输对象
      * @author yuzhanglong
-     * @description 添加一个judgeHost记录
      * @date 2020-7-30 18:34
      */
     public void createJudgeHost(JudgeHostDTO judgeHostDTO) {
+        String baseUrl = judgeHostDTO.getBaseUrl();
+        Integer port = judgeHostDTO.getPort();
+        // IP 合法性
+        if (!PublicValidator.isAddressValidated(baseUrl)) {
+            throw new ForbiddenException("A0009");
+        }
+        // 端口合法性
+        if (!PublicValidator.isPortValidated(port)) {
+            throw new ForbiddenException("A0010");
+        }
+        // IP地址是否重复
+        if (judgeHostRepository.findOneByBaseUrl(baseUrl) != null) {
+            throw new ForbiddenException("B0014");
+        }
         JudgeHostEntity judgeHostEntity = mapper.map(judgeHostDTO, JudgeHostEntity.class);
+        judgeHostEntity.setBaseUrl(baseUrl);
+        // 活跃状态默认置为否
+        judgeHostEntity.setActive(false);
         judgeHostRepository.save(judgeHostEntity);
     }
 
 
     /**
+     * 判断是否连接正常
+     *
      * @param connectionDTO judgeHost response数据传输对象
      * @return Boolean 是否连接正常
      * @author yuzhanglong
-     * @description 判断是否连接正常
      * @date 2020-7-30 23:53
      */
     private Boolean isConnectSuccess(JudgeHostConnectionDTO connectionDTO) {
@@ -102,8 +122,9 @@ public class JudgeHostService {
     }
 
     /**
+     * 将判题机状态的信息,存入redis中
+     *
      * @author yuzhanglong
-     * @description 判题机状态的信息, 存入redis中
      * @date 2020-08-17 14:18:59
      */
     public void setJudgeConditionCache() {
@@ -114,9 +135,10 @@ public class JudgeHostService {
     }
 
     /**
-     * @return List<JudgeHostBO> 判题机相关业务对象
+     * 获取缓存中判题机状态的信息
+     *
+     * @return 判题机相关业务对象
      * @author yuzhanglong
-     * @description 获取缓存中判题机状态的信息
      * @date 2020-08-17 14:24:55
      */
     public List<JudgeHostBO> getJudgeHostsCondition() {
@@ -128,6 +150,13 @@ public class JudgeHostService {
         return judgeHostBOList;
     }
 
+    /**
+     * 获取缓存中判题机状态的信息(限制了判题机id)
+     *
+     * @return 判题机相关业务对象
+     * @author yuzhanglong
+     * @date 2020-08-17 14:24:55
+     */
     public JudgeHostBO getJudgeHostConditionById(Long judgeHostId) {
         Object judgeHost = judgeHostCache.getJudgeHostsConditionByJudgeHostId(judgeHostId.toString());
         if (judgeHost == null) {
@@ -138,30 +167,33 @@ public class JudgeHostService {
 
 
     /**
-     * @return 可以请求的judgeHostBO
-     * @author yuzhanglong
-     * @date 2020-08-17 15:23:23
-     * @description 选择一个合适的判题机以发送提交请求
+     * 选择一个合适的判题机以发送提交请求
      * 当前我们有多个判题机集群部署, 当前缓存中已经有了所有判题机的信息
      * 我们需要达到的目标
      * 1. 保证程序的稳定性
      * 2. 维持负载均衡
+     *
+     * @return 可以请求的judgeHostBO
+     * @author yuzhanglong
+     * @date 2020-08-17 15:23:23
      */
     public JudgeHostBO chooseJudgeHostToRequest() {
         // 从缓存中获取所有判题机的信息
         List<JudgeHostBO> judgeHosts = getJudgeHostsCondition();
-        // TODO: 设计一个负载均衡的算法，最终返回一个可以请求的判题机信息
         int finalIndex = -1;
-        int judgeHostAmount = judgeHosts.size();
+        // 及时移除没有正常连接的judgeHost，
+        // 因为这种类型的judgeHost没有有效的 JudgeHostConditionDTO 对象，
+        // 即getCondition会返回null，最终导致sort时爆NPE错误
+        judgeHosts.removeIf(judgeHost -> !judgeHost.getConnection());
+
+        // 排序，以获取最优判题机
         judgeHosts.sort(new BestJudgeHostComparator());
 
-        for (int i = 0; i < judgeHostAmount; i++) {
+        for (int i = 0; i < judgeHosts.size(); i++) {
             JudgeHostBO judgeHost = judgeHosts.get(i);
             // isActive 由系统管理员控制，表示判题机是否开启
             boolean isActive = judgeHost.getActive();
-            // isConnected 由服务端定时请求判题机得来，如果为真表示连接正常
-            boolean isConnected = judgeHost.getConnection();
-            if (isActive && isConnected) {
+            if (isActive) {
                 finalIndex = i;
                 break;
             }
@@ -174,14 +206,15 @@ public class JudgeHostService {
 
 
     /**
-     * @return boolean 当前该判题机状态
-     * @author yuzhanglong
-     * @date 2020-8-18 23:46:27
-     * @description 改变某个判题服务器活跃状态【isActive】
+     * 改变某个判题服务器活跃状态【isActive】
      * 如果当前为【活跃】状态，将被替换为【非活跃状态】，反之亦然
      * 值得注意的是, 改变活跃状态并不是停止判题服务器的服务
      * 但是，接下来执行判题操作时，
      * 我们不会再请求【非活跃】的服务器，直至状态被重置为【活跃】
+     *
+     * @return boolean 当前该判题机状态
+     * @author yuzhanglong
+     * @date 2020-8-18 23:46:27
      */
     public Boolean makeJudgeHostActiveOrUnActive(Long judgeHostId) {
         JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
@@ -197,11 +230,12 @@ public class JudgeHostService {
     }
 
     /**
+     * 查询、序列化某个时间段内某个判题机的提交数据
+     *
      * @param judgeHostId 判题机id
      * @param begin       开始时间
      * @param end         结束时间
      * @author yuzhanglong
-     * @description 查询、序列化某个时间段内某个判题机的提交数据
      * @date 2020-8-19 17:09:33
      */
     public CountSubmissionByTimeVO countJudgeHostsSubmissionByTimeBetween(Date begin, Date end, Long judgeHostId) {

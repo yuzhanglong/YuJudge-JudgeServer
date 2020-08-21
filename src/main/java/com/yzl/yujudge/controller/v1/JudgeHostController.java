@@ -36,9 +36,9 @@ public class JudgeHostController {
      * @param judgeHostDTO 判题机信息数据传输对象
      * @author yuzhanglong
      * @description 添加一个judgeHost记录
-     * @date 2020-7-30 18:31
+     * @date 2020-8-21 22:18:37
      */
-    @PostMapping("/create")
+    @PutMapping("/create_judge_host")
     public UnifiedResponse createJudgeHost(@RequestBody @Validated JudgeHostDTO judgeHostDTO) {
         judgeHostService.createJudgeHost(judgeHostDTO);
         return new UnifiedResponse("添加判题服务器信息成功");
@@ -58,7 +58,7 @@ public class JudgeHostController {
     /**
      * @param judgeHostId 判题机id
      * @author yuzhanglong
-     * @description 获取当前所有判题服务器信息
+     * @description 获取判题服务器信息
      * @date 2020-08-16 21:02:54
      */
     @GetMapping("/get_judge_host_by_id/{judgeHostId}")
@@ -94,11 +94,11 @@ public class JudgeHostController {
             @RequestParam String begin,
             @RequestParam String end,
             @RequestParam Long judgeHostId) {
-            CountSubmissionByTimeVO res = judgeHostService.countJudgeHostsSubmissionByTimeBetween(
-                    DateTimeUtil.formatDateTimeString(begin),
-                    DateTimeUtil.formatDateTimeString(end),
-                    judgeHostId
-            );
-            return new UnifiedResponse(res);
+        CountSubmissionByTimeVO res = judgeHostService.countJudgeHostsSubmissionByTimeBetween(
+                DateTimeUtil.formatDateTimeString(begin),
+                DateTimeUtil.formatDateTimeString(end),
+                judgeHostId
+        );
+        return new UnifiedResponse(res);
     }
 }

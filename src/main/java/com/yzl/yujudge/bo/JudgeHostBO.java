@@ -13,7 +13,7 @@ import java.util.Date;
 public class JudgeHostBO {
     private Long id;
     private String name;
-    private String address;
+    private String baseUrl;
     private Boolean active;
     private Date createTime;
     private JudgeHostConditionDTO condition;
@@ -37,12 +37,12 @@ public class JudgeHostBO {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public Boolean getActive() {
@@ -81,7 +81,7 @@ public class JudgeHostBO {
     public String toString() {
         return "JudgeHostBO{" +
                 "name='" + name + '\'' +
-                ", address='" + address + '\'' +
+                ", address='" + baseUrl + '\'' +
                 ", active=" + active +
                 ", createTime=" + createTime +
                 ", condition=" + condition +

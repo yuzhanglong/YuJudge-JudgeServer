@@ -51,10 +51,6 @@ public class SubmissionEntity extends BaseEntity {
     @Column(name = "judge_preference")
     private String judgePreference;
 
-    @Basic
-    @Column(name = "is_ac_before")
-    private Boolean isAcBefore;
-
     @OneToOne
     @JoinColumn(name = "pk_judge_host")
     private JudgeHostEntity judgeHost;
@@ -147,22 +143,6 @@ public class SubmissionEntity extends BaseEntity {
         this.problemSet = problemSet;
     }
 
-    public Boolean getIsAcBefore() {
-        return isAcBefore;
-    }
-
-    public void setIsAcBefore(Boolean isAcBefore) {
-        this.isAcBefore = isAcBefore;
-    }
-
-    public Boolean getAcBefore() {
-        return isAcBefore;
-    }
-
-    public void setAcBefore(Boolean acBefore) {
-        isAcBefore = acBefore;
-    }
-
     public UserEntity getCreator() {
         return creator;
     }
@@ -190,7 +170,6 @@ public class SubmissionEntity extends BaseEntity {
                 ", judgeResult=" + judgeResult +
                 ", codeContent='" + codeContent + '\'' +
                 ", judgePreference='" + judgePreference + '\'' +
-                ", isAcBefore=" + isAcBefore +
                 ", judgeHost=" + judgeHost +
                 ", problemSet=" + problemSet +
                 ", creator=" + creator +

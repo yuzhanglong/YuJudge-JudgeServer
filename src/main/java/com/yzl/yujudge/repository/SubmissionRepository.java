@@ -90,12 +90,12 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * 之后的任何提交在这里都不会被计算进去，
      * 详见submission的isAcBefore字段
      */
+    @Deprecated
     @Query("select count(submission) from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
             "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
             "and submission.judgeCondition = 'ACCEPT' " +
-            "and submission.isAcBefore = false " +
             "order by submission.createTime desc ")
     Long getAcAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
 
@@ -111,12 +111,12 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @date 2020-08-13 22:36:12
      * @description 根据题目集信息、题目信息、用户/队伍 信息寻找某个用户在某个题目上是否已经ac过
      */
+    @Deprecated
     @Query("select submission from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
             "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
             "and submission.judgeCondition = 'ACCEPT' " +
-            "and submission.isAcBefore = false " +
             "order by submission.createTime desc ")
     SubmissionEntity getUserFirstAcInProblemSet(Long problemSetId, Long userId, Long problemId);
 
@@ -157,12 +157,12 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * 之后的任何提交在这里都不会被计算进去，
      * 详见submission的isAcBefore字段
      */
+    @Deprecated
     @Query("select count(submission) from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
             "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
             "and submission.judgeCondition <> 'ACCEPT' " +
-            "and submission.isAcBefore = false " +
             "order by submission.createTime desc ")
     Long getWaAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
 

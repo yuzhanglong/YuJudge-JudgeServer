@@ -6,12 +6,34 @@ import reactor.core.publisher.Mono;
 
 
 /**
+ * judgeHost一般接口的请求类
+ *
  * @author yuzhanglong
- * @description judgeHost一般接口的请求类
+ * @date 2020-7-30
  */
-public class JudgeHostCommonRequest extends HttpRequest{
+public class JudgeHostCommonRequest extends HttpRequest {
+
+
+    /**
+     * 构造函数，传入完整地址
+     *
+     * @author yuzhanglong
+     * @date 2020-7-30
+     */
     public JudgeHostCommonRequest(String baseUrl) {
         super(baseUrl);
+    }
+
+    /**
+     * 构造函数，传入ip + 端口号
+     *
+     * @param address 地址
+     * @param port    端口
+     * @author yuzhanglong
+     * @date 2020-8-21 23:54:54
+     */
+    public JudgeHostCommonRequest(String address, Integer port) {
+        super(address + ":" + port.toString());
     }
 
     /**

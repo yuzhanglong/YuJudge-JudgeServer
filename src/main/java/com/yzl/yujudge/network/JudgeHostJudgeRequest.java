@@ -18,25 +18,27 @@ public class JudgeHostJudgeRequest extends HttpRequest {
             "6iXiQWK0l8ysGpjTutltZw1JJdOAjjHSaensgHY9kxE";
 
     /**
+     * 判题机判题请求的构造方法，传入完整地址
+     *
      * @param judgeHostBaseUrl 判题服务器的baseURL
      * @author yuzhanglong
      * @date 2020-7-30 00:24
-     * @description 我们可能有多个判题服务器集群，所以我们提供传入baseURL的构造方法
      */
     public JudgeHostJudgeRequest(String judgeHostBaseUrl) {
         super(judgeHostBaseUrl);
     }
 
-
     /**
+     * 判题机判题请求的构造方法，传入ip + 端口
+     *
+     * @param address 地址
+     * @param port    端口号
      * @author yuzhanglong
-     * @date 2020-7-30 00:24
-     * @description 一般不会使用此构造方法，仅用于单个服务器的测试
+     * @date 2020-8-21 23:04:10
      */
-    public JudgeHostJudgeRequest() {
-        super("http://47.106.202.255:8080");
+    public JudgeHostJudgeRequest(String address, Integer port) {
+        super(address + ":" + port.toString());
     }
-
 
     /**
      * @param judgeHostDTO 判题相关数据传输对象
