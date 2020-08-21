@@ -8,20 +8,16 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
+ * problem实体类
+ *
  * @author yuzhanglong
  * @date 2020-7-18 23:49:50
- * @description problem实体类
  */
 @Entity
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "judge_problem", schema = "yu-judge")
 public class JudgeProblemEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
     @Basic
     @Column(name = "name")
     private String name;
@@ -80,15 +76,6 @@ public class JudgeProblemEntity extends BaseEntity {
     public void setClosed(Boolean closed) {
         this.closed = closed;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 
     public String getName() {
         return name;
@@ -156,5 +143,21 @@ public class JudgeProblemEntity extends BaseEntity {
 
     public void setProblemSetEntityList(List<ProblemSetEntity> problemSetEntityList) {
         this.problemSetEntityList = problemSetEntityList;
+    }
+
+    @Override
+    public String toString() {
+        return "JudgeProblemEntity{" +
+                "name='" + name + '\'' +
+                ", content='" + content + '\'' +
+                ", timeLimit=" + timeLimit +
+                ", memoryLimit=" + memoryLimit +
+                ", cpuTimeLimit=" + cpuTimeLimit +
+                ", characterTags=" + characterTags +
+                ", closed=" + closed +
+                ", outputLimit=" + outputLimit +
+                ", solutions=" + solutions +
+                ", problemSetEntityList=" + problemSetEntityList +
+                '}';
     }
 }

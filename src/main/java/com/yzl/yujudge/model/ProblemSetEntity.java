@@ -18,11 +18,6 @@ import java.util.List;
 @DynamicInsert
 @Table(name = "problem_set", schema = "yu-judge")
 public class ProblemSetEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
     @Basic
     @Column(name = "name")
     private String name;
@@ -67,13 +62,6 @@ public class ProblemSetEntity extends BaseEntity {
     @JoinColumn(name = "pk_user", referencedColumnName = "id")
     private UserEntity creator;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -154,5 +142,21 @@ public class ProblemSetEntity extends BaseEntity {
 
     public void setTimePenalty(Long timePenalty) {
         this.timePenalty = timePenalty;
+    }
+
+    @Override
+    public String toString() {
+        return "ProblemSetEntity{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", deadline=" + deadline +
+                ", startTime=" + startTime +
+                ", judgePreference='" + judgePreference + '\'' +
+                ", timePenalty=" + timePenalty +
+                ", allowedLanguage=" + allowedLanguage +
+                ", problems=" + problems +
+                ", participants=" + participants +
+                ", creator=" + creator +
+                '}';
     }
 }

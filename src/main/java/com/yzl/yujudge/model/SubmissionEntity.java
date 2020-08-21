@@ -18,11 +18,6 @@ import javax.persistence.*;
 @DynamicInsert
 @Table(name = "submission", schema = "yu-judge")
 public class SubmissionEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
     @Basic
     @Column(name = "pk_problem")
     private Long pkProblem;
@@ -71,14 +66,6 @@ public class SubmissionEntity extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "pk_user", referencedColumnName = "id")
     private UserEntity creator;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getPkProblem() {
         return pkProblem;
@@ -190,5 +177,23 @@ public class SubmissionEntity extends BaseEntity {
 
     public void setJudgeHost(JudgeHostEntity judgeHost) {
         this.judgeHost = judgeHost;
+    }
+
+    @Override
+    public String toString() {
+        return "SubmissionEntity{" +
+                "pkProblem=" + pkProblem +
+                ", language='" + language + '\'' +
+                ", judgeCondition='" + judgeCondition + '\'' +
+                ", timeCost=" + timeCost +
+                ", memoryCost=" + memoryCost +
+                ", judgeResult=" + judgeResult +
+                ", codeContent='" + codeContent + '\'' +
+                ", judgePreference='" + judgePreference + '\'' +
+                ", isAcBefore=" + isAcBefore +
+                ", judgeHost=" + judgeHost +
+                ", problemSet=" + problemSet +
+                ", creator=" + creator +
+                '}';
     }
 }

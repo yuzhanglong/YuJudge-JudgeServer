@@ -7,8 +7,9 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
+ * 用户组实体类
+ *
  * @author yuzhanglong
- * @description 用户组实体类
  * @date 2020-08-16 11:56:20
  */
 
@@ -16,12 +17,7 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "user_group", schema = "yu-judge")
-public class UserGroupEntity extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class UserGroupEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
@@ -31,14 +27,6 @@ public class UserGroupEntity extends BaseEntity{
             joinColumns = @JoinColumn(name = "pk_user_group"),
             inverseJoinColumns = @JoinColumn(name = "pk_user"))
     private List<UserEntity> users;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

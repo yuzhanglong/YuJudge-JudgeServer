@@ -6,20 +6,16 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 /**
+ * 判题服务器的实体类
+ *
  * @author yuzhanglong
- * @description 判题服务器的实体类
  * @date 2020-7-30 18:47
  */
 @Entity
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "judge_host", schema = "yu-judge")
-public class JudgeHostEntity extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class JudgeHostEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
@@ -31,15 +27,6 @@ public class JudgeHostEntity extends BaseEntity{
     @Basic
     @Column(name = "is_active")
     private Boolean isActive;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -67,9 +54,8 @@ public class JudgeHostEntity extends BaseEntity{
 
     @Override
     public String toString() {
-        return "JudgeServerEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+        return "JudgeHostEntity{" +
+                "name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", isActive=" + isActive +
                 '}';

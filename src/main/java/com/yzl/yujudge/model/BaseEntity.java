@@ -3,9 +3,7 @@ package com.yzl.yujudge.model;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -18,13 +16,20 @@ import java.util.Date;
 @DynamicUpdate
 @DynamicInsert
 public class BaseEntity {
-    private Date createTime;
-    private Date deleteTime;
-    private Date updateTime;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Basic
     @Column(name = "create_time")
+    private Date createTime;
+
+    @Basic
+    @Column(name = "update_time")
+    private Date updateTime;
+
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -33,23 +38,20 @@ public class BaseEntity {
         this.createTime = createTime;
     }
 
-    @Basic
-    @Column(name = "delete_time")
-    public Date getDeleteTime() {
-        return deleteTime;
-    }
 
-    public void setDeleteTime(Date deleteTime) {
-        this.deleteTime = deleteTime;
-    }
-
-    @Basic
-    @Column(name = "update_time")
     public Date getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -6,8 +6,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 /**
+ * 解决方案实体类
+ *
  * @author yuzhanglong
- * @description 解决方案实体类
  * @date 2020-7-18 23:50:19
  */
 
@@ -15,12 +16,7 @@ import javax.persistence.*;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "judge_solution", schema = "yu-judge")
-public class JudgeSolutionEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+public class JudgeSolutionEntity extends SoftDeleteEntity {
     @Basic
     @Column(name = "std_in")
     private String stdIn;
@@ -36,15 +32,6 @@ public class JudgeSolutionEntity extends BaseEntity {
     @Basic
     @Column(name = "description")
     private String description;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
 
     public String getStdIn() {
@@ -79,5 +66,15 @@ public class JudgeSolutionEntity extends BaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "JudgeSolutionEntity{" +
+                "stdIn='" + stdIn + '\'' +
+                ", expectedStdOut='" + expectedStdOut + '\'' +
+                ", pkProblem=" + pkProblem +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
