@@ -159,15 +159,15 @@ public class ProblemController {
 
 
     /**
-     * @param solutionId 目标solutionId
+     * 删除某个解决方案（测试点）
+     *
      * @author yuzhanglong
-     * @description 删除某个solution
-     * @date 2020-7-22
+     * @date 2020-8-21 18:35:23
      */
     @DeleteMapping("/delete_solution/{solutionId}")
     public UnifiedResponse deleteSolution(@PathVariable Long solutionId) {
         problemService.deleteSolution(solutionId);
-        return new UnifiedResponse();
+        return new UnifiedResponse("删除解决方案成功");
     }
 
 
@@ -199,9 +199,10 @@ public class ProblemController {
 
 
     /**
+     * 获取最新的若干个problem
+     *
      * @author yuzhanglong
-     * @description 获取最新的若干个problem
-     * @date 2020-08-06 20:14:45
+     * @description
      */
     @GetMapping("/get_recent_problem")
     public UnifiedResponse getRecentProblem(@RequestParam Integer size) {

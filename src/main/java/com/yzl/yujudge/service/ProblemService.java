@@ -141,10 +141,10 @@ public class ProblemService {
      */
     public void deleteSolution(Long solutionId) {
         JudgeSolutionEntity solutionEntity = solutionRepository.findOneById(solutionId);
-        if (solutionId == null) {
+        if (solutionEntity == null) {
             throw new NotFoundException("B0003");
         }
-        solutionRepository.delete(solutionEntity);
+        solutionRepository.softDeleteById(solutionEntity.getId());
     }
 
     /**
@@ -174,11 +174,7 @@ public class ProblemService {
         problemEntity.setMemoryLimit(limitation.getMemoryLimit());
         problemRepository.save(problemEntity);
     }
-
-    public void setProblemBasicInfo(Long problemId, ProblemDTO problemDTO) {
-        JudgeProblemEntity problemEntity = getProblemEntityById(problemId, false);
-    }
-
+    
     /**
      * @param problemId  目标problemId
      * @param isNullable 是否允许实体对象是否为空

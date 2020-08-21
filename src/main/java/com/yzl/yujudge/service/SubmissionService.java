@@ -71,8 +71,6 @@ public class SubmissionService {
      * @date 2020-7-29 13:40:54
      */
     public SubmissionEntity initSubmission(SubmissionDTO submissionDTO) {
-        // TODO: 不要对数据库直接操作, 可以考虑放入线程池异步操作或者使用缓存?
-
         Long userId = UserHolder.getUserId();
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(submissionDTO.getProblemSetId());
         if (problemSetEntity == null) {

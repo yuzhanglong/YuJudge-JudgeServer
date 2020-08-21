@@ -2,8 +2,12 @@ package com.yzl.yujudge.model;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * 解决方案实体类
@@ -16,6 +20,7 @@ import javax.persistence.*;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "judge_solution", schema = "yu-judge")
+@Where(clause = "delete_time is null")
 public class JudgeSolutionEntity extends SoftDeleteEntity {
     @Basic
     @Column(name = "std_in")
