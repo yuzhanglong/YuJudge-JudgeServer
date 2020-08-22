@@ -1,6 +1,6 @@
 package com.yzl.yujudge.core.handler;
 
-import com.yzl.yujudge.core.authorization.AuthorizationInterceptor;
+import com.yzl.yujudge.core.interceptor.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -20,7 +20,7 @@ public class HttpRequestHandler implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthorizationInterceptor authenticationInterceptor() {
-        return new AuthorizationInterceptor();
+    public RequestInterceptor authenticationInterceptor() {
+        return new RequestInterceptor();
     }
 }

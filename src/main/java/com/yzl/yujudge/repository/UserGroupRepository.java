@@ -17,4 +17,12 @@ public interface UserGroupRepository extends JpaRepository<UserGroupEntity, Long
      * @return 查找的用户组实体类
      */
     UserGroupEntity findOneById(Long id);
+
+    /**
+     * 通过用户组名称查找用户组
+     *
+     * @param name 用户组id
+     * @return 查找的用户组实体类
+     */
+    UserGroupEntity findOneByName(String name);
 }

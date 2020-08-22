@@ -7,6 +7,7 @@ package com.yzl.yujudge.vo;
  * @date 2020-8-22 11:59:29
  */
 public class UserGroupVO {
+    private Long id;
     private String name;
     private String description;
 
@@ -24,6 +25,14 @@ public class UserGroupVO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

@@ -2,11 +2,14 @@ package com.yzl.yujudge.service;
 
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
+import com.yzl.yujudge.core.enumeration.BaseUserGroupEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
+import com.yzl.yujudge.model.PermissionEntity;
 import com.yzl.yujudge.model.UserEntity;
+import com.yzl.yujudge.model.UserGroupEntity;
 import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.store.redis.RedisOperations;
 import com.yzl.yujudge.utils.CheckCodeUtil;
@@ -23,8 +26,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * 与用户相关的业务逻辑
+ *
  * @author yuzhanglong
- * @description 与用户相关的业务逻辑
  * @date 2020-08-03 13:25:11
  */
 
@@ -44,12 +48,13 @@ public class UserService {
     }
 
     /**
-     * @param loginDTO 登录信息的数据传输对象
-     * @author yuzhanglong
-     * @description 用户登录
+     * 用户登录
      * 在这里，我们会将用户名和密码进行比对，
      * 如果登录成功，我们会返回一个token字符串
      * 接下来调用相关接口只需要带上token即可
+     *
+     * @param loginDTO 登录信息的数据传输对象
+     * @author yuzhanglong
      * @date 2020-08-03 13:30:29
      */
     public String userLogin(LoginDTO loginDTO) {
@@ -78,9 +83,10 @@ public class UserService {
     }
 
     /**
+     * 用户注册
+     *
      * @param registerDTO 注册信息的数据传输对象
      * @author yuzhanglong
-     * @description 用户注册
      * @date 2020-08-03 18:42:30
      */
     public void userRegister(RegisterDTO registerDTO) {
@@ -105,9 +111,10 @@ public class UserService {
 
 
     /**
-     * @author yuzhanglong
-     * @description 通过userId，生成新的token给客户端
+     * 通过userId，生成新的token给客户端
      * 接下来客户端需要调用相关接口只需要传入token
+     *
+     * @author yuzhanglong
      * @date 2020-08-03 16:30:20
      */
     private String generateUserTokenByUserId(Long userId) throws NullPointerException {
@@ -121,8 +128,9 @@ public class UserService {
 
 
     /**
+     * 生成验证码信息，以供返回给前端
+     *
      * @author yuzhanglong
-     * @description 生成验证码信息，以供返回给前端
      * @date 2020-08-03 20:15:29
      */
     public Map<String, String> generateCheckCode() {
@@ -138,10 +146,11 @@ public class UserService {
     }
 
     /**
+     * 检测验证码是否通过
+     *
      * @param key     验证码对应的key
      * @param content 客户端传入的验证码内容
      * @author yuzhanglong
-     * @description 检测验证码是否通过
      * @date 2020-08-03 21:22:00
      */
     private Boolean isCheckCodePass(String key, String content) {
@@ -153,9 +162,10 @@ public class UserService {
     }
 
     /**
+     * 获取近期活跃用户信息
+     *
      * @param userAmount 用户的数量
      * @author yuzhanglong
-     * @description 获取近期活跃用户信息
      * @date 2020-08-07 16:18:31
      */
     public List<UserEntity> getActiveUser(Integer userAmount) {
@@ -179,10 +189,11 @@ public class UserService {
     }
 
     /**
+     * 获取用户信息分页对象
+     *
      * @param count 单页数量
      * @param start 页码
      * @author yuzhanglong
-     * @description 获取用户信息分页对象
      * @date 2020-08-16 13:53:33
      */
     public Page<UserEntity> getUsers(Integer start, Integer count) {
@@ -192,9 +203,10 @@ public class UserService {
     }
 
     /**
+     * 获取用户信息分页对象
+     *
      * @param userId 用户ID
      * @author yuzhanglong
-     * @description 获取用户信息分页对象
      * @date 2020-8-22 13:41:07
      */
     public void deleteUser(Long userId) {
@@ -204,9 +216,49 @@ public class UserService {
             throw new NotFoundException("B0006");
         }
         // 可能出现是自己的情况
-        if(UserHolder.getUserId().equals(userId)){
+        if (UserHolder.getUserId().equals(userId)) {
             throw new NotFoundException("B0006");
         }
         userRepository.softDeleteById(userId);
+    }
+
+    /**
+     * 根据用户id判断是否为管理员用户
+     *
+     * @param userId 用户ID
+     * @author yuzhanglong
+     * @date 2020-8-22 13:41:07
+     */
+    public Boolean isRootUser(Long userId) {
+        UserEntity userEntity = userRepository.findOneById(userId);
+        // 管理员用户只有一个用户组，即ROOT
+        UserGroupEntity userGroupEntity = userEntity.getUserGroups().get(0);
+        return userGroupEntity.getName().equals(BaseUserGroupEnum.COMMON.name());
+    }
+
+    /**
+     * 判断某个permission是否符合某个用户
+     * 检测用户是否有资格访问资源
+     * 在数据表层面，我们可以理解为：
+     * 用户【user】对应的用户组【user_group】是否拥有这个权限【permission】，三张表全为多对多关系
+     *
+     * @param userId 用户ID
+     * @author yuzhanglong
+     * @date 2020-8-22 13:41:07
+     */
+    public Boolean isUserPermissionAccepted(Long userId, String permission) {
+        // TODO: 权限数据一般很少改变，但调用较为频繁，采用缓存，避免大量查询
+        UserEntity userEntity = userRepository.findOneById(userId);
+        List<UserGroupEntity> userGroupEntityList = userEntity.getUserGroups();
+        for (UserGroupEntity userGroupEntity : userGroupEntityList) {
+            List<PermissionEntity> permissionEntityList = userGroupEntity.getPermissions();
+            for (PermissionEntity permissionEntity : permissionEntityList) {
+                String permissionName = permissionEntity.getName();
+                if (permission.equals(permissionName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,6 +1,8 @@
 package com.yzl.yujudge.service;
 
 import com.github.dozermapper.core.Mapper;
+import com.yzl.yujudge.core.enumeration.BaseUserGroupEnum;
+import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.UserGroupDTO;
 import com.yzl.yujudge.model.UserGroupEntity;
@@ -37,7 +39,12 @@ public class UserGroupService {
      */
     public void createUserGroup(UserGroupDTO userGroupDTO) {
         UserGroupEntity userGroup = mapper.map(userGroupDTO, UserGroupEntity.class);
-        userGroup.setName(userGroupDTO.getName().toUpperCase());
+        String name = userGroupDTO.getName().toUpperCase();
+        if (isDuplicateUserGroupName(name)) {
+            throw new ForbiddenException("B0017");
+        }
+        validateUserGroupName(name);
+        userGroup.setName(name);
         userGroupRepository.save(userGroup);
     }
 
@@ -65,6 +72,8 @@ public class UserGroupService {
         if (userGroupEntityToDelete == null) {
             throw new NotFoundException("B0015");
         }
+        // 默认分组禁止删除
+        validateUserGroupName(userGroupEntityToDelete.getName());
         userGroupRepository.delete(userGroupEntityToDelete);
     }
 
@@ -77,13 +86,48 @@ public class UserGroupService {
      * @author yuzhanglong
      * @date 2020-8-22 14:58:30
      */
-    public void editUserGroup(Long userGroupId, UserGroupDTO userGroupDTO) {
+    public void setUserGroup(Long userGroupId, UserGroupDTO userGroupDTO) {
         UserGroupEntity entity = userGroupRepository.findOneById(userGroupId);
         if (entity == null) {
             throw new NotFoundException("B0015");
         }
+        // 不允许的名称
+        validateUserGroupName(entity.getName());
+        String nameToEdit = userGroupDTO.getName().toUpperCase();
+        validateUserGroupName(nameToEdit);
         entity.setDescription(userGroupDTO.getDescription());
-        entity.setName(userGroupDTO.getName().toUpperCase());
+        entity.setName(nameToEdit);
         userGroupRepository.save(entity);
+    }
+
+
+    /**
+     * 验证用户组的合法性
+     * 项目预先安排了一些用户组,
+     * 例如超级管理员、一般用户等，
+     * 这些用户组如果被删除可能会影响部分逻辑的正常进行
+     *
+     * @param name 用户组名称
+     * @author yuzhanglong
+     * @date 2020-8-22 18:29:26
+     */
+    private void validateUserGroupName(String name) {
+        boolean isDefaultUserGroup = BaseUserGroupEnum.isDefaultUserGroup(name);
+        if (isDefaultUserGroup) {
+            throw new NotFoundException("B0016");
+        }
+    }
+
+    /**
+     * 查询用户名称是否重复，我们不允许重复的用户组名称出现
+     *
+     * @param name 用户组名称
+     * @return 是否重复
+     * @author yuzhanglong
+     * @date 2020-8-22 18:29:26
+     */
+    private Boolean isDuplicateUserGroupName(String name) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findOneByName(name);
+        return userGroupEntity != null;
     }
 }

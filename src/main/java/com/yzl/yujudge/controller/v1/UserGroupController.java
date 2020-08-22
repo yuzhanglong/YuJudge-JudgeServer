@@ -74,7 +74,7 @@ public class UserGroupController {
     public UnifiedResponse editUserGroup(
             @PathVariable Long userGroupId,
             @RequestBody UserGroupDTO userGroupDTO) {
-        userGroupService.editUserGroup(userGroupId, userGroupDTO);
+        userGroupService.setUserGroup(userGroupId, userGroupDTO);
         return new UnifiedResponse("编辑用户组信息成功");
     }
 }
