@@ -1,7 +1,7 @@
 package com.yzl.yujudge.service;
 
+import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
-import com.yzl.yujudge.core.enumeration.UserScopeEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.LoginDTO;
@@ -181,22 +181,32 @@ public class UserService {
     /**
      * @param count 单页数量
      * @param start 页码
-     * @param scope 权限限制
      * @author yuzhanglong
      * @description 获取用户信息分页对象
      * @date 2020-08-16 13:53:33
      */
-    public Page<UserEntity> getUsers(Integer start, Integer count, String scope) {
+    public Page<UserEntity> getUsers(Integer start, Integer count) {
         Pageable pageable = PageRequest.of(start, count);
         // 当没有传入权限时，直接查找所有用户
-
-        if (!"".equals(scope)) {
-            // 权限名称不存在时
-            if (!UserScopeEnum.isCorrectScope(scope)) {
-                throw new NotFoundException("A0007");
-            }
-            return userRepository.findUsersByScope(scope, pageable);
-        }
         return userRepository.findAll(pageable);
+    }
+
+    /**
+     * @param userId 用户ID
+     * @author yuzhanglong
+     * @description 获取用户信息分页对象
+     * @date 2020-8-22 13:41:07
+     */
+    public void deleteUser(Long userId) {
+        UserEntity user = userRepository.findOneById(userId);
+        // 用户为空
+        if (user == null) {
+            throw new NotFoundException("B0006");
+        }
+        // 可能出现是自己的情况
+        if(UserHolder.getUserId().equals(userId)){
+            throw new NotFoundException("B0006");
+        }
+        userRepository.softDeleteById(userId);
     }
 }

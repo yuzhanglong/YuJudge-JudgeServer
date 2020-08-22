@@ -1,17 +1,28 @@
 package com.yzl.yujudge.vo;
 
+import java.util.List;
+
 /**
  * @author yuzhanglong
  * @description 用户信息的视图层对象
  * @date 2020-08-07 20:28:13
  */
 public class UserInfoVO {
+    private Long id;
     private String nickname;
     private String email;
     private String avatar;
     private Integer acAmount;
     private Integer submissionAmount;
-    private String scope;
+    private List<UserGroupVO> userGroups;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNickname() {
         return nickname;
@@ -53,12 +64,12 @@ public class UserInfoVO {
         this.submissionAmount = submissionAmount;
     }
 
-    public String getScope() {
-        return scope;
+    public List<UserGroupVO> getUserGroups() {
+        return userGroups;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setUserGroups(List<UserGroupVO> userGroups) {
+        this.userGroups = userGroups;
     }
 
     @Override
@@ -69,7 +80,6 @@ public class UserInfoVO {
                 ", avatar='" + avatar + '\'' +
                 ", acAmount=" + acAmount +
                 ", submissionAmount=" + submissionAmount +
-                ", scope='" + scope + '\'' +
                 '}';
     }
 }

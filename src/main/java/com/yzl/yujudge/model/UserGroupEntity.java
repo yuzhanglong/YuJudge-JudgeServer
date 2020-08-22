@@ -22,11 +22,21 @@ public class UserGroupEntity extends BaseEntity {
     @Column(name = "name")
     private String name;
 
+    @Basic
+    @Column(name = "description")
+    private String description;
+
     @ManyToMany
     @JoinTable(name = "user_user_group",
             joinColumns = @JoinColumn(name = "pk_user_group"),
             inverseJoinColumns = @JoinColumn(name = "pk_user"))
     private List<UserEntity> users;
+
+    @ManyToMany
+    @JoinTable(name = "user_group_permission",
+            joinColumns = @JoinColumn(name = "pk_user_group"),
+            inverseJoinColumns = @JoinColumn(name = "pk_permission"))
+    private List<PermissionEntity> permissions;
 
     public String getName() {
         return name;
@@ -42,5 +52,21 @@ public class UserGroupEntity extends BaseEntity {
 
     public void setUsers(List<UserEntity> users) {
         this.users = users;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<PermissionEntity> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<PermissionEntity> permissions) {
+        this.permissions = permissions;
     }
 }

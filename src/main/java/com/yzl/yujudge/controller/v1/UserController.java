@@ -22,8 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 用户相关接口控制层
+ *
  * @author yuzhanglong
- * @description 用户相关接口控制层
  * @date 2020-08-02 19:50:22
  */
 
@@ -42,8 +43,9 @@ public class UserController {
     }
 
     /**
+     * 注册一个用户
+     *
      * @author yuzhanglong
-     * @description 注册一个用户
      * @date 2020-08-02 19:52:36
      */
     @PostMapping("/register")
@@ -53,8 +55,9 @@ public class UserController {
     }
 
     /**
+     * 用户鉴权、登录
+     *
      * @author yuzhanglong
-     * @description 用户鉴权、登录
      * @date 2020-08-02 19:53:08
      */
     @PostMapping("/login")
@@ -67,8 +70,9 @@ public class UserController {
     }
 
     /**
+     * 本接口仅用于token的测试
+     *
      * @author yuzhanglong
-     * @description 本接口仅用于token的测试
      * @date 2020-08-03 19:38:25
      */
     @GetMapping("/check_token")
@@ -80,8 +84,9 @@ public class UserController {
 
 
     /**
+     * 下发验证码图片
+     *
      * @author yuzhanglong
-     * @description 下发验证码图片
      * @date 2020-08-03 19:51:21
      */
     @RequestMapping("/get_check_code")
@@ -91,8 +96,9 @@ public class UserController {
     }
 
     /**
+     * 获取近期活跃用户
+     *
      * @author yuzhanglong
-     * @description 获取近期活跃用户
      * @date 2020-08-07 20:13:09
      */
     @GetMapping("/get_active_user")
@@ -106,11 +112,12 @@ public class UserController {
 
 
     /**
-     * @author yuzhanglong
-     * @description 通过用户id，获取用户信息
+     * 通过用户id，获取用户信息
      * 我们不会直接让调用者传入用户id
      * 而是通过用户传入的token
      * 将token解析，获取其中包含的用户id
+     *
+     * @author yuzhanglong
      * @date 2020-08-08 13:11:24
      */
     @GetMapping("/get_user_info")
@@ -123,20 +130,34 @@ public class UserController {
     }
 
     /**
+     * 分页获取所有用户的基本信息
+     *
      * @param count 单页数量
      * @param start 页码
-     * @param scope 权限限制
      * @author yuzhanglong
-     * @description 分页获取所有用户的基本信息
      * @date 2020-08-16 13:02:20
      */
     @GetMapping("/get_users")
     public UnifiedResponse getUsers(
             @RequestParam(defaultValue = "0") Integer start,
-            @RequestParam(defaultValue = "10") Integer count,
-            @RequestParam(defaultValue = "") String scope) {
-        Page<UserEntity> userEntities = userService.getUsers(start, count, scope);
+            @RequestParam(defaultValue = "10") Integer count) {
+        Page<UserEntity> userEntities = userService.getUsers(start, count);
         PaginationVO<UserEntity, UserInfoVO> paginationVO = new PaginationVO<>(userEntities, UserInfoVO.class);
         return new UnifiedResponse(paginationVO);
+    }
+
+
+    /**
+     * 删除用户
+     *
+     * @param userId 需要删除的用户Id
+     * @author yuzhanglong
+     * @date 2020-8-22 14:05:20
+     */
+    @DeleteMapping("/delete_user/{userId}")
+    @AuthorizationRequired
+    public UnifiedResponse deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return new UnifiedResponse("删除用户成功");
     }
 }

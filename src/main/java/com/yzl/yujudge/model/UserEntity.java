@@ -2,6 +2,7 @@ package com.yzl.yujudge.model;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,8 +17,9 @@ import java.util.List;
 @Entity
 @DynamicUpdate
 @DynamicInsert
+@Where(clause = "delete_time is null")
 @Table(name = "user", schema = "yu-judge")
-public class UserEntity extends BaseEntity {
+public class UserEntity extends SoftDeleteEntity {
     @Basic
     @Column(name = "nickname")
     private String nickname;
@@ -38,9 +40,6 @@ public class UserEntity extends BaseEntity {
     @Column(name = "ac_amount")
     private Integer acAmount;
 
-    @Basic
-    @Column(name = "scope")
-    private String scope;
 
     @Basic
     @Column(name = "submission_amount")
@@ -50,7 +49,7 @@ public class UserEntity extends BaseEntity {
     private List<ProblemSetEntity> problemSetEntityList;
 
     @ManyToMany(mappedBy = "users")
-    private List<UserGroupEntity> userGroupEntityList;
+    private List<UserGroupEntity> userGroups;
 
 
     public String getNickname() {
@@ -109,19 +108,11 @@ public class UserEntity extends BaseEntity {
         this.problemSetEntityList = problemSetEntityList;
     }
 
-    public List<UserGroupEntity> getUserGroupEntityList() {
-        return userGroupEntityList;
+    public List<UserGroupEntity> getUserGroups() {
+        return userGroups;
     }
 
-    public void setUserGroupEntityList(List<UserGroupEntity> userGroupEntityList) {
-        this.userGroupEntityList = userGroupEntityList;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setUserGroups(List<UserGroupEntity> userGroupEntityList) {
+        this.userGroups = userGroupEntityList;
     }
 }

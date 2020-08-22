@@ -19,8 +19,8 @@ import javax.persistence.Table;
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@Table(name = "judge_solution", schema = "yu-judge")
 @Where(clause = "delete_time is null")
+@Table(name = "judge_solution", schema = "yu-judge")
 public class JudgeSolutionEntity extends SoftDeleteEntity {
     @Basic
     @Column(name = "std_in")
