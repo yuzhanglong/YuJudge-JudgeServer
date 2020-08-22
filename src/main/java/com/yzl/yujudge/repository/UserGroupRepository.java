@@ -10,4 +10,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UserGroupRepository extends JpaRepository<UserGroupEntity, Long> {
 
+    /**
+     * 通过用户组id查找用户组
+     *
+     * @param id 用户组id
+     * @return 查找的用户组实体类
+     */
+    UserGroupEntity findOneById(Long id);
 }
