@@ -233,7 +233,7 @@ public class UserService {
         UserEntity userEntity = userRepository.findOneById(userId);
         // 管理员用户只有一个用户组，即ROOT
         UserGroupEntity userGroupEntity = userEntity.getUserGroups().get(0);
-        return userGroupEntity.getName().equals(BaseUserGroupEnum.COMMON.name());
+        return userGroupEntity.getName().equals(BaseUserGroupEnum.ROOT.name());
     }
 
     /**

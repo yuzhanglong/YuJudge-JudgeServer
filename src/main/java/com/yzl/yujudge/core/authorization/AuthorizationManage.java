@@ -58,7 +58,10 @@ public class AuthorizationManage implements AuthorizationManageable {
         if (isRootUser(userId)) {
             return true;
         }
-        return userService.isUserPermissionAccepted(userId, permission);
+        if(!userService.isUserPermissionAccepted(userId, permission)){
+            throw new ForbiddenException("A0011");
+        }
+        return true;
     }
 
     /**
