@@ -111,7 +111,7 @@ public class UserGroupService {
      * @author yuzhanglong
      * @date 2020-8-22 18:29:26
      */
-    private void validateUserGroupName(String name) {
+    public void validateUserGroupName(String name) {
         boolean isDefaultUserGroup = BaseUserGroupEnum.isDefaultUserGroup(name);
         if (isDefaultUserGroup) {
             throw new NotFoundException("B0016");

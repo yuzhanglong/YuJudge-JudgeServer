@@ -1,7 +1,6 @@
 package com.yzl.yujudge.repository;
 
 import com.yzl.yujudge.model.JudgeHostEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 
 /**
@@ -10,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author yuzhanglong
  * @date 2020-7-30 18:56
  */
-public interface JudgeHostRepository extends JpaRepository<JudgeHostEntity, Long> {
+public interface JudgeHostRepository extends BaseRepository<JudgeHostEntity> {
     /**
      * 根据ID 获取判题机信息
      *

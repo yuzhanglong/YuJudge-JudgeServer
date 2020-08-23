@@ -17,11 +17,7 @@ import java.util.List;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "permission", schema = "yu-judge")
-public class PermissionEntity {
-    @Id
-    @Column(name = "id")
-    private Long id;
-
+public class PermissionEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
@@ -32,14 +28,6 @@ public class PermissionEntity {
 
     @ManyToMany(mappedBy = "permissions")
     private List<UserGroupEntity> userGroupEntityList;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -68,9 +56,9 @@ public class PermissionEntity {
     @Override
     public String toString() {
         return "PermissionEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", userGroupEntityList=" + userGroupEntityList +
                 '}';
     }
 }
