@@ -1,6 +1,8 @@
 package com.yzl.yujudge.repository;
 
+import com.yzl.yujudge.model.ProblemSetEntity;
 import com.yzl.yujudge.model.SubmissionEntity;
+import com.yzl.yujudge.model.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -77,30 +79,6 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
 
 
     /**
-     * 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
-     *
-     * @param problemSetId 题目集id
-     * @param userId       用户/队伍id
-     * @param problemId    题目id
-     * @return SubmissionEntity 查询到的提交实体类对象
-     * @author yuzhanglong
-     * @date 2020-08-13 01:00:23
-     * @description 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
-     * 注意：如果之前已经ac过，
-     * 之后的任何提交在这里都不会被计算进去，
-     * 详见submission的isAcBefore字段
-     */
-    @Deprecated
-    @Query("select count(submission) from SubmissionEntity submission " +
-            "where submission.problemSet.id = ?1 " +
-            "and submission.creator.id = ?2 " +
-            "and submission.pkProblem = ?3 " +
-            "and submission.judgeCondition = 'ACCEPT' " +
-            "order by submission.createTime desc ")
-    Long getAcAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
-
-
-    /**
      * 根据题目集信息、题目信息、用户/队伍 信息寻找某个用户在某个题目上是否已经ac过
      *
      * @param problemSetId 题目集id
@@ -119,6 +97,19 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
             "and submission.judgeCondition = 'ACCEPT' " +
             "order by submission.createTime desc ")
     SubmissionEntity getUserFirstAcInProblemSet(Long problemSetId, Long userId, Long problemId);
+
+
+    /**
+     * 获取用户某一道题目第一次ac的提交
+     *
+     * @param problemSet 题目集
+     * @param creator    用户/队伍
+     * @param pkProblem  题目id
+     * @return SubmissionEntity 查询到的提交实体类对象
+     * @author yuzhanglong
+     * @date 2020-8-23 22:12:31
+     */
+    SubmissionEntity findTop1ByProblemSetAndCreatorAndPkProblemOrderByCreateTimeAsc(ProblemSetEntity problemSet, UserEntity creator, Long pkProblem);
 
 
     /**
@@ -144,27 +135,23 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
 
     /**
      * 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
+     * 注意: 在首次ac之后的任何提交都不会被查询到
      *
      * @param problemSetId 题目集id
      * @param userId       用户/队伍id
      * @param problemId    题目id
+     * @param firstAcTime  首次ac的时间
      * @return SubmissionEntity 查询到的提交实体类对象
      * @author yuzhanglong
-     * @date 2020-08-13 01:01:19
-     * @description 根据题目集信息、题目信息、用户/队伍 信息寻找AC的个数
-     * <p>
-     * 注意：如果之前已经ac过，
-     * 之后的任何提交在这里都不会被计算进去，
-     * 详见submission的isAcBefore字段
+     * @date 2020-8-23 22:11:21
      */
-    @Deprecated
     @Query("select count(submission) from SubmissionEntity submission " +
             "where submission.problemSet.id = ?1 " +
             "and submission.creator.id = ?2 " +
             "and submission.pkProblem = ?3 " +
-            "and submission.judgeCondition <> 'ACCEPT' " +
+            "and submission.judgeCondition <> 'ACCEPT' and submission.createTime < ?4 " +
             "order by submission.createTime desc ")
-    Long getWaAmountByProblemSetIdAndUserIdAndProblemId(Long problemSetId, Long userId, Long problemId);
+    Long getUserProblemWaAmountByInProblemSet(Long problemSetId, Long userId, Long problemId, Date firstAcTime);
 
 
     /**

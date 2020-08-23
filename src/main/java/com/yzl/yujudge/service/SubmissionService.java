@@ -293,22 +293,6 @@ public class SubmissionService {
     }
 
     /**
-     * 判断用户在本题目集中在此之前是否已经ac过了某一道题目
-     *
-     * @param submissionEntity 题目集实体对象
-     * @return Boolean 用户是否在题目集中
-     * @author yuzhanglong
-     * @date 2020-08-13 00:52:38
-     */
-    private Boolean isAcBeforeInProblemSet(SubmissionEntity submissionEntity) {
-        Long problemSetId = submissionEntity.getProblemSet().getId();
-        Long userId = submissionEntity.getCreator().getId();
-        Long problemId = submissionEntity.getPkProblem();
-        long acAmount = submissionRepository.getAcAmountByProblemSetIdAndUserIdAndProblemId(problemSetId, userId, problemId);
-        return acAmount > 0;
-    }
-
-    /**
      * 获取用户判题结果的相关信息，例如wa数目、ac数目、tle数目等
      *
      * @author yuzhanglong

@@ -284,11 +284,12 @@ public class ProblemSetService {
         long totalTimePenalty = 0;
         for (JudgeProblemEntity problemEntity : problems) {
             long problemId = problemEntity.getId();
-            // FIXME: 此处返回了不止一个提交
-            SubmissionEntity firstAcSubmission = submissionRepository.getUserFirstAcInProblemSet(problemSet.getId(), user.getId(), problemId);
-            long wrongAnswerAmount = submissionRepository.getWaAmountByProblemSetIdAndUserIdAndProblemId(problemEntity.getId(), user.getId(), problemId);
+            // 拿到这支队伍在本题第一次的ac
+            SubmissionEntity firstAcSubmission = submissionRepository.findTop1ByProblemSetAndCreatorAndPkProblemOrderByCreateTimeAsc(problemSet, user, problemId);
             boolean isAc = firstAcSubmission != null;
-
+            // 如果没有ac，则我们要统计所有的提交。此时我们把时间限制设置为当前时间，可以达到我们的需求
+            Date firstAcTime = isAc ? firstAcSubmission.getCreateTime() : new Date();
+            long wrongAnswerAmount = submissionRepository.getUserProblemWaAmountByInProblemSet(problemEntity.getId(), user.getId(), problemId, firstAcTime);
             if (isAc) {
                 // 此题目拿到了AC， 通过总数加一
                 totalAcAmount += 1;
