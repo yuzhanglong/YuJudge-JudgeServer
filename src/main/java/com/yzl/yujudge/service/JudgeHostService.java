@@ -34,20 +34,17 @@ public class JudgeHostService {
     private final Mapper mapper;
     private final ObjectMapper objectMapper;
     private final SubmissionRepository submissionRepository;
-    private final ProblemSetService problemSetService;
 
     public JudgeHostService(
             JudgeHostRepository judgeHostRepository,
             JudgeHostCache judgeHostCache,
             Mapper mapper, ObjectMapper objectMapper,
-            SubmissionRepository submissionRepository,
-            ProblemSetService problemSetService) {
+            SubmissionRepository submissionRepository) {
         this.judgeHostRepository = judgeHostRepository;
         this.judgeHostCache = judgeHostCache;
         this.mapper = mapper;
         this.objectMapper = objectMapper;
         this.submissionRepository = submissionRepository;
-        this.problemSetService = problemSetService;
     }
 
     /**
@@ -241,7 +238,7 @@ public class JudgeHostService {
     public CountSubmissionByTimeVO countJudgeHostsSubmissionByTimeBetween(Date begin, Date end, Long judgeHostId) {
         // 查询结果
         Set<List<Object>> results = submissionRepository.countSubmissionGroupByHoursByJudgeHostId(begin, end, judgeHostId);
-        List<Map<String, Object>> items = problemSetService.publishSubmissionHourlyCount(results);
+        List<Map<String, Object>> items = SubmissionService.publishSubmissionHourlyCount(results);
         return new CountSubmissionByTimeVO((long) results.size(), items);
     }
 }

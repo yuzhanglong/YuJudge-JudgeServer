@@ -168,16 +168,17 @@ public class UserService {
      * @author yuzhanglong
      * @date 2020-08-07 16:18:31
      */
-    public List<UserEntity> getActiveUser(Integer userAmount) {
+    public List<UserEntity> getActiveUsers(Integer userAmount) {
         int finalSize = userAmount > GET_RECENT_USER_MAX_SIZE ? GET_RECENT_USER_MAX_SIZE : userAmount;
         Pageable pageable = PageRequest.of(0, finalSize);
         return userRepository.findByOrderBySubmissionAmountDesc(pageable);
     }
 
     /**
+     * 获取用户信息
+     *
      * @param userId 用户id
      * @author yuzhanglong
-     * @description 获取近期活跃用户信息
      * @date 2020-08-08 13:01:16
      */
     public UserEntity getUserInfo(Long userId) {

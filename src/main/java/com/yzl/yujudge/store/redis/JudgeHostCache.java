@@ -16,7 +16,7 @@ import java.util.concurrent.locks.*;
 
 @Component
 public class JudgeHostCache {
-    public static final String JUDGE_HOST_INFO_SAVE_PREFIX = "judgeHosts";
+    public static final String JUDGE_HOST_INFO_REDIS_SAVE_PREFIX = "judgeHosts";
     private final RedisOperations redisOperations;
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
@@ -33,7 +33,7 @@ public class JudgeHostCache {
      */
     public List<Object> getJudgeHostsConditionListCache() {
         readWriteLock.readLock().lock();
-        Map<Object, Object> res = redisOperations.getHashMap(JUDGE_HOST_INFO_SAVE_PREFIX);
+        Map<Object, Object> res = redisOperations.getHashMap(JUDGE_HOST_INFO_REDIS_SAVE_PREFIX);
         readWriteLock.readLock().unlock();
         return new ArrayList<>(res.values());
     }
@@ -47,7 +47,7 @@ public class JudgeHostCache {
      */
     public Object getJudgeHostsConditionByJudgeHostId(String key) {
         readWriteLock.readLock().lock();
-        Map<Object, Object> res = redisOperations.getHashMap(JUDGE_HOST_INFO_SAVE_PREFIX);
+        Map<Object, Object> res = redisOperations.getHashMap(JUDGE_HOST_INFO_REDIS_SAVE_PREFIX);
         readWriteLock.readLock().unlock();
         return res.get(key);
     }
@@ -62,11 +62,11 @@ public class JudgeHostCache {
         // 写数据时我们不允许读，更不允许写，因此我们使用读写锁
         readWriteLock.writeLock().lock();
         // 删除旧数据
-        redisOperations.remove(JUDGE_HOST_INFO_SAVE_PREFIX);
+        redisOperations.remove(JUDGE_HOST_INFO_REDIS_SAVE_PREFIX);
         // 遍历判断过的judgeHostBO,并将每一项存入hashMap
         for (JudgeHostBO judgeHostBO : judgeHostBOList) {
             boolean isSet = redisOperations.setHashMap(
-                    JUDGE_HOST_INFO_SAVE_PREFIX,
+                    JUDGE_HOST_INFO_REDIS_SAVE_PREFIX,
                     judgeHostBO.getId().toString(),
                     judgeHostBO
             );

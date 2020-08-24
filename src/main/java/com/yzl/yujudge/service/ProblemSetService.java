@@ -44,6 +44,7 @@ public class ProblemSetService {
     private final SubmissionRepository submissionRepository;
     private final ProblemSetCache problemSetCache;
     private final Mapper mapper;
+    private final Pageable findFirstPageable = PageRequest.of(0, 1);
 
 
     public ProblemSetService(
@@ -285,23 +286,23 @@ public class ProblemSetService {
         for (JudgeProblemEntity problemEntity : problems) {
             long problemId = problemEntity.getId();
             // 拿到这支队伍在本题第一次的ac
-            SubmissionEntity firstAcSubmission = submissionRepository.findTop1ByProblemSetAndCreatorAndPkProblemOrderByCreateTimeAsc(problemSet, user, problemId);
-            boolean isAc = firstAcSubmission != null;
+            List<SubmissionEntity> firstAcSubmission = submissionRepository.findUserProblemAcInProblemSet(problemSet, user, problemId, findFirstPageable);
+            boolean isAc = firstAcSubmission.size() == 1;
             // 如果没有ac，则我们要统计所有的提交。此时我们把时间限制设置为当前时间，可以达到我们的需求
-            Date firstAcTime = isAc ? firstAcSubmission.getCreateTime() : new Date();
-            long wrongAnswerAmount = submissionRepository.getUserProblemWaAmountByInProblemSet(problemEntity.getId(), user.getId(), problemId, firstAcTime);
+            Date firstAcTime = isAc ? firstAcSubmission.get(0).getCreateTime() : new Date();
+            long wrongAnswerAmount = submissionRepository.getUserProblemWaAmountByInProblemSet(problemSet.getId(), user.getId(), problemId, firstAcTime);
             if (isAc) {
                 // 此题目拿到了AC， 通过总数加一
                 totalAcAmount += 1;
                 // 计算总罚时
                 totalTimePenalty += countProblemPenalty(
                         problemSet.getStartTime(),
-                        firstAcSubmission.getCreateTime(),
+                        firstAcSubmission.get(0).getCreateTime(),
                         problemSet.getTimePenalty(),
                         wrongAnswerAmount
                 );
             }
-            problemList.add(generateProblemCondition(isAc, wrongAnswerAmount, problemSet, firstAcSubmission, problemId));
+            problemList.add(generateProblemCondition(wrongAnswerAmount, problemSet, isAc ? firstAcSubmission.get(0) : null, problemId));
         }
         return new TeamProblemsSolutionBO(problemList, totalAcAmount, totalTimePenalty);
     }
@@ -315,7 +316,6 @@ public class ProblemSetService {
      * "isAccepted": false（是否通过了这道题）
      * },
      *
-     * @param isAc              是否通过
      * @param wrongAnswerAmount 错误答案的数量
      * @param problemSetEntity  题目集实体类
      * @param firstAcSubmission 首次ac的提交
@@ -324,10 +324,11 @@ public class ProblemSetService {
      * @date 2020-08-13 22:42:39
      */
     private Map<String, Object> generateProblemCondition(
-            Boolean isAc, Long wrongAnswerAmount,
+            Long wrongAnswerAmount,
             ProblemSetEntity problemSetEntity,
             SubmissionEntity firstAcSubmission, Long problemId) {
         Map<String, Object> problemCondition = new HashMap<>(3);
+        boolean isAc = firstAcSubmission != null;
         // 是否 ac
         problemCondition.put("isAccepted", isAc);
         // 之前是否已经有人ac了
@@ -412,36 +413,8 @@ public class ProblemSetService {
         Date start = problemSetEntity.getStartTime();
         Date end = problemSetEntity.getDeadline();
         Set<List<Object>> results = submissionRepository.countSubmissionGroupByHoursByProblemSetId(start, end, problemSetId);
-        List<Map<String, Object>> items = publishSubmissionHourlyCount(results);
+        List<Map<String, Object>> items = SubmissionService.publishSubmissionHourlyCount(results);
         return new CountSubmissionByTimeVO((long) results.size(), items);
-    }
-
-
-    /**
-     * 序列化提交数据
-     * 【数组单个元素示例】
-     * {
-     * "submissionAmount": 1,
-     * "hour": 0,
-     * "time": 1597680000000
-     * }
-     *
-     * @param results 查询结果
-     * @return 处理后的结果列表，内容见@description
-     * @author yuzhanglong
-     * @date 2020-8-20 10:54:52
-     * @see SubmissionRepository 参阅传入内容的数据结构
-     */
-    public List<Map<String, Object>> publishSubmissionHourlyCount(Set<List<Object>> results) {
-        List<Map<String, Object>> items = new ArrayList<>();
-        for (List<Object> result : results) {
-            Map<String, Object> itemForOneHour = new HashMap<>(12);
-            itemForOneHour.put("time", result.get(0));
-            itemForOneHour.put("hour", result.get(1));
-            itemForOneHour.put("submissionAmount", result.get(2));
-            items.add(itemForOneHour);
-        }
-        return items;
     }
 
     /**

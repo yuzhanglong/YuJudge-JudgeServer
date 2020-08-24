@@ -24,19 +24,6 @@ public interface UserRepository extends SoftDeleteRepository<UserEntity> {
      */
     UserEntity findByNickname(String nickName);
 
-
-    /**
-     * 通过用户昵称或者邮箱找到对应用户
-     *
-     * @param nickname 用户昵称
-     * @param email    用户邮箱
-     * @return UserEntity 用户实体对象
-     * @author yuzhanglong
-     * @description 通过用户昵称或者邮箱找到对应用户
-     * @date 2020-08-03 22:09:55
-     */
-    UserEntity findUserEntityByNicknameOrEmail(String nickname, String email);
-
     /**
      * 获取活跃用户
      *

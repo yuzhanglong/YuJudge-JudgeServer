@@ -100,16 +100,23 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
 
 
     /**
-     * 获取用户某一道题目第一次ac的提交
+     * 分页获取用户某一道题目ac的提交
      *
      * @param problemSet 题目集
      * @param creator    用户/队伍
      * @param pkProblem  题目id
+     * @param pageable   分页对象
      * @return SubmissionEntity 查询到的提交实体类对象
      * @author yuzhanglong
      * @date 2020-8-23 22:12:31
      */
-    SubmissionEntity findTop1ByProblemSetAndCreatorAndPkProblemOrderByCreateTimeAsc(ProblemSetEntity problemSet, UserEntity creator, Long pkProblem);
+    @Query("select submission from SubmissionEntity submission " +
+            "where submission.problemSet = ?1 " +
+            "and submission.creator = ?2 " +
+            "and submission.pkProblem = ?3 " +
+            "and submission.judgeCondition = 'ACCEPT' " +
+            "order by submission.createTime asc ")
+    List<SubmissionEntity> findUserProblemAcInProblemSet(ProblemSetEntity problemSet, UserEntity creator, Long pkProblem, Pageable pageable);
 
 
     /**
@@ -192,13 +199,8 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @author yuzhanglong
      * @date 2020-8-19 17:05:29
      * @description 统计某个时间段内某个判题机的提交数据
-     * 示例:【排序优先级: 提交时间 > 小时数】
-     * +--------------------+------------------+--------------------+
-     * | 提交时间(精确到天)   | 位于当天的小时数   | 这个小时的提交数量   |
-     * +--------------------+------------------+--------------------+
-     * | 2020-08-18         |                0 |                  1 |
-     * | 2020-08-19         |               14 |                  1 |
-     * +--------------------+------------------+--------------------+
+     * 示例:见 countSubmissionGroupByHoursByJudgeHostId 方法
+     * @see SubmissionRepository#countSubmissionGroupByHoursByJudgeHostId(Date, Date, Long)
      */
     @Query(value = "SELECT DATE(s.create_time), HOUR(s.create_time), COUNT(*)" +
             "FROM submission s " +
@@ -209,6 +211,26 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
             nativeQuery = true)
     Set<List<Object>> countSubmissionGroupByHoursByProblemSetId(Date start, Date end, Long problemSetId);
 
+
+    /**
+     * 统计某个时间段内所有提交数据
+     *
+     * @param start 开始时间
+     * @param end   结束时间
+     * @return 提交数据统计的集合
+     * @author yuzhanglong
+     * @date 2020-8-24 19:14:22
+     * @description 统计某个时间段内某个判题机的提交数据
+     * 示例:见 countSubmissionGroupByHoursByJudgeHostId 方法
+     * @see SubmissionRepository#countSubmissionGroupByHoursByJudgeHostId(Date, Date, Long)
+     */
+    @Query(value = "SELECT DATE(s.create_time), HOUR(s.create_time), COUNT(*)" +
+            "FROM submission s " +
+            "WHERE s.create_time BETWEEN ?1 and ?2 " +
+            "GROUP BY DATE(s.create_time), HOUR(s.create_time) " +
+            "ORDER BY DATE(s.create_time), HOUR(s.create_time) ",
+            nativeQuery = true)
+    Set<List<Object>> countSubmissionGroupByHours(Date start, Date end);
 
     /**
      * 获取某个用户在本平台内的所有提交统计

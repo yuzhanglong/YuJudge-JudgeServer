@@ -3,6 +3,9 @@ package com.yzl.yujudge.store.redis;
 import com.yzl.yujudge.bo.ScoreBoardBO;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * @author yuzhanglong
  * @description 题目集相关缓存操作
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class ProblemSetCache {
     public static final String PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX = "problem_set_score_board";
     private final RedisOperations redisOperations;
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public ProblemSetCache(RedisOperations redisOperations) {
         this.redisOperations = redisOperations;
@@ -28,7 +32,10 @@ public class ProblemSetCache {
     public void setProblemSetScoreBoardCache(ScoreBoardBO scoreBoardInfo, String problemSetId) {
         // 生成key
         String key = PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX + "_" + problemSetId;
+        // 写数据时我们不允许读，更不允许写，因此我们使用读写锁
+        readWriteLock.writeLock().lock();
         redisOperations.set(key, scoreBoardInfo);
+        readWriteLock.writeLock().unlock();
     }
 
     /**
@@ -38,7 +45,9 @@ public class ProblemSetCache {
      * @description 添加题目集记分板缓存
      */
     public Object getProblemSetScoreBoardCache(Long problemSetId) {
+        readWriteLock.readLock().lock();
         String key = PROBLEM_SET_SCORE_BOARD_REDIS_SAVE_PREFIX + "_" + problemSetId;
+        readWriteLock.readLock().unlock();
         return redisOperations.get(key);
     }
 }

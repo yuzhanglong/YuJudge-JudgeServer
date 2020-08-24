@@ -309,4 +309,32 @@ public class SubmissionService {
         }
         return res;
     }
+
+    /**
+     * 序列化提交数据
+     * 【数组单个元素示例】
+     * {
+     * "submissionAmount": 1,
+     * "hour": 0,
+     * "time": 1597680000000
+     * }
+     *
+     * @param results 查询结果
+     * @return 处理后的结果列表，内容见@description
+     * @author yuzhanglong
+     * @date 2020-8-20 10:54:52
+     * @see SubmissionRepository#countSubmissionGroupByHoursByJudgeHostId(Date, Date, Long)
+     * 参阅传入内容的数据结构
+     */
+    public static List<Map<String, Object>> publishSubmissionHourlyCount(Set<List<Object>> results) {
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (List<Object> result : results) {
+            Map<String, Object> itemForOneHour = new HashMap<>(12);
+            itemForOneHour.put("time", result.get(0));
+            itemForOneHour.put("hour", result.get(1));
+            itemForOneHour.put("submissionAmount", result.get(2));
+            items.add(itemForOneHour);
+        }
+        return items;
+    }
 }

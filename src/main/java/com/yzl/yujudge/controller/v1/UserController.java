@@ -104,7 +104,7 @@ public class UserController {
     @GetMapping("/get_active_user")
     @AuthorizationRequired
     public UnifiedResponse getActiveUser(@RequestParam @NotNull Integer amount) {
-        List<UserEntity> userEntities = userService.getActiveUser(amount);
+        List<UserEntity> userEntities = userService.getActiveUsers(amount);
         EntityToVoListMapper<UserEntity, UserInfoVO> mapper = new EntityToVoListMapper<>(userEntities, UserInfoVO.class);
         List<UserInfoVO> userInfoVOList = mapper.getItems();
         return new UnifiedResponse(userInfoVOList);
