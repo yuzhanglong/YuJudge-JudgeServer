@@ -6,6 +6,7 @@ import com.yzl.yujudge.bo.ScoreBoardBO;
 import com.yzl.yujudge.bo.ScoreBoardItemBO;
 import com.yzl.yujudge.bo.TeamProblemsSolutionBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
+import com.yzl.yujudge.core.enumeration.LanguageEnum;
 import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemSetDTO;
@@ -124,6 +125,7 @@ public class ProblemSetService {
             throw new NotFoundException("A0001");
         }
         problemSetEntity.setCreator(user);
+        problemSetEntity.setAllowedLanguage(LanguageEnum.getAllAcceptedLanguage());
         problemSetRepository.save(problemSetEntity);
     }
 

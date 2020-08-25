@@ -140,8 +140,9 @@ public class UserController {
     @GetMapping("/get_users")
     public UnifiedResponse getUsers(
             @RequestParam(defaultValue = "0") Integer start,
-            @RequestParam(defaultValue = "10") Integer count) {
-        Page<UserEntity> userEntities = userService.getUsers(start, count);
+            @RequestParam(defaultValue = "10") Integer count,
+            @RequestParam(defaultValue = "") Long group) {
+        Page<UserEntity> userEntities = userService.getUsers(start, count, group);
         PaginationVO<UserEntity, UserInfoVO> paginationVO = new PaginationVO<>(userEntities, UserInfoVO.class);
         return new UnifiedResponse(paginationVO);
     }

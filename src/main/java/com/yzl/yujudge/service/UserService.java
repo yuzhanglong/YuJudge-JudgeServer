@@ -41,7 +41,10 @@ public class UserService {
     private final AuthorizationConfiguration authorizationConfiguration;
     private final RedisOperations redisOperations;
 
-    public UserService(UserRepository userRepository, AuthorizationConfiguration authorizationConfiguration, RedisOperations redisOperations) {
+    public UserService(
+            UserRepository userRepository,
+            AuthorizationConfiguration authorizationConfiguration,
+            RedisOperations redisOperations) {
         this.userRepository = userRepository;
         this.authorizationConfiguration = authorizationConfiguration;
         this.redisOperations = redisOperations;
@@ -191,16 +194,23 @@ public class UserService {
 
     /**
      * 获取用户信息分页对象
+     * userGroupId为空时，则我们不限制用户组
      *
      * @param count 单页数量
      * @param start 页码
+     * @param userGroupId 用户组id
+     * @return 用户信息分页对象
      * @author yuzhanglong
      * @date 2020-08-16 13:53:33
      */
-    public Page<UserEntity> getUsers(Integer start, Integer count) {
+    public Page<UserEntity> getUsers(Integer start, Integer count, Long userGroupId) {
         Pageable pageable = PageRequest.of(start, count);
-        // 当没有传入权限时，直接查找所有用户
-        return userRepository.findAll(pageable);
+        if (userGroupId == null) {
+            // 当没有传入用户组信息时，直接查找所有用户
+            return userRepository.findAll(pageable);
+        } else {
+            return userRepository.findUsersByUserGroup(userGroupId, pageable);
+        }
     }
 
     /**
@@ -227,6 +237,7 @@ public class UserService {
      * 根据用户id判断是否为管理员用户
      *
      * @param userId 用户ID
+     * @return 是否为管理员
      * @author yuzhanglong
      * @date 2020-8-22 13:41:07
      */
@@ -244,6 +255,7 @@ public class UserService {
      * 用户【user】对应的用户组【user_group】是否拥有这个权限【permission】，三张表全为多对多关系
      *
      * @param userId 用户ID
+     * @return 用户是否有资格访问资源
      * @author yuzhanglong
      * @date 2020-8-22 13:41:07
      */

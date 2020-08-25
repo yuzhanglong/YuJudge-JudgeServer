@@ -1,12 +1,14 @@
 package com.yzl.yujudge.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
- * @author yuzhanglong
- * @description 判题结果的数据传输对象，
+ * 判题结果的数据传输对象，
  * 我们成功请求获得判题结果json字符串之后
  * 将其映射到这个对象上面
+ *
+ * @author yuzhanglong
  */
 public class JudgeResultDTO {
     private List<JudgeTestCaseResultDTO> judgeResults;
@@ -54,5 +56,25 @@ public class JudgeResultDTO {
                 ", judgeEndTime=" + judgeEndTime +
                 ", extraInfo=" + extraInfo +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JudgeResultDTO that = (JudgeResultDTO) o;
+        return Objects.equals(judgeResults, that.judgeResults) &&
+                Objects.equals(submissionId, that.submissionId) &&
+                Objects.equals(judgeEndTime, that.judgeEndTime) &&
+                Objects.equals(extraInfo, that.extraInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(judgeResults, submissionId, judgeEndTime, extraInfo);
     }
 }
