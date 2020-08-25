@@ -22,7 +22,7 @@ import com.yzl.yujudge.store.redis.ProblemSetCache;
 import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.utils.comparator.ScoreBoardItemComparator;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
-import com.yzl.yujudge.vo.UserInfoVO;
+import com.yzl.yujudge.vo.UserInfoBasicVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -253,7 +253,7 @@ public class ProblemSetService {
         for (int i = 0; i < participants.size(); i++) {
             UserEntity user = participants.get(i);
             ScoreBoardItemBO item = new ScoreBoardItemBO();
-            item.setTeamInfo(mapper.map(user, UserInfoVO.class));
+            item.setTeamInfo(mapper.map(user, UserInfoBasicVO.class));
             TeamProblemsSolutionBO singleProblemSolutionInfo = countTeamProblemSolutionInfo(
                     user,
                     problemSetEntity,

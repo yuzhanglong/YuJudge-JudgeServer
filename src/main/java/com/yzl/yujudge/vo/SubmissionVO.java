@@ -16,7 +16,7 @@ public class SubmissionVO {
     private Long memoryCost;
     private Date createTime;
     private String judgePreference;
-    private UserInfoVO creator;
+    private UserInfoBasicVO creator;
     private JudgeHostBasicVO judgeHost;
 
     public String getLanguage() {
@@ -75,11 +75,11 @@ public class SubmissionVO {
         this.createTime = createTime;
     }
 
-    public UserInfoVO getCreator() {
+    public UserInfoBasicVO getCreator() {
         return creator;
     }
 
-    public void setCreator(UserInfoVO creator) {
+    public void setCreator(UserInfoBasicVO creator) {
         this.creator = creator;
     }
 

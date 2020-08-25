@@ -1,6 +1,6 @@
 package com.yzl.yujudge.bo;
 
-import com.yzl.yujudge.vo.UserInfoVO;
+import com.yzl.yujudge.vo.UserInfoBasicVO;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class ScoreBoardItemBO {
     private List<Map<String, Object>> solutionInfo;
-    private UserInfoVO teamInfo;
+    private UserInfoBasicVO teamInfo;
     private Integer rank;
     private Integer totalAcAmount;
     private Long totalTimePenalty;
@@ -26,11 +26,11 @@ public class ScoreBoardItemBO {
         this.solutionInfo = solutionInfo;
     }
 
-    public UserInfoVO getTeamInfo() {
+    public UserInfoBasicVO getTeamInfo() {
         return teamInfo;
     }
 
-    public void setTeamInfo(UserInfoVO teamInfo) {
+    public void setTeamInfo(UserInfoBasicVO teamInfo) {
         this.teamInfo = teamInfo;
     }
 

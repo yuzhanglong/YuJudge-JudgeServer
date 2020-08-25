@@ -14,7 +14,7 @@ import java.util.List;
 public class ProblemSetVO {
     private String name;
     private String description;
-    private UserInfoVO creator;
+    private UserInfoBasicVO creator;
     private Date deadline;
     private Date startTime;
     private Date createTime;
@@ -39,11 +39,11 @@ public class ProblemSetVO {
         this.description = description;
     }
 
-    public UserInfoVO getCreator() {
+    public UserInfoBasicVO getCreator() {
         return creator;
     }
 
-    public void setCreator(UserInfoVO creator) {
+    public void setCreator(UserInfoBasicVO creator) {
         this.creator = creator;
     }
 

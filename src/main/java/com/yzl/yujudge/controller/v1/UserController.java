@@ -12,6 +12,7 @@ import com.yzl.yujudge.utils.EntityToVoListMapper;
 import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.AuthorizationVO;
 import com.yzl.yujudge.vo.PaginationVO;
+import com.yzl.yujudge.vo.UserInfoBasicVO;
 import com.yzl.yujudge.vo.UserInfoVO;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -105,8 +106,8 @@ public class UserController {
     @AuthorizationRequired
     public UnifiedResponse getActiveUser(@RequestParam @NotNull Integer amount) {
         List<UserEntity> userEntities = userService.getActiveUsers(amount);
-        EntityToVoListMapper<UserEntity, UserInfoVO> mapper = new EntityToVoListMapper<>(userEntities, UserInfoVO.class);
-        List<UserInfoVO> userInfoVOList = mapper.getItems();
+        EntityToVoListMapper<UserEntity, UserInfoBasicVO> mapper = new EntityToVoListMapper<>(userEntities, UserInfoBasicVO.class);
+        List<UserInfoBasicVO> userInfoVOList = mapper.getItems();
         return new UnifiedResponse(userInfoVOList);
     }
 

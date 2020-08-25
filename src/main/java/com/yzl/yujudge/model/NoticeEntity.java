@@ -25,11 +25,11 @@ public class NoticeEntity extends SoftDeleteEntity {
 
     @Basic
     @Column(name = "priority")
-    private Integer priority;
+    private String priority;
 
     @OneToOne
     @JoinColumn(name = "pk_user", referencedColumnName = "id")
-    private UserEntity pkUser;
+    private UserEntity creator;
 
     public String getTitle() {
         return title;
@@ -39,20 +39,20 @@ public class NoticeEntity extends SoftDeleteEntity {
         this.title = title;
     }
 
-    public Integer getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(Integer priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 
-    public UserEntity getPkUser() {
-        return pkUser;
+    public UserEntity getCreator() {
+        return creator;
     }
 
-    public void setPkUser(UserEntity pkUser) {
-        this.pkUser = pkUser;
+    public void setCreator(UserEntity pkUser) {
+        this.creator = pkUser;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class NoticeEntity extends SoftDeleteEntity {
         return "NoticeEntity{" +
                 "title='" + title + '\'' +
                 ", priority=" + priority +
-                ", pkUser=" + pkUser +
+                ", pkUser=" + creator +
                 '}';
     }
 }
