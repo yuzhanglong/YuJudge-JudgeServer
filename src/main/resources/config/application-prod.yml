@@ -1,7 +1,24 @@
 server:
   port: 8080
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/yu-judge?characterEncoding=utf-8&serverTimezone=GMT%2B8
     username: root
     password: yzl520
+  redis:
+    port: 6379
+    host: localhost
+    database: 0
+
+authorization:
+  expired-in: 14400
+  secret-key: secret
+
+upload:
+  qn-service:
+    access-key: o4fgM7P2lPEyo3FZ7s_NGdo_xJVNDdKf55apCubX
+    secret-key: YxRkcS8o-GSLMo1ajWuLjeFxFsMo1WKnOvyrLjB8
+    bucket: yzlyzl123
+
+cross-origin: false

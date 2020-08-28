@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/permission")
 public class PermissionController {
     private final PermissionService permissionService;

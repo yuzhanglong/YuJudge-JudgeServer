@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/judge_host")
 public class JudgeHostController {
     private final JudgeHostService judgeHostService;

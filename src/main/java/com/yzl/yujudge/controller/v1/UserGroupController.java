@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/user_group")
 public class UserGroupController {
     private final UserGroupService userGroupService;

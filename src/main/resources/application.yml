@@ -15,3 +15,4 @@ spring:
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: true
+

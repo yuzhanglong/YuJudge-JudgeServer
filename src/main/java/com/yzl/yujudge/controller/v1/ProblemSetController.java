@@ -30,7 +30,6 @@ import java.util.Map;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/problem_set")
 public class ProblemSetController {
     private final ProblemSetService problemSetService;

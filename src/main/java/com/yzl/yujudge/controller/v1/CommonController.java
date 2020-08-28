@@ -6,7 +6,6 @@ import com.yzl.yujudge.service.CommonService;
 import com.yzl.yujudge.vo.GlobalCountVO;
 import com.yzl.yujudge.vo.UploadTokenVO;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/common")
 public class CommonController {
     private final CommonService commonService;

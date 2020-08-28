@@ -28,7 +28,6 @@ import java.util.List;
  */
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/problem")
 public class ProblemController {
     private final ProblemService problemService;

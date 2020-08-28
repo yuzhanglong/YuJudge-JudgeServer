@@ -30,7 +30,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/submission")
 public class SubmissionController {
     private final SubmissionService submissionService;

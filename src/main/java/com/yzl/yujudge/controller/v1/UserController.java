@@ -31,7 +31,6 @@ import java.util.Map;
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/user")
 public class UserController {
 
