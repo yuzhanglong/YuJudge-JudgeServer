@@ -39,8 +39,22 @@ public class NoticeController {
     public UnifiedResponse getNotices(
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count) {
-        Page<NoticeEntity> notices= noticeService.getNotices(start, count);
+        Page<NoticeEntity> notices = noticeService.getNotices(start, count);
         PaginationVO<NoticeEntity, NoticeBasicVO> paginationVO = new PaginationVO<>(notices, NoticeBasicVO.class);
         return new UnifiedResponse(paginationVO);
+    }
+
+
+    @DeleteMapping("/delete_notice")
+    public UnifiedResponse deleteNotice() {
+        // TODO: 删除
+        return new UnifiedResponse("删除成功");
+    }
+
+
+    @PutMapping("/update_notice")
+    public UnifiedResponse updateNotice() {
+        // TODO: 更新
+        return new UnifiedResponse("更新成功");
     }
 }

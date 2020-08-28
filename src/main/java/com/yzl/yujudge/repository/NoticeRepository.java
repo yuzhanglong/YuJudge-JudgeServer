@@ -25,7 +25,7 @@ public interface NoticeRepository extends SoftDeleteRepository<NoticeEntity> {
      * @description 分页获取公告
      */
 
-    @Query("select notice from NoticeEntity notice " +
-            "order by notice.priority, notice.createTime desc ")
+    @Query("select notice from NoticeEntity notice where notice.closed = false " +
+            "order by notice.priority desc, notice.createTime desc ")
     Page<NoticeEntity> findNoticesOrderByPriorityAndTime(Pageable pageable);
 }

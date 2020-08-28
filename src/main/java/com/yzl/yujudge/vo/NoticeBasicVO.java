@@ -2,6 +2,8 @@ package com.yzl.yujudge.vo;
 
 import com.yzl.yujudge.core.enumeration.NoticePriorityEnum;
 
+import java.util.Date;
+
 /**
  * 公告基本内容视图层对象
  *
@@ -10,9 +12,27 @@ import com.yzl.yujudge.core.enumeration.NoticePriorityEnum;
  */
 
 public class NoticeBasicVO {
+    private Long id;
     private String title;
     private NoticePriorityEnum priority;
     private UserInfoBasicVO creator;
+    private Date createTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public String getTitle() {
         return title;

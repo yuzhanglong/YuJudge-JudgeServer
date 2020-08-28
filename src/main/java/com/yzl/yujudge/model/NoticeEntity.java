@@ -31,6 +31,10 @@ public class NoticeEntity extends SoftDeleteEntity {
     @JoinColumn(name = "pk_user", referencedColumnName = "id")
     private UserEntity creator;
 
+    @Basic
+    @JoinColumn(name = "is_closed")
+    private Boolean closed;
+
     public String getTitle() {
         return title;
     }
@@ -53,6 +57,14 @@ public class NoticeEntity extends SoftDeleteEntity {
 
     public void setCreator(UserEntity pkUser) {
         this.creator = pkUser;
+    }
+
+    public Boolean getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
     }
 
     @Override
