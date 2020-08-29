@@ -32,7 +32,7 @@ public class NoticeEntity extends SoftDeleteEntity {
     private UserEntity creator;
 
     @Basic
-    @JoinColumn(name = "is_closed")
+    @Column(name = "is_closed")
     private Boolean closed;
 
     public String getTitle() {

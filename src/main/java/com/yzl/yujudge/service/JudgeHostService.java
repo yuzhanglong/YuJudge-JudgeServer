@@ -9,6 +9,7 @@ import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostConditionDTO;
 import com.yzl.yujudge.dto.JudgeHostConnectionDTO;
 import com.yzl.yujudge.dto.JudgeHostDTO;
+import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.model.JudgeHostEntity;
 import com.yzl.yujudge.network.JudgeHostCommonRequest;
 import com.yzl.yujudge.repository.JudgeHostRepository;
@@ -18,6 +19,7 @@ import com.yzl.yujudge.utils.comparator.BestJudgeHostComparator;
 import com.yzl.yujudge.utils.validators.PublicValidator;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.*;
 
@@ -240,5 +242,34 @@ public class JudgeHostService {
         Set<List<Object>> results = submissionRepository.countSubmissionGroupByHoursByJudgeHostId(begin, end, judgeHostId);
         List<Map<String, Object>> items = SubmissionService.publishSubmissionHourlyCount(results);
         return new CountSubmissionByTimeVO((long) results.size(), items);
+    }
+
+    /**
+     * 设置判题机工作节点
+     *
+     * @param judgeHostId         判题机id
+     * @param setWorkingAmountDTO 设置判题机节点的数据传输对象
+     * @author yuzhanglong
+     * @date 2020-8-29 18:50:38
+     */
+    public void setJudgeHostServiceWorkingAmount(Long judgeHostId, SetWorkingAmountDTO setWorkingAmountDTO) {
+        JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
+        if (judgeHostEntity == null) {
+            throw new NotFoundException("B0013");
+        }
+        if (setWorkingAmountDTO.getForceSet() == null) {
+            setWorkingAmountDTO.setForceSet(false);
+        }
+        JudgeHostCommonRequest request = new JudgeHostCommonRequest(judgeHostEntity.getBaseUrl(), judgeHostEntity.getPort());
+        try {
+            String testResponse = request.setJudgeMaxWorkingAmount(setWorkingAmountDTO);
+        } catch (WebClientResponseException e) {
+            String res = new String(e.getResponseBodyAsByteArray());
+            System.out.println(res);
+            throw new NotFoundException("B0019");
+        } catch (Exception e) {
+            // 没有连接
+            throw new NotFoundException("B0020");
+        }
     }
 }

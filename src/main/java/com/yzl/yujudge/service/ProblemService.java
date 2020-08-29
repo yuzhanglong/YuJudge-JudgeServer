@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +30,9 @@ public class ProblemService {
     private final SolutionRepository solutionRepository;
     private final Mapper mapper;
     public static final int RECENT_PROBLEM_SEARCH_MAX_SIZE = 15;
+    public static final int TIME_LIMIT_DEFAULT = 1000 * 5;
+    public static final int OUTPUT_LIMIT_DEFAULT = 100000;
+    public static final String PROBLEM_CONTENT_DEFAULT = "您可以修改题目内容";
 
     public ProblemService(ProblemRepository problemRepository, SolutionRepository solutionRepository, Mapper mapper) {
         this.problemRepository = problemRepository;
@@ -73,6 +77,11 @@ public class ProblemService {
     public void createProblem(ProblemDTO problemInfo) {
         // problem实体类
         JudgeProblemEntity problem = ToEntityUtil.problemDtoToProblemEntity(problemInfo);
+        problem.setCpuTimeLimit(TIME_LIMIT_DEFAULT);
+        problem.setTimeLimit(TIME_LIMIT_DEFAULT);
+        problem.setCharacterTags(new ArrayList<>());
+        problem.setOutputLimit(OUTPUT_LIMIT_DEFAULT);
+        problem.setContent(PROBLEM_CONTENT_DEFAULT);
         problemRepository.save(problem);
     }
 

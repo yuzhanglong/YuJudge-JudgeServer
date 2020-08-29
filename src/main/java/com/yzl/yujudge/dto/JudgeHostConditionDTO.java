@@ -16,6 +16,15 @@ public class JudgeHostConditionDTO {
     private Integer memoryCostPercentage;
     private Integer cpuCostPercentage;
     private Integer queueAmount;
+    private Integer maxWorkingAmount;
+
+    public Integer getMaxWorkingAmount() {
+        return maxWorkingAmount;
+    }
+
+    public void setMaxWorkingAmount(Integer maxWorkingAmount) {
+        this.maxWorkingAmount = maxWorkingAmount;
+    }
 
     public String getWorkPath() {
         return workPath;

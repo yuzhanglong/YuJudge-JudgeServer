@@ -13,7 +13,6 @@ public class ProblemDTO {
     @NotNull(message = "题目名称不得为空")
     private String name;
 
-    @NotNull(message = "题目内容不得为空")
     private String content;
 
     private List<String> characterTags;

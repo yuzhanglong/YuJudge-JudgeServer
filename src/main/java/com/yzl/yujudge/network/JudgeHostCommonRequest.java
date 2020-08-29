@@ -1,8 +1,12 @@
 package com.yzl.yujudge.network;
 
+import com.yzl.yujudge.dto.SetWorkingAmountDTO;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -37,16 +41,38 @@ public class JudgeHostCommonRequest extends HttpRequest {
     }
 
     /**
+     * 发送用户提交到judgeHost
+     *
      * @return String 测试连接结果的json字符串
      * @throws WebClientResponseException 请求失败时抛出异常
      * @author yuzhanglong
      * @date 2020-7-30 23:17
-     * @description 发送用户提交到judgeHost
      */
     public String testJudgeConnection() {
         WebClient webClient = getWebClient();
         Mono<String> responseMono = webClient.get()
                 .uri("/common/test_connection")
+                .retrieve()
+                .bodyToMono(String.class);
+        return responseMono.block();
+    }
+
+    /**
+     * 设置判题机最大并行工作数量
+     *
+     * @param setWorkingAmountDTO 请求数据传输对象
+     * @return String 测试连接结果的json字符串
+     * @throws WebClientResponseException 请求失败时抛出异常
+     * @author yuzhanglong
+     * @date 2020-8-29 18:41:53
+     */
+    public String setJudgeMaxWorkingAmount(SetWorkingAmountDTO setWorkingAmountDTO) {
+        WebClient webClient = getWebClient();
+        Mono<String> responseMono = webClient.put()
+                .uri("/common/set_max_working_amount")
+                .contentType(MediaType.APPLICATION_JSON)
+                .acceptCharset(StandardCharsets.UTF_8)
+                .body(Mono.just(setWorkingAmountDTO), SetWorkingAmountDTO.class)
                 .retrieve()
                 .bodyToMono(String.class);
         return responseMono.block();

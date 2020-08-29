@@ -46,6 +46,7 @@ public class SubmissionService {
     private final JudgeHostRepository judgeHostRepository;
     public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
     public static final int MAX_SUBMISSION_COUNT_DATE = 40;
+    public static final int MAX_SUBMISSION_COUNT_HOURS = 24 * 15;
 
     public SubmissionService(
             SubmissionRepository submissionRepository,

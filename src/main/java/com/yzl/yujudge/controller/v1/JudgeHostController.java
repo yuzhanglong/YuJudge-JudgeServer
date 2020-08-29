@@ -4,6 +4,7 @@ import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.dto.JudgeHostDTO;
+import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.service.JudgeHostService;
 import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
@@ -99,5 +100,22 @@ public class JudgeHostController {
                 judgeHostId
         );
         return new UnifiedResponse(res);
+    }
+
+
+    /**
+     * 设置判题机工作节点
+     *
+     * @param judgeHostId         判题机id
+     * @param setWorkingAmountDTO 设置判题机节点的数据传输对象
+     * @author yuzhanglong
+     * @date 2020-8-29 18:50:38
+     */
+    @PutMapping("/set_judge_host_working_amount/{judgeHostId}")
+    public UnifiedResponse setJudgeHostServiceWorkingAmount(
+            @PathVariable Long judgeHostId,
+            @Validated @RequestBody SetWorkingAmountDTO setWorkingAmountDTO) {
+        judgeHostService.setJudgeHostServiceWorkingAmount(judgeHostId, setWorkingAmountDTO);
+        return new UnifiedResponse("设置成功~");
     }
 }
