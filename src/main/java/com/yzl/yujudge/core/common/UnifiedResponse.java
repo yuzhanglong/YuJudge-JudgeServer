@@ -1,10 +1,11 @@
 package com.yzl.yujudge.core.common;
 
 /**
+ * 统一返回格式
+ * 包括：错误码、错误信息、请求的地址
+ *
  * @author yuzhanglong
  * @date 2020-6-30 12:56:51
- * @description 统一返回格式
- * 包括：错误码、错误信息、请求的地址
  */
 public class UnifiedResponse {
     private String code;
@@ -13,7 +14,7 @@ public class UnifiedResponse {
     private Object data;
 
 
-    public void initCodeAndMessageForSuccess(){
+    public void initCodeAndMessageForSuccess() {
         this.code = "00000";
         this.message = "success";
     }
@@ -35,7 +36,7 @@ public class UnifiedResponse {
         initCodeAndMessageForSuccess();
     }
 
-    public UnifiedResponse(String message){
+    public UnifiedResponse(String message) {
         initCodeAndMessageForSuccess();
         setMessage(message);
     }

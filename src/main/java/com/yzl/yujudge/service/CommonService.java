@@ -2,8 +2,11 @@ package com.yzl.yujudge.service;
 
 import com.qiniu.util.Auth;
 import com.yzl.yujudge.core.configuration.UploadConfiguration;
+import com.yzl.yujudge.model.DailyWordEntity;
 import com.yzl.yujudge.repository.*;
 import com.yzl.yujudge.utils.DateTimeUtil;
+import com.yzl.yujudge.utils.EntityToVoMapper;
+import com.yzl.yujudge.vo.DailyWordVO;
 import com.yzl.yujudge.vo.GlobalCountVO;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,7 @@ public class CommonService {
     private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
     private final JudgeHostRepository judgeHostRepository;
+    private final DailyWordRepository dailyWordRepository;
 
     public CommonService(
             UploadConfiguration uploadConfiguration,
@@ -31,13 +35,15 @@ public class CommonService {
             ProblemSetRepository problemSetRepository,
             ProblemRepository problemRepository,
             UserRepository userRepository,
-            JudgeHostRepository judgeHostRepository) {
+            JudgeHostRepository judgeHostRepository,
+            DailyWordRepository dailyWordRepository) {
         this.uploadConfiguration = uploadConfiguration;
         this.submissionRepository = submissionRepository;
         this.problemSetRepository = problemSetRepository;
         this.problemRepository = problemRepository;
         this.userRepository = userRepository;
         this.judgeHostRepository = judgeHostRepository;
+        this.dailyWordRepository = dailyWordRepository;
     }
 
     /**
@@ -91,5 +97,20 @@ public class CommonService {
     public List<Map<String, Object>> countGlobalSubmission(Date start, Date end) {
         Set<List<Object>> res = submissionRepository.countSubmissionGroupByHours(start, end);
         return SubmissionService.publishSubmissionHourlyCount(res);
+    }
+
+    /**
+     * 获取每日一句
+     *
+     * @return 计数结果数组
+     * @author yuzhanglong
+     * @date 2020-8-30 21:18:40
+     */
+    public DailyWordVO getDailyWord(){
+        Calendar calendar = Calendar.getInstance();
+        Long dayOfYear = (long) calendar.get(Calendar.DAY_OF_YEAR);
+        DailyWordEntity dailyWordEntity = dailyWordRepository.findOneById(dayOfYear);
+        EntityToVoMapper<DailyWordEntity, DailyWordVO> mapper = new EntityToVoMapper<>(dailyWordEntity, DailyWordVO.class);
+        return mapper.getViewObject();
     }
 }

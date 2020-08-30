@@ -3,6 +3,7 @@ package com.yzl.yujudge.controller.v1;
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.service.CommonService;
+import com.yzl.yujudge.vo.DailyWordVO;
 import com.yzl.yujudge.vo.GlobalCountVO;
 import com.yzl.yujudge.vo.UploadTokenVO;
 import org.springframework.validation.annotation.Validated;
@@ -54,5 +55,18 @@ public class CommonController {
     public UnifiedResponse getGlobalCount() {
         GlobalCountVO count = commonService.getGlobalCount();
         return new UnifiedResponse(count);
+    }
+
+    /**
+     * 获取每日一句
+     *
+     * @author yuzhanglong
+     * @date 2020-8-30 21:18:31
+     */
+    @GetMapping("/get_daily_word")
+    @AuthorizationRequired
+    public UnifiedResponse getDailyWord() {
+        DailyWordVO dailyWordVO = commonService.getDailyWord();
+        return new UnifiedResponse(dailyWordVO);
     }
 }

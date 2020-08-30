@@ -237,6 +237,11 @@ public class SubmissionService {
         if (submissionEntity == null) {
             throw new NotFoundException("B0005");
         }
+        // 不是自己的提交
+        if(!UserHolder.getUserId().equals(submissionEntity.getCreator().getId())){
+            submissionEntity.setCodeContent("抱歉, 代码不予显示");
+            submissionEntity.getJudgeResult().setExtraInfo(new ArrayList<>());
+        }
         return submissionEntity;
     }
 
