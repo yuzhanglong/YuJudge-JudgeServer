@@ -2,6 +2,7 @@ package com.yzl.yujudge.core.authorization;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.service.UserService;
 import com.yzl.yujudge.utils.TokenUtil;
@@ -51,14 +52,14 @@ public class AuthorizationManage implements AuthorizationManageable {
     }
 
     @Override
-    public Boolean handleUserGroupPermission(HttpServletRequest request, HttpServletResponse response, String permission) {
+    public Boolean handleUserGroupPermission(HttpServletRequest request, HttpServletResponse response, PermissionEnum permission) {
         handleLogin(request, response);
         Long userId = UserHolder.getUserId();
         // 超级管理员免检
         if (isRootUser(userId)) {
             return true;
         }
-        if(!userService.isUserPermissionAccepted(userId, permission)){
+        if(!userService.isUserPermissionAccepted(userId, permission.name())){
             throw new ForbiddenException("A0011");
         }
         return true;

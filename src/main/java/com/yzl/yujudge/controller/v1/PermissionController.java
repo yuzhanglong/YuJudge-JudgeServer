@@ -1,6 +1,8 @@
 package com.yzl.yujudge.controller.v1;
 
+import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.PermissionEditDTO;
 import com.yzl.yujudge.service.PermissionService;
 import com.yzl.yujudge.vo.PermissionVO;
@@ -33,6 +35,7 @@ public class PermissionController {
      * @date 2020-8-23 11:08:08
      */
     @GetMapping("/get_permissions")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse getPermissions() {
         List<PermissionVO> permissionVOList = permissionService.getPermissions();
         return new UnifiedResponse(permissionVOList);
@@ -45,6 +48,7 @@ public class PermissionController {
      * @date 2020-8-23 13:09:38
      */
     @GetMapping("/get_permission_by_user_group/{userGroupId}")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse getPermissionsByUserGroup(@PathVariable Long userGroupId) {
         List<PermissionVO> res = permissionService.getPermissionsByUserGroup(userGroupId);
         return new UnifiedResponse(res);
@@ -57,6 +61,7 @@ public class PermissionController {
      * @date 2020-8-23 13:10:00
      */
     @PutMapping("/edit_user_group_permission/{userGroupId}")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse editUserGroupPermission(
             @PathVariable Long userGroupId,
             @RequestBody PermissionEditDTO permissionEditDTO) {

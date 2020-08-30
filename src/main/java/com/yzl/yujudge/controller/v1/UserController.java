@@ -4,6 +4,7 @@ import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
 import com.yzl.yujudge.model.UserEntity;
@@ -57,6 +58,7 @@ public class UserController {
     /**
      * 用户鉴权、登录
      *
+     * @param loginDTO 登录数据传输对象
      * @author yuzhanglong
      * @date 2020-08-02 19:53:08
      */
@@ -99,6 +101,7 @@ public class UserController {
      * 获取近期活跃用户
      *
      * @author yuzhanglong
+     * @description 需要获取的用户数目
      * @date 2020-08-07 20:13:09
      */
     @GetMapping("/get_active_user")
@@ -138,6 +141,7 @@ public class UserController {
      * @date 2020-08-16 13:02:20
      */
     @GetMapping("/get_users")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse getUsers(
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count,
@@ -156,7 +160,7 @@ public class UserController {
      * @date 2020-8-22 14:05:20
      */
     @DeleteMapping("/delete_user/{userId}")
-    @AuthorizationRequired
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return new UnifiedResponse("删除用户成功");

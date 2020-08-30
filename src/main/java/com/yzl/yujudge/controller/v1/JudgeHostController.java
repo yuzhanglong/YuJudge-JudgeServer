@@ -2,7 +2,9 @@ package com.yzl.yujudge.controller.v1;
 
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
+import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.JudgeHostDTO;
 import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.service.JudgeHostService;
@@ -15,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
+ * 判题服务器相关控制层
+ *
  * @author yuzhanglong
- * @description 判题服务器相关控制层
  * @date 2020-7-30
  */
 
@@ -33,48 +36,56 @@ public class JudgeHostController {
     }
 
     /**
+     * 添加一个judgeHost记录
+     *
      * @param judgeHostDTO 判题机信息数据传输对象
      * @author yuzhanglong
-     * @description 添加一个judgeHost记录
      * @date 2020-8-21 22:18:37
      */
     @PutMapping("/create_judge_host")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse createJudgeHost(@RequestBody @Validated JudgeHostDTO judgeHostDTO) {
         judgeHostService.createJudgeHost(judgeHostDTO);
         return new UnifiedResponse("添加判题服务器信息成功");
     }
 
     /**
+     * 获取当前所有判题服务器信息
+     *
      * @author yuzhanglong
-     * @description 获取当前所有判题服务器信息
      * @date 2020-08-16 21:02:54
      */
     @GetMapping("/get_judge_hosts_info")
+    @AuthorizationRequired
     public UnifiedResponse getJudgeHostsInfo() {
         List<JudgeHostBO> judgeHostVOList = judgeHostService.getJudgeHostsCondition();
         return new UnifiedResponse(judgeHostVOList);
     }
 
     /**
+     * 获取判题服务器信息
+     *
      * @param judgeHostId 判题机id
      * @author yuzhanglong
-     * @description 获取判题服务器信息
      * @date 2020-08-16 21:02:54
      */
     @GetMapping("/get_judge_host_by_id/{judgeHostId}")
+    @AuthorizationRequired
     public UnifiedResponse getJudgeHostById(@PathVariable Long judgeHostId) {
         JudgeHostBO judgeHostBO = judgeHostService.getJudgeHostConditionById(judgeHostId);
         return new UnifiedResponse(mapper.map(judgeHostBO, JudgeHostVO.class));
     }
 
     /**
+     * 修改判题机状态，
+     * 相关解释请参考 makeJudgeHostActiveOrUnActive方法
+     *
      * @param judgeHostId 判题机id
      * @author yuzhanglong
-     * @description 修改判题机状态，
-     * 相关解释请参考 makeJudgeHostActiveOrUnActive方法
      * @date 2020-8-19 00:18:05
      */
     @PutMapping("/reset_active_condition/{judgeHostId}")
+    @AuthorizationRequired
     public UnifiedResponse makeJudgeHostActiveOrUnActive(@PathVariable Long judgeHostId) {
         Boolean isActive = judgeHostService.makeJudgeHostActiveOrUnActive(judgeHostId);
         return new UnifiedResponse("状态修改成功，当前状态: " + (isActive ? "运行中" : "已暂停"));
@@ -82,14 +93,16 @@ public class JudgeHostController {
 
 
     /**
+     * 统计某个时间段内某个判题机的提交数据
+     *
      * @param judgeHostId 判题机id
      * @param begin       开始时间
      * @param end         结束时间
      * @author yuzhanglong
-     * @description 统计某个时间段内某个判题机的提交数据
      * @date 2020-8-19 17:04:47
      */
     @GetMapping("/count_judge_host_submission")
+    @AuthorizationRequired
     public UnifiedResponse countJudgeHostSubmission(
             @RequestParam String begin,
             @RequestParam String end,
@@ -112,6 +125,7 @@ public class JudgeHostController {
      * @date 2020-8-29 18:50:38
      */
     @PutMapping("/set_judge_host_working_amount/{judgeHostId}")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse setJudgeHostServiceWorkingAmount(
             @PathVariable Long judgeHostId,
             @Validated @RequestBody SetWorkingAmountDTO setWorkingAmountDTO) {

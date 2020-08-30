@@ -1,5 +1,7 @@
 package com.yzl.yujudge.core.authorization;
 
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,5 +34,5 @@ public interface AuthorizationManageable {
      * @author yuzhanglong
      * @date 2020-8-23 00:02:34
      */
-    Boolean handleUserGroupPermission(HttpServletRequest request, HttpServletResponse response, String permission);
+    Boolean handleUserGroupPermission(HttpServletRequest request, HttpServletResponse response, PermissionEnum permission);
 }

@@ -3,6 +3,7 @@ package com.yzl.yujudge.controller.v1;
 
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.ProblemSetDTO;
 import com.yzl.yujudge.dto.UpdateProblemSetProblemDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
@@ -49,6 +50,7 @@ public class ProblemSetController {
      * @date 2020-08-08 22:38:45
      */
     @GetMapping("/get_problem_sets")
+    @AuthorizationRequired
     public UnifiedResponse getProblemSets(
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count,
@@ -67,6 +69,7 @@ public class ProblemSetController {
      * @date 2020-08-10 18:50:07
      */
     @GetMapping("/get_problem_set_problems/{problemSetId}")
+    @AuthorizationRequired
     public UnifiedResponse getProblemSetById(
             @PathVariable Long problemSetId,
             @RequestParam(defaultValue = "0") Integer start,
@@ -84,7 +87,7 @@ public class ProblemSetController {
      * @date 2020-08-09 15:32:25
      */
     @PostMapping("/create_problem_set")
-    @AuthorizationRequired
+    @AuthorizationRequired(permission = PermissionEnum.PROBLEM_MANAGER)
     public UnifiedResponse createProblemSet(@RequestBody @Validated ProblemSetDTO problemSetDTO) {
         problemSetService.createProblemSet(problemSetDTO);
         return new UnifiedResponse("创建题目集成功");
@@ -99,6 +102,7 @@ public class ProblemSetController {
      * @date 2020-08-10 18:58:08
      */
     @PutMapping("/update_problem_set_problem")
+    @AuthorizationRequired(permission = PermissionEnum.PROBLEM_MANAGER)
     public UnifiedResponse updateProblemSetProblem(
             @RequestBody @Validated UpdateProblemSetProblemDTO problemSetProblemDTO) {
         List<Long> problemId = problemSetProblemDTO.getProblems();
@@ -116,6 +120,7 @@ public class ProblemSetController {
      * @date 2020-08-10 23:05:18
      */
     @DeleteMapping("/remove_from_problem_set")
+    @AuthorizationRequired(permission = PermissionEnum.PROBLEM_MANAGER)
     public UnifiedResponse removeFromProblemSet(
             @RequestParam Long problemSetId,
             @RequestParam Long problemId) {
@@ -190,8 +195,10 @@ public class ProblemSetController {
      * @return 题目集散点结果列表
      * @author yuzhanglong
      * @date 2020-8-20 14:38:42
+     * @deprecated 暂不使用
      */
     @GetMapping("/get_scatter")
+    @Deprecated
     public UnifiedResponse countProblemSetConditionScatter(@RequestParam Long problemSetId) {
         List<Map<String, Object>> res = problemSetService.countSubmissionConditionScatter(problemSetId);
         return new UnifiedResponse(res);

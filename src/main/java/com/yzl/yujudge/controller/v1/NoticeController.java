@@ -1,6 +1,8 @@
 package com.yzl.yujudge.controller.v1;
 
+import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.model.NoticeEntity;
 import com.yzl.yujudge.service.NoticeService;
 import com.yzl.yujudge.vo.NoticeBasicVO;
@@ -35,6 +37,7 @@ public class NoticeController {
      * @date 2020-8-25 23:49:00
      */
     @GetMapping("/get_notices")
+    @AuthorizationRequired
     public UnifiedResponse getNotices(
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count) {
@@ -45,6 +48,7 @@ public class NoticeController {
 
 
     @DeleteMapping("/delete_notice")
+    @AuthorizationRequired(permission = PermissionEnum.PROBLEM_MANAGER)
     public UnifiedResponse deleteNotice() {
         // TODO: 删除
         return new UnifiedResponse("删除成功");
@@ -52,6 +56,7 @@ public class NoticeController {
 
 
     @PutMapping("/update_notice")
+    @AuthorizationRequired(permission = PermissionEnum.NOTICE_MANGER)
     public UnifiedResponse updateNotice() {
         // TODO: 更新
         return new UnifiedResponse("更新成功");

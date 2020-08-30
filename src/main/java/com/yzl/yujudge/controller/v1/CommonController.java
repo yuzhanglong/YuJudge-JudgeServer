@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 一般性接口的控制层
+ *
  * @author yuzhanglong
- * @description 一般性接口的控制层
  * @date 2020-08-05 20:42:59
  */
 
@@ -33,6 +34,7 @@ public class CommonController {
      * @date 2020-08-05 21:02:07
      */
     @GetMapping("/upload_token")
+    @AuthorizationRequired
     public UnifiedResponse getUploadToken() {
         String token = commonService.getUploadToken();
         UploadTokenVO uploadTokenVO = new UploadTokenVO();

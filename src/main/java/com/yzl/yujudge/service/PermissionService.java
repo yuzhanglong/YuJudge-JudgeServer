@@ -90,4 +90,20 @@ public class PermissionService {
         userGroupEntity.setPermissions(permissionEntityList);
         userGroupRepository.save(userGroupEntity);
     }
+
+
+    /**
+     * 创建一个权限
+     *
+     * @param name 权限名称
+     * @param description 描述
+     * @author yuzhanglong
+     * @date 2020-8-30 12:44:36
+     */
+    public void createPermission(String name, String description) {
+        PermissionEntity permissionEntity = new PermissionEntity();
+        permissionEntity.setName(name);
+        permissionEntity.setDescription(description);
+        permissionRepository.save(permissionEntity);
+    }
 }

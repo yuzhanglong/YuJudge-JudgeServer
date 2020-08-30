@@ -5,6 +5,7 @@ import com.yzl.yujudge.core.authorization.AuthorizationManageable;
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.method.HandlerMethod;
@@ -38,7 +39,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         AuthorizationRequired authorizationRequired = method.getAnnotation(AuthorizationRequired.class);
         if (authorizationRequired != null) {
             // 由 AuthorizationManage 处理权限相关
-            if (!"".equals(authorizationRequired.permission())) {
+            if (authorizationRequired.permission() != PermissionEnum.ANY) {
                 return authorizationManageable.handleUserGroupPermission(request, response, authorizationRequired.permission());
             }
             return authorizationManageable.handleLogin(request, response);

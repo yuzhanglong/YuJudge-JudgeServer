@@ -63,6 +63,7 @@ public class SubmissionController {
      * @date 2020-8-2 18:00
      */
     @GetMapping("/get_submit_condition")
+    @AuthorizationRequired
     public UnifiedResponse getSubmitCondition() {
         // TODO: 获取submission线程池状态
         ThreadPoolExecutor threadPoolExecutor = submissionExecutorConfiguration.submissionAsyncServiceExecutor();
@@ -79,6 +80,7 @@ public class SubmissionController {
      * @date 2020-7-31 20:06:36
      */
     @GetMapping("/get_submissions")
+    @AuthorizationRequired
     public UnifiedResponse getSubmissions(
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count,
@@ -96,6 +98,7 @@ public class SubmissionController {
      * @date 2020-8-1 11:42:46
      */
     @GetMapping("/get_submission_detail")
+    @AuthorizationRequired
     public UnifiedResponse getSubmissionDetail(@RequestParam @NotNull Long submissionId) {
         // TODO: 提交详情某些内容（例如代码）是否应该开放？我们需要一个权限控制
         SubmissionEntity submission = submissionService.getSubmissionDataById(submissionId);
