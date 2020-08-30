@@ -97,6 +97,32 @@ public class SubmissionService {
     }
 
     /**
+     * 初始化用户的提交，包括二次验证、数据库写入, 此方法的提交不和题目集绑定
+     * <p>
+     * 你可以理解为公共题目
+     *
+     * @param submissionDTO 提交相关的数据传输对象
+     * @return SubmissionEntity 的实体对象，以供后续操作
+     * @author yuzhanglong
+     * @date 2020-8-31 00:09:09
+     */
+    public SubmissionEntity initSubmissionWithoutProblemSet(SubmissionDTO submissionDTO) {
+        Long userId = UserHolder.getUserId();
+        UserEntity userEntity = userRepository.findOneById(userId);
+        validateSubmission(submissionDTO);
+        SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO);
+        // 我们将本次提交设为waiting（等待判题）
+        submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
+        submissionEntity.setCondition(JudgeConditionEnum.WAITING.toString());
+        submissionEntity.setCreateTime(new Date());
+        submissionEntity.setCodeContent(submissionDTO.getCodeContent());
+        submissionEntity.setCreator(userEntity);
+        // 执行保存
+        submissionRepository.save(submissionEntity);
+        return submissionEntity;
+    }
+
+    /**
      * 业务层面的提交相关验证
      *
      * @param submissionDTO 提交相关数据传输对象
@@ -238,7 +264,7 @@ public class SubmissionService {
             throw new NotFoundException("B0005");
         }
         // 不是自己的提交
-        if(!UserHolder.getUserId().equals(submissionEntity.getCreator().getId())){
+        if (!UserHolder.getUserId().equals(submissionEntity.getCreator().getId())) {
             submissionEntity.setCodeContent("抱歉, 代码不予显示");
             submissionEntity.getJudgeResult().setExtraInfo(new ArrayList<>());
         }

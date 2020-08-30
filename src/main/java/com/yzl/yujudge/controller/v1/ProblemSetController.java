@@ -68,10 +68,10 @@ public class ProblemSetController {
      * @author yuzhanglong
      * @date 2020-08-10 18:50:07
      */
-    @GetMapping("/get_problem_set_problems/{problemSetId}")
+    @GetMapping("/get_problem_set_problems")
     @AuthorizationRequired
     public UnifiedResponse getProblemSetById(
-            @PathVariable Long problemSetId,
+            @RequestParam(defaultValue = "") Long problemSetId,
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count) {
         Page<JudgeProblemEntity> items = problemSetService.getProblemSetProblems(start, count, problemSetId);

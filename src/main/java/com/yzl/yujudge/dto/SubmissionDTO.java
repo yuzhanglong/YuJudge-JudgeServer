@@ -21,7 +21,6 @@ public class SubmissionDTO {
     @NotNull(message = "判题偏好不得为空")
     private String judgePreference;
 
-    @NotNull(message = "目标题目集不得为空")
     private Long problemSetId;
 
 

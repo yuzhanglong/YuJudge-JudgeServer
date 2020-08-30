@@ -51,7 +51,12 @@ public class SubmissionController {
     @AuthorizationRequired
     public UnifiedResponse submitCode(@Validated @RequestBody SubmissionDTO submissionDTO) {
         // 获取submission实体对象，当我们拿到它之后，说明这个submission已经被保存了
-        SubmissionEntity submissionEntity = submissionService.initSubmission(submissionDTO);
+        SubmissionEntity submissionEntity;
+        if (submissionDTO.getProblemSetId() != null) {
+            submissionEntity = submissionService.initSubmission(submissionDTO);
+        } else {
+            submissionEntity = submissionService.initSubmissionWithoutProblemSet(submissionDTO);
+        }
         submissionService.addSubmissionTask(submissionEntity, 0);
         return new UnifiedResponse("提交已经开始处理");
     }
@@ -65,7 +70,6 @@ public class SubmissionController {
     @GetMapping("/get_submit_condition")
     @AuthorizationRequired
     public UnifiedResponse getSubmitCondition() {
-        // TODO: 获取submission线程池状态
         ThreadPoolExecutor threadPoolExecutor = submissionExecutorConfiguration.submissionAsyncServiceExecutor();
         return new UnifiedResponse(threadPoolExecutor.getActiveCount());
     }

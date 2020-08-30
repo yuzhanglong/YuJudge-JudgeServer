@@ -102,11 +102,15 @@ public class ProblemSetService {
             Integer start,
             Integer count,
             Long problemSetId) {
+        Pageable pageable = PageRequest.of(start, count);
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        // 当传入的题目集为空时，我们进行全局题目的查询
+        if (problemSetId == null) {
+            return problemRepository.findAll(pageable);
+        }
         if (problemSetEntity == null) {
             throw new NotFoundException("B0011");
         }
-        Pageable pageable = PageRequest.of(start, count);
         return problemRepository.findAllByProblemSetEntityList(problemSetEntity, pageable);
     }
 
