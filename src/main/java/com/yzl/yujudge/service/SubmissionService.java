@@ -71,11 +71,16 @@ public class SubmissionService {
      * @author yuzhanglong
      * @date 2020-7-29 13:40:54
      */
-    public SubmissionEntity initSubmission(SubmissionDTO submissionDTO) {
+    public SubmissionEntity initSubmissionWithProblemSet(SubmissionDTO submissionDTO) {
         Long userId = UserHolder.getUserId();
+        // 查询题目集是否存在
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(submissionDTO.getProblemSetId());
         if (problemSetEntity == null) {
             throw new NotFoundException("B0011");
+        }
+        // 是否超时？如果超时，我们不执行
+        if (problemSetEntity.getDeadline().before(new Date())) {
+            throw new NotFoundException("B0021");
         }
         UserEntity userEntity = userRepository.findOneById(userId);
         if (!isUserInProblemSet(problemSetEntity.getId(), userEntity)) {

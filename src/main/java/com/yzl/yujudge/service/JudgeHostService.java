@@ -272,4 +272,16 @@ public class JudgeHostService {
             throw new NotFoundException("B0020");
         }
     }
+
+    /**
+     * 移除一个判题机
+     *
+     * @param judgeHostId 判题机id
+     * @author yuzhanglong
+     * @date 2020-8-31 16:16:11
+     */
+    public void deleteJudgeHost(Long judgeHostId) {
+        JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
+        judgeHostRepository.delete(judgeHostEntity);
+    }
 }

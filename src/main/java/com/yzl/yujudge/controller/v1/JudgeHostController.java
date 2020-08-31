@@ -126,10 +126,25 @@ public class JudgeHostController {
      */
     @PutMapping("/set_judge_host_working_amount/{judgeHostId}")
     @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    @Deprecated
     public UnifiedResponse setJudgeHostServiceWorkingAmount(
             @PathVariable Long judgeHostId,
             @Validated @RequestBody SetWorkingAmountDTO setWorkingAmountDTO) {
         judgeHostService.setJudgeHostServiceWorkingAmount(judgeHostId, setWorkingAmountDTO);
+        return new UnifiedResponse("设置成功~");
+    }
+
+    /**
+     * 移除一个判题服务器
+     *
+     * @param judgeHostId 判题机id
+     * @author yuzhanglong
+     * @date 2020-8-31 16:08:09
+     */
+    @DeleteMapping("/delete_judge_host/{judgeHostId}")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse deleteJudgeHost(@PathVariable Long judgeHostId) {
+        judgeHostService.deleteJudgeHost(judgeHostId);
         return new UnifiedResponse("设置成功~");
     }
 }

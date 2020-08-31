@@ -53,7 +53,7 @@ public class SubmissionController {
         // 获取submission实体对象，当我们拿到它之后，说明这个submission已经被保存了
         SubmissionEntity submissionEntity;
         if (submissionDTO.getProblemSetId() != null) {
-            submissionEntity = submissionService.initSubmission(submissionDTO);
+            submissionEntity = submissionService.initSubmissionWithProblemSet(submissionDTO);
         } else {
             submissionEntity = submissionService.initSubmissionWithoutProblemSet(submissionDTO);
         }
