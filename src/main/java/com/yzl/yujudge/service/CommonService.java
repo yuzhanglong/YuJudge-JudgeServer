@@ -76,7 +76,7 @@ public class CommonService {
         c1.setTime(new Date());
         c1.add(Calendar.DATE, 1);
         Date toDayEnd = DateTimeUtil.removeTimeFromDateObject(DateTimeUtil.removeTimeFromDateObject(c1.getTime()));
-        List<Map<String, Object>>  countGlobalSubmission = countGlobalSubmission(toDayBegin, toDayEnd);
+        List<Map<String, Object>> countGlobalSubmission = countGlobalSubmission(toDayBegin, toDayEnd);
         return new GlobalCountVO(
                 problemRepository.count(),
                 problemSetRepository.count(),
@@ -106,7 +106,7 @@ public class CommonService {
      * @author yuzhanglong
      * @date 2020-8-30 21:18:40
      */
-    public DailyWordVO getDailyWord(){
+    public DailyWordVO getDailyWord() {
         Calendar calendar = Calendar.getInstance();
         Long dayOfYear = (long) calendar.get(Calendar.DAY_OF_YEAR);
         DailyWordEntity dailyWordEntity = dailyWordRepository.findOneById(dayOfYear);

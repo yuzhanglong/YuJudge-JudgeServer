@@ -14,6 +14,7 @@ spring:
 authorization:
   expired-in: 14400
   secret-key: secret
+  active: true
 
 upload:
   qn-service:

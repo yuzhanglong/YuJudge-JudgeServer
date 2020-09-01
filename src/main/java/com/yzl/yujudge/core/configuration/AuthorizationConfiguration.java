@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 public class AuthorizationConfiguration {
     private Integer expiredIn;
     private String secretKey;
+    private Boolean active;
 
     public String getSecretKey() {
         return secretKey;
@@ -33,5 +34,13 @@ public class AuthorizationConfiguration {
 
     public void setExpiredIn(Integer expiredIn) {
         this.expiredIn = expiredIn;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

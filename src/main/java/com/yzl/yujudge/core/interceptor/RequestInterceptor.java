@@ -7,7 +7,6 @@ import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -21,11 +20,13 @@ import java.lang.reflect.Method;
  * @author yuzhanglong
  * @date 2020-08-03 19:30:46
  */
-@EnableConfigurationProperties({AuthorizationConfiguration.class})
 public class RequestInterceptor implements HandlerInterceptor {
 
     @Autowired
     private AuthorizationManageable authorizationManageable;
+
+    @Autowired
+    private AuthorizationConfiguration authorizationConfiguration;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -37,7 +38,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         Method method = handlerMethod.getMethod();
 
         AuthorizationRequired authorizationRequired = method.getAnnotation(AuthorizationRequired.class);
-        if (authorizationRequired != null) {
+        if (authorizationRequired != null && authorizationConfiguration.getActive()) {
             // 由 AuthorizationManage 处理权限相关
             if (authorizationRequired.permission() != PermissionEnum.ANY) {
                 return authorizationManageable.handleUserGroupPermission(request, response, authorizationRequired.permission());
