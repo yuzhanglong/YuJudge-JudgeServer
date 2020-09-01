@@ -164,6 +164,10 @@ public class SubmissionService {
 
         // 选择一个合适的服务器
         JudgeHostBO judgeHostToRequest = judgeHostService.chooseJudgeHostToRequest();
+        if (judgeHostToRequest == null) {
+            saveJudgeResult(submission, "无判题服务器工作", false);
+            return;
+        }
 
         // 执行判题请求
         JudgeHostJudgeRequest judgeHostJudgeRequest = new JudgeHostJudgeRequest(
