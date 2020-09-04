@@ -1,6 +1,7 @@
 package com.yzl.yujudge.store.redis;
 
 import com.yzl.yujudge.bo.JudgeHostBO;
+import com.yzl.yujudge.utils.RedisOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

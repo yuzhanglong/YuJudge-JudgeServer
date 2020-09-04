@@ -9,11 +9,15 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * JudgeHost判题相关网络请求的请求类
+ *
  * @author yuzhanglong
- * @description JudgeHost判题相关网络请求的请求类
+ * @date 2020-9-4 17:13:41
  */
 public class JudgeHostJudgeRequest extends HttpRequest {
-    final String testAccessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9." +
+    public static final String JUDGE_URL = "/judge/result";
+    public static final String ACCESS_TOKEN_KEY = "accessToken";
+    public static final String TEST_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOiJ5emwiLCJpYXQiOjE1OTM2OTE1Nzl9." +
             "6iXiQWK0l8ysGpjTutltZw1JJdOAjjHSaensgHY9kxE";
 
@@ -51,8 +55,8 @@ public class JudgeHostJudgeRequest extends HttpRequest {
     public String judgeSubmission(JudgeHostJudgeRequestDTO judgeHostDTO) throws WebClientResponseException {
         WebClient webClient = getWebClient();
         Mono<String> responseMono = webClient.post()
-                .uri("/judge/run")
-                .header("accessToken", testAccessToken)
+                .uri(JUDGE_URL)
+                .header(ACCESS_TOKEN_KEY, TEST_ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON)
                 .acceptCharset(StandardCharsets.UTF_8)
                 .body(Mono.just(judgeHostDTO), JudgeHostJudgeRequestDTO.class)

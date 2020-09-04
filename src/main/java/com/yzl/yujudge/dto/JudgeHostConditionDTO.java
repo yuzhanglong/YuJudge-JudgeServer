@@ -2,8 +2,9 @@ package com.yzl.yujudge.dto;
 
 
 /**
+ * 描述判题服务器状态的视图层对象
+ *
  * @author yuzhanglong
- * @description 描述判题服务器状态的视图层对象
  * @date 2020-8-17 19:42:07
  */
 public class JudgeHostConditionDTO {
@@ -17,6 +18,15 @@ public class JudgeHostConditionDTO {
     private Integer cpuCostPercentage;
     private Integer queueAmount;
     private Integer maxWorkingAmount;
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public Integer getMaxWorkingAmount() {
         return maxWorkingAmount;

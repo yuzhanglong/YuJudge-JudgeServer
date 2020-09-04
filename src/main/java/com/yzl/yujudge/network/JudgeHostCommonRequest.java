@@ -16,6 +16,8 @@ import java.nio.charset.StandardCharsets;
  * @date 2020-7-30
  */
 public class JudgeHostCommonRequest extends HttpRequest {
+    public static final String CONNECT_TEST_URL = "/common/connection_test";
+    public static final String SET_MAX_WORKING_AMOUNT = "/common/set_max_working_amount";
 
 
     /**
@@ -51,7 +53,7 @@ public class JudgeHostCommonRequest extends HttpRequest {
     public String testJudgeConnection() {
         WebClient webClient = getWebClient();
         Mono<String> responseMono = webClient.get()
-                .uri("/common/test_connection")
+                .uri(CONNECT_TEST_URL)
                 .retrieve()
                 .bodyToMono(String.class);
         return responseMono.block();
@@ -69,7 +71,7 @@ public class JudgeHostCommonRequest extends HttpRequest {
     public String setJudgeMaxWorkingAmount(SetWorkingAmountDTO setWorkingAmountDTO) {
         WebClient webClient = getWebClient();
         Mono<String> responseMono = webClient.put()
-                .uri("/common/set_max_working_amount")
+                .uri(SET_MAX_WORKING_AMOUNT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .acceptCharset(StandardCharsets.UTF_8)
                 .body(Mono.just(setWorkingAmountDTO), SetWorkingAmountDTO.class)

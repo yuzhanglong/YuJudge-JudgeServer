@@ -1,4 +1,4 @@
-package com.yzl.yujudge.store.redis;
+package com.yzl.yujudge.utils;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -190,6 +190,7 @@ public class RedisOperations {
 
     /**
      * 获取hashKey对应的所有键值
+     *
      * @param key 键
      * @return 对应的多个键值
      */

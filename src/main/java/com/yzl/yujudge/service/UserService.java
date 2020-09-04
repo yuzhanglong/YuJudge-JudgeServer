@@ -11,7 +11,7 @@ import com.yzl.yujudge.model.PermissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.model.UserGroupEntity;
 import com.yzl.yujudge.repository.UserRepository;
-import com.yzl.yujudge.store.redis.RedisOperations;
+import com.yzl.yujudge.utils.RedisOperations;
 import com.yzl.yujudge.utils.CheckCodeUtil;
 import com.yzl.yujudge.utils.SecurityUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;

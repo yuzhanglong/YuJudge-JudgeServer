@@ -59,7 +59,7 @@ public class AuthorizationManage implements AuthorizationManageable {
         if (isRootUser(userId)) {
             return true;
         }
-        if(!userService.isUserPermissionAccepted(userId, permission.name())){
+        if (!userService.isUserPermissionAccepted(userId, permission.name())) {
             throw new ForbiddenException("A0011");
         }
         return true;
@@ -88,7 +88,6 @@ public class AuthorizationManage implements AuthorizationManageable {
      *
      * @author yuzhanglong
      * @date 2020-08-07 11:09:04
-     * @description
      */
     private void setUserDataToThreadLocal(Map<String, Claim> userInfo) {
         String userId = userInfo.get("userId").asString();

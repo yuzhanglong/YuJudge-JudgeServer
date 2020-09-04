@@ -1,8 +1,10 @@
 package com.yzl.yujudge.dto;
 
 /**
+ * 这是判题结果数据传输对象的一部分，表示了一个测试案例
+ *
  * @author yuzhanglong
- * @description 这是判题结果数据传输对象的一部分，表示了一个测试案例
+ * @date 2020-9-4 17:17:29
  */
 public class JudgeTestCaseResultDTO {
     private Integer realTimeCost;
@@ -10,8 +12,8 @@ public class JudgeTestCaseResultDTO {
     private Integer cpuTimeCost;
     private Integer condition;
     private String stdinPath;
-    private String stdoutPath;
-    private String stderrPath;
+    private String stdOutPath;
+    private String stdErrPath;
     private String message;
 
     public Integer getRealTimeCost() {
@@ -54,20 +56,20 @@ public class JudgeTestCaseResultDTO {
         this.stdinPath = stdinPath;
     }
 
-    public String getStdoutPath() {
-        return stdoutPath;
+    public String getStdOutPath() {
+        return stdOutPath;
     }
 
-    public void setStdoutPath(String stdoutPath) {
-        this.stdoutPath = stdoutPath;
+    public void setStdOutPath(String stdOutPath) {
+        this.stdOutPath = stdOutPath;
     }
 
-    public String getStderrPath() {
-        return stderrPath;
+    public String getStdErrPath() {
+        return stdErrPath;
     }
 
-    public void setStderrPath(String stderrPath) {
-        this.stderrPath = stderrPath;
+    public void setStdErrPath(String stdErrPath) {
+        this.stdErrPath = stdErrPath;
     }
 
     public String getMessage() {
@@ -81,13 +83,13 @@ public class JudgeTestCaseResultDTO {
     @Override
     public String toString() {
         return "JudgeTestCaseResultDTO{" +
-                "realTimeCost='" + realTimeCost + '\'' +
-                ", memoryCost='" + memoryCost + '\'' +
-                ", cpuTimeCost='" + cpuTimeCost + '\'' +
+                "realTimeCost=" + realTimeCost +
+                ", memoryCost=" + memoryCost +
+                ", cpuTimeCost=" + cpuTimeCost +
                 ", condition=" + condition +
                 ", stdinPath='" + stdinPath + '\'' +
-                ", stdoutPath='" + stdoutPath + '\'' +
-                ", stderrPath='" + stderrPath + '\'' +
+                ", stdOutPath='" + stdOutPath + '\'' +
+                ", stdErrPath='" + stdErrPath + '\'' +
                 ", message='" + message + '\'' +
                 '}';
     }

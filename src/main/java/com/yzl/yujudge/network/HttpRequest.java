@@ -5,8 +5,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 
 /**
+ * 网络请求的封装
+ *
  * @author yuzhanglong
- * @description 网络请求的封装
  * @date 2020-7-29 21:23
  */
 public class HttpRequest {

@@ -9,6 +9,7 @@ import java.util.Objects;
  * 将其映射到这个对象上面
  *
  * @author yuzhanglong
+ * @date 2020-9-4 17:17:54
  */
 public class JudgeResultDTO {
     private List<JudgeTestCaseResultDTO> judgeResults;
