@@ -161,7 +161,7 @@ public class ProblemSetController {
     /**
      * 更新某个题目集的基本信息
      *
-     * @param problemSetId 更新题目集的基本信息
+     * @param problemSetId 题目集id
      * @author yuzhanglong
      * @date 2020-08-16 00:02:14
      */
@@ -201,6 +201,19 @@ public class ProblemSetController {
     @Deprecated
     public UnifiedResponse countProblemSetConditionScatter(@RequestParam Long problemSetId) {
         List<Map<String, Object>> res = problemSetService.countSubmissionConditionScatter(problemSetId);
+        return new UnifiedResponse(res);
+    }
+
+    /**
+     * 获取题目集时间线
+     *
+     * @param problemSetId 题目集id
+     * @author yuzhanglong
+     * @date 2020-9-4 23:32:56
+     */
+    @GetMapping("/timeline/{problemSetId}")
+    public UnifiedResponse getProblemSetTimeLine(@PathVariable Long problemSetId) {
+        List<Map<String, Object>> res = problemSetService.getProblemSetTimeLine(problemSetId);
         return new UnifiedResponse(res);
     }
 }

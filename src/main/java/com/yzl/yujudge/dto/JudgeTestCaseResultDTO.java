@@ -11,7 +11,7 @@ public class JudgeTestCaseResultDTO {
     private Integer memoryCost;
     private Integer cpuTimeCost;
     private Integer condition;
-    private String stdinPath;
+    private String stdInPath;
     private String stdOutPath;
     private String stdErrPath;
     private String message;
@@ -48,12 +48,12 @@ public class JudgeTestCaseResultDTO {
         this.condition = condition;
     }
 
-    public String getStdinPath() {
-        return stdinPath;
+    public String getStdInPath() {
+        return stdInPath;
     }
 
-    public void setStdinPath(String stdinPath) {
-        this.stdinPath = stdinPath;
+    public void setStdInPath(String stdInPath) {
+        this.stdInPath = stdInPath;
     }
 
     public String getStdOutPath() {
@@ -87,7 +87,7 @@ public class JudgeTestCaseResultDTO {
                 ", memoryCost=" + memoryCost +
                 ", cpuTimeCost=" + cpuTimeCost +
                 ", condition=" + condition +
-                ", stdinPath='" + stdinPath + '\'' +
+                ", stdInPath='" + stdInPath + '\'' +
                 ", stdOutPath='" + stdOutPath + '\'' +
                 ", stdErrPath='" + stdErrPath + '\'' +
                 ", message='" + message + '\'' +

@@ -55,11 +55,12 @@ public class ProblemService {
     }
 
     /**
+     * 根据题目id来获取题目信息
+     *
      * @param pageAmount 页码数量
      * @param size       数据条数
      * @param search     搜索关键字
      * @author yuzhanglong
-     * @description 根据题目id来获取题目信息
      * @date 2020-7-18 04:57:55
      */
     public Page<JudgeProblemEntity> getProblems(Integer pageAmount, Integer size, String search) {
@@ -69,9 +70,10 @@ public class ProblemService {
 
 
     /**
+     * 创建一个problem
+     *
      * @param problemInfo ProblemDTO对象（问题信息）
      * @author yuzhanglong
-     * @description 创建一个problem
      * @date 2020-7-20 23:23:57
      */
     public void createProblem(ProblemDTO problemInfo) {
@@ -86,10 +88,11 @@ public class ProblemService {
     }
 
     /**
+     * 编辑一个problem
+     *
      * @param problemId  要修改的问题
      * @param problemDTO 修改的问题信息
      * @author yuzhanglong
-     * @description 编辑一个problem
      * @date 2020-7-20 23:29:23
      */
     public void editProblem(Long problemId, ProblemDTO problemDTO) {
@@ -103,9 +106,10 @@ public class ProblemService {
     }
 
     /**
+     * 删除一个problem
+     *
      * @param problemId 目标问题id
      * @author yuzhanglong
-     * @description 删除一个problem
      * @date 2020-7-22
      */
     public void deleteProblem(Long problemId) {
@@ -115,10 +119,11 @@ public class ProblemService {
 
 
     /**
+     * 删除一个problem
+     *
      * @param problemId 目标问题id
      * @return List<JudgeSolutionEntity> 一个或者多个解决方案实体类
      * @author yuzhanglong
-     * @description 删除一个problem
      * @date 2020-7-22
      */
     public List<JudgeSolutionEntity> getProblemSolutions(Long problemId) {
@@ -128,9 +133,10 @@ public class ProblemService {
 
 
     /**
+     * 为目标problem添加一个解决方案
+     *
      * @param problemId 目标问题id
      * @author yuzhanglong
-     * @description 为目标problem添加一个解决方案
      * @date 2020-7-22
      */
     public void createSolution(Long problemId, SolutionDTO solution) {
@@ -143,9 +149,10 @@ public class ProblemService {
 
 
     /**
+     * 删除某个solution
+     *
      * @param solutionId 目标solutionId
      * @author yuzhanglong
-     * @description 删除某个solution
      * @date 2020-7-22
      */
     public void deleteSolution(Long solutionId) {
@@ -157,9 +164,10 @@ public class ProblemService {
     }
 
     /**
+     * 关闭某个problem
+     *
      * @param problemId 目标problemId
      * @author yuzhanglong
-     * @description 关闭某个problem
      * @date 2020-7-26
      */
     public void closeProblem(Long problemId) {
@@ -170,9 +178,10 @@ public class ProblemService {
     }
 
     /**
+     * 修改Problem限制
+     *
      * @param problemId 目标problemId
      * @author yuzhanglong
-     * @description 修改Problem限制
      * @date 2020-7-26 17:54:45
      */
     public void setLimitation(Long problemId, ProblemLimitationDTO limitation) {
@@ -183,14 +192,15 @@ public class ProblemService {
         problemEntity.setMemoryLimit(limitation.getMemoryLimit());
         problemRepository.save(problemEntity);
     }
-    
+
     /**
+     * 根据problemId，获取problem实体对象
+     * 如果不允许实体为空的情况下，实体为空
+     * 那么我们会抛出一个全局异常B0002(problem不存在)
+     *
      * @param problemId  目标problemId
      * @param isNullable 是否允许实体对象是否为空
      * @author yuzhanglong
-     * @description 根据problemId，获取problem实体对象
-     * 如果不允许实体为空的情况下，实体为空
-     * 那么我们会抛出一个全局异常B0002(problem不存在)
      * @date 2020-7-26 18:07:44
      */
     private JudgeProblemEntity getProblemEntityById(Long problemId, Boolean isNullable) {
@@ -202,16 +212,29 @@ public class ProblemService {
     }
 
     /**
-     * @param size 需要获取problem的数量
-     * @author yuzhanglong
-     * @description 传入你需要获取的数量获取最近创建的problems，
+     * 传入你需要获取的数量获取最近创建的problems，
      * 实际上是利用分页机制加上createTime的排序得出
      * 注意: 最多获取十五条，如果size大于15，则我们只去最近的十五条记录
+     *
+     * @param size 需要获取problem的数量
+     * @author yuzhanglong
      * @date 2020-08-06 20:55:11
      */
     public List<JudgeProblemEntity> getRecentProblem(Integer size) {
         int finalSize = size > RECENT_PROBLEM_SEARCH_MAX_SIZE ? RECENT_PROBLEM_SEARCH_MAX_SIZE : size;
         Pageable pageable = PageRequest.of(0, finalSize);
         return problemRepository.findByOrderByCreateTimeDesc(pageable);
+    }
+
+    /**
+     * 根据名称获取problem
+     *
+     * @param name 名称
+     * @return List JudgeProblemEntity 的分页对象
+     * @author yuzhanglong
+     * @date 2020-9-4 21:51:26
+     */
+    public JudgeProblemEntity getProblemByName(String name) {
+        return problemRepository.findTop1ByName(name);
     }
 }

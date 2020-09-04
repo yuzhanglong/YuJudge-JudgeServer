@@ -19,11 +19,6 @@ import javax.persistence.*;
 @Table(name = "submission", schema = "yu-judge")
 public class SubmissionEntity extends BaseEntity {
     @Basic
-    @Column(name = "pk_problem")
-    private Long pkProblem;
-
-
-    @Basic
     @Column(name = "language")
     private String language;
 
@@ -56,6 +51,10 @@ public class SubmissionEntity extends BaseEntity {
     private JudgeHostEntity judgeHost;
 
     @OneToOne
+    @JoinColumn(name = "pk_problem")
+    private JudgeProblemEntity problem;
+
+    @OneToOne
     @JoinColumn(name = "pk_problem_set", referencedColumnName = "id")
     private ProblemSetEntity problemSet;
 
@@ -63,13 +62,6 @@ public class SubmissionEntity extends BaseEntity {
     @JoinColumn(name = "pk_user", referencedColumnName = "id")
     private UserEntity creator;
 
-    public Long getPkProblem() {
-        return pkProblem;
-    }
-
-    public void setPkProblem(Long pkProblem) {
-        this.pkProblem = pkProblem;
-    }
 
     public String getLanguage() {
         return language;
@@ -159,10 +151,17 @@ public class SubmissionEntity extends BaseEntity {
         this.judgeHost = judgeHost;
     }
 
+    public JudgeProblemEntity getProblem() {
+        return problem;
+    }
+
+    public void setProblem(JudgeProblemEntity problem) {
+        this.problem = problem;
+    }
+
     @Override
     public String toString() {
         return "SubmissionEntity{" +
-                "pkProblem=" + pkProblem +
                 ", language='" + language + '\'' +
                 ", judgeCondition='" + judgeCondition + '\'' +
                 ", timeCost=" + timeCost +

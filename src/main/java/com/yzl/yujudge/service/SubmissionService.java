@@ -86,8 +86,15 @@ public class SubmissionService {
         if (!isUserInProblemSet(problemSetEntity.getId(), userEntity)) {
             problemSetEntity.getParticipants().add(userEntity);
         }
-        validateSubmission(submissionDTO);
-        SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO);
+        // 验证目标problem是否存在
+        JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionDTO.getProblemId());
+
+        // 如果目标problem不存在
+        if (judgeProblemEntity == null) {
+            throw new NotFoundException("B0002");
+        }
+
+        SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO, judgeProblemEntity);
         // 我们将本次提交设为waiting（等待判题）
         submissionEntity.setCondition(JudgeConditionEnum.WAITING.toString());
         submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
@@ -114,8 +121,13 @@ public class SubmissionService {
     public SubmissionEntity initSubmissionWithoutProblemSet(SubmissionDTO submissionDTO) {
         Long userId = UserHolder.getUserId();
         UserEntity userEntity = userRepository.findOneById(userId);
-        validateSubmission(submissionDTO);
-        SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO);
+        JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionDTO.getProblemId());
+
+        // 如果目标problem不存在
+        if (judgeProblemEntity == null) {
+            throw new NotFoundException("B0002");
+        }
+        SubmissionEntity submissionEntity = ToEntityUtil.submissionDtoToSubmissionEntity(submissionDTO, judgeProblemEntity);
         // 我们将本次提交设为waiting（等待判题）
         submissionEntity.setJudgePreference(submissionDTO.getJudgePreference());
         submissionEntity.setCondition(JudgeConditionEnum.WAITING.toString());
@@ -125,23 +137,6 @@ public class SubmissionService {
         // 执行保存
         submissionRepository.save(submissionEntity);
         return submissionEntity;
-    }
-
-    /**
-     * 业务层面的提交相关验证
-     *
-     * @param submissionDTO 提交相关数据传输对象
-     * @author yuzhanglong
-     * @date 2020-7-29 14:21:59
-     */
-    private void validateSubmission(SubmissionDTO submissionDTO) {
-        // 验证目标problem是否存在
-        JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionDTO.getProblemId());
-
-        // 如果目标problem不存在
-        if (judgeProblemEntity == null) {
-            throw new NotFoundException("B0002");
-        }
     }
 
     /**
@@ -156,7 +151,7 @@ public class SubmissionService {
     @Async(value = "submissionAsyncServiceExecutor")
     public void addSubmissionTask(SubmissionEntity submissionEntity, Integer tryAmount) {
         // 获取这个submission对应的problem实体
-        JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionEntity.getPkProblem());
+        JudgeProblemEntity judgeProblemEntity = submissionEntity.getProblem();
 
         // 进入这个方法说明已经完成了排队操作，我们将状态置为【PENDING -- 判题中】
         SubmissionEntity submission = setSubmissionPendingCondition(submissionEntity);
@@ -255,8 +250,12 @@ public class SubmissionService {
      * @date 2020-7-31 19:56:19
      */
     public Page<SubmissionEntity> getSubmissionByProblemId(Integer start, Integer size, Long problemId) {
+        JudgeProblemEntity problemEntity = problemRepository.findOneById(problemId);
+        if (problemEntity == null) {
+            throw new NotFoundException("B0002");
+        }
         Pageable pageable = PageRequest.of(start, size);
-        return submissionRepository.findAllByPkProblemOrderByCreateTimeDesc(problemId, pageable);
+        return submissionRepository.findAllByProblemOrderByCreateTimeDesc(problemEntity, pageable);
     }
 
     /**

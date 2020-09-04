@@ -62,9 +62,9 @@ public class ToEntityUtil {
      * @description 由solutionDTO转换为solution
      * @date 2020-7-29 13:28:04
      */
-    public static SubmissionEntity submissionDtoToSubmissionEntity(SubmissionDTO submissionDTO) {
+    public static SubmissionEntity submissionDtoToSubmissionEntity(SubmissionDTO submissionDTO, JudgeProblemEntity problemEntity) {
         SubmissionEntity submissionEntity = new SubmissionEntity();
-        submissionEntity.setPkProblem(submissionDTO.getProblemId());
+        submissionEntity.setProblem(problemEntity);
         submissionEntity.setCodeContent(submissionDTO.getCodeContent());
         submissionEntity.setLanguage(submissionDTO.getLanguage());
         return submissionEntity;

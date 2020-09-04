@@ -290,13 +290,12 @@ public class ProblemSetService {
         // 罚时
         long totalTimePenalty = 0;
         for (JudgeProblemEntity problemEntity : problems) {
-            long problemId = problemEntity.getId();
             // 拿到这支队伍在本题第一次的ac
-            List<SubmissionEntity> firstAcSubmission = submissionRepository.findUserProblemAcInProblemSet(problemSet, user, problemId, findFirstPageable);
+            List<SubmissionEntity> firstAcSubmission = submissionRepository.findUserProblemAcInProblemSet(problemSet, user, problemEntity, findFirstPageable);
             boolean isAc = firstAcSubmission.size() == 1;
             // 如果没有ac，则我们要统计所有的提交。此时我们把时间限制设置为当前时间，可以达到我们的需求
             Date firstAcTime = isAc ? firstAcSubmission.get(0).getCreateTime() : new Date();
-            long wrongAnswerAmount = submissionRepository.getUserProblemWaAmountByInProblemSet(problemSet.getId(), user.getId(), problemId, firstAcTime);
+            long wrongAnswerAmount = submissionRepository.getUserProblemWaAmountByInProblemSet(problemSet.getId(), user.getId(), problemEntity, firstAcTime);
             if (isAc) {
                 // 此题目拿到了AC， 通过总数加一
                 totalAcAmount += 1;
@@ -308,7 +307,7 @@ public class ProblemSetService {
                         wrongAnswerAmount
                 );
             }
-            problemList.add(generateProblemCondition(wrongAnswerAmount, problemSet, isAc ? firstAcSubmission.get(0) : null, problemId));
+            problemList.add(generateProblemCondition(wrongAnswerAmount, problemSet, isAc ? firstAcSubmission.get(0) : null, problemEntity));
         }
         return new TeamProblemsSolutionBO(problemList, totalAcAmount, totalTimePenalty);
     }
@@ -325,14 +324,14 @@ public class ProblemSetService {
      * @param wrongAnswerAmount 错误答案的数量
      * @param problemSetEntity  题目集实体类
      * @param firstAcSubmission 首次ac的提交
-     * @param problemId         题目id
+     * @param problemEntity     题目
      * @author yuzhanglong
      * @date 2020-08-13 22:42:39
      */
     private Map<String, Object> generateProblemCondition(
             Long wrongAnswerAmount,
             ProblemSetEntity problemSetEntity,
-            SubmissionEntity firstAcSubmission, Long problemId) {
+            SubmissionEntity firstAcSubmission, JudgeProblemEntity problemEntity) {
         Map<String, Object> problemCondition = new HashMap<>(3);
         boolean isAc = firstAcSubmission != null;
         // 是否 ac
@@ -340,7 +339,7 @@ public class ProblemSetService {
         // 之前是否已经有人ac了
         boolean hasEarlyAcBefore = false;
         if (isAc) {
-            hasEarlyAcBefore = submissionRepository.countAcSubmissionEarlyThanGiven(problemSetEntity.getId(), problemId, firstAcSubmission.getCreateTime()) == 0;
+            hasEarlyAcBefore = submissionRepository.countAcSubmissionEarlyThanGiven(problemSetEntity.getId(), problemEntity, firstAcSubmission.getCreateTime()) == 0;
         }
         problemCondition.put("isFirstAc", hasEarlyAcBefore);
         // 尝试次数
@@ -399,8 +398,8 @@ public class ProblemSetService {
         }
         problemSetEntity.setName(problemSetDTO.getName());
         problemSetEntity.setDescription(problemSetDTO.getDescription());
-        problemSetDTO.setStartTime(problemSetDTO.getStartTime());
-        problemSetDTO.setDeadline(problemSetDTO.getDeadline());
+        problemSetEntity.setStartTime(problemSetDTO.getStartTime());
+        problemSetEntity.setDeadline(problemSetDTO.getDeadline());
         problemSetRepository.save(problemSetEntity);
     }
 
@@ -445,6 +444,45 @@ public class ProblemSetService {
             tmp.put("judgeResult", re.getJudgeCondition());
             tmp.put("userNickName", re.getCreator().getNickname());
             tmp.put("time", re.getCreateTime());
+            result.add(tmp);
+        }
+        return result;
+    }
+
+    /**
+     * 获取题目集时间线
+     *
+     * @param problemSetId 题目集id
+     * @author yuzhanglong
+     * @date 2020-8-20 14:36:12
+     */
+    public List<Map<String, Object>> getProblemSetTimeLine(Long problemSetId) {
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        // 获取题目集下的所有问题
+        List<JudgeProblemEntity> problems = problemSetEntity.getProblems();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Boolean> acAppearCondition = new HashMap<>(10);
+        Set<List<Object>> res = submissionRepository.getAcSubmissionByProblemSet(problemSetEntity);
+        for (List<Object> re : res) {
+            Map<String, Object> tmp = new HashMap<>(10);
+            // 创建者
+            UserEntity user = (UserEntity) re.get(0);
+            tmp.put("creator", mapper.map(user, UserInfoBasicVO.class));
+            // ac时间
+            tmp.put("acTime", re.get(1));
+            // 本次提交对应的题目
+            String targetProblemId = re.get(2).toString();
+            // 如果没有出现过AC，即一血，我们将isFirstAc键置为true
+            boolean isAcBefore = acAppearCondition.get(targetProblemId) != null;
+            if (isAcBefore) {
+                tmp.put("isFirstAc", false);
+            } else {
+                tmp.put("isFirstAc", true);
+                acAppearCondition.put(targetProblemId, true);
+            }
             result.add(tmp);
         }
         return result;

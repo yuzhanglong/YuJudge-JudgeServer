@@ -1,6 +1,7 @@
 package com.yzl.yujudge.dto;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 
 /**
@@ -14,9 +15,9 @@ public class ProblemSetDTO {
     @NotNull(message = "描述不得为空")
     private String description;
     @NotNull(message = "截止时间不得为空")
-    private Long deadline;
+    private Date deadline;
     @NotNull(message = "开始时间不得为空")
-    private Long startTime;
+    private Date startTime;
 
     public String getName() {
         return name;
@@ -34,19 +35,19 @@ public class ProblemSetDTO {
         this.description = description;
     }
 
-    public Long getDeadline() {
+    public Date getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Long deadline) {
+    public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
 
-    public Long getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Long startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 

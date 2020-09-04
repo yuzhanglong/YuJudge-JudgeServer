@@ -12,8 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 题目集相关定时任务
+ *
  * @author yuzhanglong
- * @description 题目集相关定时任务
  * @date 2020-08-14 12:59:01
  */
 @Component
@@ -32,12 +33,14 @@ public class ProblemSetTask {
     }
 
     /**
+     * 更新活跃题目集记分板的信息
+     *
      * @author yuzhanglong
-     * @description 更新活跃题目集记分板的信息
      * @date 2020-08-14 14:32:12
      */
     @Scheduled(fixedDelay = 5 * 1_000)
     public void renewActiveProblemSetScoreBoard() {
+        //TODO: 这里采用定时任务获取计分板是一种不优雅的方式（虽然减少了大量的连接查询）需要优化
         Date current = new Date();
         List<ProblemSetEntity> activeProblemSets = problemSetRepository.findBetweenCurrentTime(current);
         for (ProblemSetEntity activeProblemSet : activeProblemSets) {

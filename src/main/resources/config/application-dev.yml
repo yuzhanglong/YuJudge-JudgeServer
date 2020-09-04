@@ -8,7 +8,7 @@ spring:
     password: yzl520
   redis:
     port: 6379
-    host: 47.106.202.255
+    host: 127.0.0.1
     database: 0
 
 authorization:
@@ -23,3 +23,6 @@ upload:
     bucket: yzlyzl123
 
 cross-origin: true
+
+application:
+  version: V1.0.0
