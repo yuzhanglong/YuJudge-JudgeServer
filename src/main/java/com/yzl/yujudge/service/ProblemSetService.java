@@ -475,7 +475,7 @@ public class ProblemSetService {
             tmp.put("acTime", re.get(1));
             // 本次提交对应的题目
             JudgeProblemEntity targetProblem = (JudgeProblemEntity) re.get(2);
-            tmp.put("problemIndex", problems.indexOf(targetProblem));
+            tmp.put("problemIndex", getProblemIndexInProblemSet(problems, targetProblem));
             // 如果没有出现过AC，即一血，我们将isFirstAc键置为true
             boolean isAcBefore = acAppearCondition.get(targetProblem.getId()) != null;
             if (isAcBefore) {
@@ -487,5 +487,22 @@ public class ProblemSetService {
             result.add(tmp);
         }
         return result;
+    }
+
+    /**
+     * 获取题目集问题索引
+     *
+     * @param judgeProblemEntityList 问题实体类
+     * @param problemEntity          问题实体类
+     * @author yuzhanglong
+     * @date 2020-8-20 14:36:12
+     */
+    private Integer getProblemIndexInProblemSet(List<JudgeProblemEntity> judgeProblemEntityList, JudgeProblemEntity problemEntity) {
+        for (int i = 0; i < judgeProblemEntityList.size(); i++) {
+            if (judgeProblemEntityList.get(i).getId().equals(problemEntity.getId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
