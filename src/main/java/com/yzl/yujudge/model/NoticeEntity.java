@@ -66,13 +66,4 @@ public class NoticeEntity extends SoftDeleteEntity {
     public void setClosed(Boolean closed) {
         this.closed = closed;
     }
-
-    @Override
-    public String toString() {
-        return "NoticeEntity{" +
-                "title='" + title + '\'' +
-                ", priority=" + priority +
-                ", pkUser=" + creator +
-                '}';
-    }
 }

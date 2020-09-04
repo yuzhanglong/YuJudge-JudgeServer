@@ -52,13 +52,4 @@ public class PermissionEntity extends BaseEntity {
     public void setUserGroupEntityList(List<UserGroupEntity> userGroupEntityList) {
         this.userGroupEntityList = userGroupEntityList;
     }
-
-    @Override
-    public String toString() {
-        return "PermissionEntity{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", userGroupEntityList=" + userGroupEntityList +
-                '}';
-    }
 }

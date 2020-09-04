@@ -464,7 +464,7 @@ public class ProblemSetService {
         // 获取题目集下的所有问题
         List<JudgeProblemEntity> problems = problemSetEntity.getProblems();
         List<Map<String, Object>> result = new ArrayList<>();
-        Map<String, Boolean> acAppearCondition = new HashMap<>(10);
+        Map<Long, Boolean> acAppearCondition = new HashMap<>(10);
         Set<List<Object>> res = submissionRepository.getAcSubmissionByProblemSet(problemSetEntity);
         for (List<Object> re : res) {
             Map<String, Object> tmp = new HashMap<>(10);
@@ -474,14 +474,15 @@ public class ProblemSetService {
             // ac时间
             tmp.put("acTime", re.get(1));
             // 本次提交对应的题目
-            String targetProblemId = re.get(2).toString();
+            JudgeProblemEntity targetProblem = (JudgeProblemEntity) re.get(2);
+            tmp.put("problemIndex", problems.indexOf(targetProblem));
             // 如果没有出现过AC，即一血，我们将isFirstAc键置为true
-            boolean isAcBefore = acAppearCondition.get(targetProblemId) != null;
+            boolean isAcBefore = acAppearCondition.get(targetProblem.getId()) != null;
             if (isAcBefore) {
                 tmp.put("isFirstAc", false);
             } else {
                 tmp.put("isFirstAc", true);
-                acAppearCondition.put(targetProblemId, true);
+                acAppearCondition.put(targetProblem.getId(), true);
             }
             result.add(tmp);
         }

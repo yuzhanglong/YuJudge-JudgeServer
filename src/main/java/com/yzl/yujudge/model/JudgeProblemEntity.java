@@ -144,20 +144,4 @@ public class JudgeProblemEntity extends BaseEntity {
     public void setProblemSetEntityList(List<ProblemSetEntity> problemSetEntityList) {
         this.problemSetEntityList = problemSetEntityList;
     }
-
-    @Override
-    public String toString() {
-        return "JudgeProblemEntity{" +
-                "name='" + name + '\'' +
-                ", content='" + content + '\'' +
-                ", timeLimit=" + timeLimit +
-                ", memoryLimit=" + memoryLimit +
-                ", cpuTimeLimit=" + cpuTimeLimit +
-                ", characterTags=" + characterTags +
-                ", closed=" + closed +
-                ", outputLimit=" + outputLimit +
-                ", solutions=" + solutions +
-                ", problemSetEntityList=" + problemSetEntityList +
-                '}';
-    }
 }

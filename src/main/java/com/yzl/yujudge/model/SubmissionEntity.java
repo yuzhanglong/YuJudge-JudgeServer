@@ -158,20 +158,4 @@ public class SubmissionEntity extends BaseEntity {
     public void setProblem(JudgeProblemEntity problem) {
         this.problem = problem;
     }
-
-    @Override
-    public String toString() {
-        return "SubmissionEntity{" +
-                ", language='" + language + '\'' +
-                ", judgeCondition='" + judgeCondition + '\'' +
-                ", timeCost=" + timeCost +
-                ", memoryCost=" + memoryCost +
-                ", judgeResult=" + judgeResult +
-                ", codeContent='" + codeContent + '\'' +
-                ", judgePreference='" + judgePreference + '\'' +
-                ", judgeHost=" + judgeHost +
-                ", problemSet=" + problemSet +
-                ", creator=" + creator +
-                '}';
-    }
 }

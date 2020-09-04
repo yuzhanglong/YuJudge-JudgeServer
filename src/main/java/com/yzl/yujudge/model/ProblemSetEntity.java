@@ -143,20 +143,4 @@ public class ProblemSetEntity extends BaseEntity {
     public void setTimePenalty(Long timePenalty) {
         this.timePenalty = timePenalty;
     }
-
-    @Override
-    public String toString() {
-        return "ProblemSetEntity{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", deadline=" + deadline +
-                ", startTime=" + startTime +
-                ", judgePreference='" + judgePreference + '\'' +
-                ", timePenalty=" + timePenalty +
-                ", allowedLanguage=" + allowedLanguage +
-                ", problems=" + problems +
-                ", participants=" + participants +
-                ", creator=" + creator +
-                '}';
-    }
 }

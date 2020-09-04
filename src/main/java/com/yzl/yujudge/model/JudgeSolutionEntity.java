@@ -72,14 +72,4 @@ public class JudgeSolutionEntity extends SoftDeleteEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    @Override
-    public String toString() {
-        return "JudgeSolutionEntity{" +
-                "stdIn='" + stdIn + '\'' +
-                ", expectedStdOut='" + expectedStdOut + '\'' +
-                ", pkProblem=" + pkProblem +
-                ", description='" + description + '\'' +
-                '}';
-    }
 }

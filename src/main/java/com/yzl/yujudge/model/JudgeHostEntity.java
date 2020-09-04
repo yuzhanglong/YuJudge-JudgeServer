@@ -63,14 +63,4 @@ public class JudgeHostEntity extends BaseEntity {
     public void setPort(Integer port) {
         this.port = port;
     }
-
-    @Override
-    public String toString() {
-        return "JudgeHostEntity{" +
-                "name='" + name + '\'' +
-                ", ipAddress='" + baseUrl + '\'' +
-                ", isActive=" + isActive +
-                ", port=" + port +
-                '}';
-    }
 }
