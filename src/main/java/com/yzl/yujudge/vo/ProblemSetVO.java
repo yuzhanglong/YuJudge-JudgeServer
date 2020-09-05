@@ -7,8 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * ProblemSet的视图层对象
+ *
  * @author yuzhanglong
- * @description ProblemSet的视图层对象
  * @date 2020-08-08 22:04:52
  */
 public class ProblemSetVO {
@@ -22,6 +23,15 @@ public class ProblemSetVO {
     private List<String> allowedLanguage;
     private String judgePreference;
     private ProblemSetConditionEnum condition;
+    private Boolean open;
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
 
     public String getName() {
         return name;

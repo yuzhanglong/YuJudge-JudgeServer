@@ -115,6 +115,7 @@ public class SubmissionController {
      *
      * @param begin 开始时间
      * @param end   结束时间
+     * @param uid   查询用户的id，如果没传入则为调用者
      * @author yuzhanglong
      * @date 2020-8-20 19:17:26
      */
@@ -122,10 +123,13 @@ public class SubmissionController {
     @AuthorizationRequired
     public UnifiedResponse getUserRecentSubmission(
             @RequestParam String begin,
-            @RequestParam String end) {
-        Long userId = UserHolder.getUserId();
+            @RequestParam String end,
+            @RequestParam(defaultValue = "") Long uid) {
+        if (uid == null) {
+            uid = UserHolder.getUserId();
+        }
         List<Map<String, Object>> res = submissionService.countUserRecentSubmission(
-                userId,
+                uid,
                 DateTimeUtil.formatDateTimeString(begin),
                 DateTimeUtil.formatDateTimeString(end));
         return new UnifiedResponse(res);
@@ -134,14 +138,17 @@ public class SubmissionController {
     /**
      * 获取用户判题结果的相关信息，例如wa数目、ac数目、tle数目等
      *
+     * @param uid 查询用户的id，如果没传入则为调用者
      * @author yuzhanglong
      * @date 2020-8-21 00:43:32
      */
     @GetMapping("/get_user_judge_result_count")
     @AuthorizationRequired
-    public UnifiedResponse getUserJudgeResultCount() {
-        Long userId = UserHolder.getUserId();
-        List<Map<String, Object>> res = submissionService.countUserJudgeResult(userId);
+    public UnifiedResponse getUserJudgeResultCount(@RequestParam(defaultValue = "") Long uid) {
+        if (uid == null) {
+            uid = UserHolder.getUserId();
+        }
+        List<Map<String, Object>> res = submissionService.countUserJudgeResult(uid);
         return new UnifiedResponse(res);
     }
 }
