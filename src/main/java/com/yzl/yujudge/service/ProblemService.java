@@ -7,16 +7,17 @@ import com.yzl.yujudge.dto.ProblemLimitationDTO;
 import com.yzl.yujudge.dto.SolutionDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.JudgeSolutionEntity;
+import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.repository.ProblemRepository;
 import com.yzl.yujudge.repository.SolutionRepository;
+import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yuzhanglong
@@ -27,6 +28,7 @@ import java.util.List;
 @Service
 public class ProblemService {
     private final ProblemRepository problemRepository;
+    private final UserRepository userRepository;
     private final SolutionRepository solutionRepository;
     private final Mapper mapper;
     public static final int RECENT_PROBLEM_SEARCH_MAX_SIZE = 15;
@@ -34,8 +36,13 @@ public class ProblemService {
     public static final int OUTPUT_LIMIT_DEFAULT = 100000;
     public static final String PROBLEM_CONTENT_DEFAULT = "您可以修改题目内容";
 
-    public ProblemService(ProblemRepository problemRepository, SolutionRepository solutionRepository, Mapper mapper) {
+    public ProblemService(
+            ProblemRepository problemRepository,
+            UserRepository userRepository,
+            SolutionRepository solutionRepository,
+            Mapper mapper) {
         this.problemRepository = problemRepository;
+        this.userRepository = userRepository;
         this.solutionRepository = solutionRepository;
         this.mapper = mapper;
     }
@@ -236,5 +243,55 @@ public class ProblemService {
      */
     public JudgeProblemEntity getProblemByName(String name) {
         return problemRepository.findTop1ByName(name);
+    }
+
+    /**
+     * 获取用户通过的问题(id集合)
+     *
+     * @param userId 用户ID
+     * @author yuzhanglong
+     * @date 2020-9-5 15:55:58
+     */
+    public List<Map<String, Object>> getUserAcceptProblems(Long userId) {
+        UserEntity userEntity = userRepository.findOneById(userId);
+        if (userEntity == null) {
+            throw new NotFoundException("B0006");
+        }
+        Set<List<Object>> res = problemRepository.getUserAcProblemInfo(userEntity);
+        return publishProblemInfo(res);
+    }
+
+    /**
+     * 获取用户尝试过的问题(没通过)
+     *
+     * @param userId 用户ID
+     * @author yuzhanglong
+     * @date 2020-9-5 15:55:58
+     */
+    public List<Map<String, Object>> getUserTriedProblems(Long userId) {
+        UserEntity userEntity = userRepository.findOneById(userId);
+        if (userEntity == null) {
+            throw new NotFoundException("B0006");
+        }
+        Set<List<Object>> res = problemRepository.getUserTriedProblemInfo(userEntity);
+        return publishProblemInfo(res);
+    }
+
+    /**
+     * 处理问题统计信息
+     *
+     * @param raw 表中查询的未处理的数据
+     * @author yuzhanglong
+     * @date 2020-9-5 17:49:39
+     */
+    public List<Map<String, Object>> publishProblemInfo(Set<List<Object>> raw) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (List<Object> re : raw) {
+            Map<String, Object> tmp = new HashMap<>(2);
+            tmp.put("problemId", re.get(0));
+            tmp.put("name", re.get(1));
+            result.add(tmp);
+        }
+        return result;
     }
 }

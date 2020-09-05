@@ -2,12 +2,14 @@ package com.yzl.yujudge.repository;
 
 import com.yzl.yujudge.model.JudgeProblemEntity;
 import com.yzl.yujudge.model.ProblemSetEntity;
+import com.yzl.yujudge.model.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * problem相关的查询类接口
@@ -73,4 +75,31 @@ public interface ProblemRepository extends JpaRepository<JudgeProblemEntity, Lon
      * @date 2020-9-4 21:50:34
      */
     JudgeProblemEntity findTop1ByName(String name);
+
+    /**
+     * 统计某个用户通过题目id集合
+     *
+     * @param userEntity 用户实体类
+     * @return 提交数据统计的集合
+     * @author yuzhanglong
+     * @date 2020-9-5 15:53:35
+     */
+    @Query("select submission.problem.id, submission.problem.name from SubmissionEntity submission " +
+            "where submission.creator = ?1 " +
+            "and submission.judgeCondition = 'ACCEPT'")
+    Set<List<Object>> getUserAcProblemInfo(UserEntity userEntity);
+
+
+    /**
+     * 统计某个用户尝试过的题目的id集合
+     *
+     * @param userEntity 用户实体类
+     * @return 提交数据统计的集合
+     * @author yuzhanglong
+     * @date 2020-9-5 15:53:35
+     */
+    @Query("select submission.problem.id, submission.problem.name from SubmissionEntity submission " +
+            "where submission.creator = ?1 ")
+    Set<List<Object>> getUserTriedProblemInfo(UserEntity userEntity);
+
 }

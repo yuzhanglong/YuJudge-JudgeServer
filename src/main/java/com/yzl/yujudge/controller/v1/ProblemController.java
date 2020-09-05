@@ -2,6 +2,7 @@ package com.yzl.yujudge.controller.v1;
 
 import com.github.dozermapper.core.Mapper;
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
+import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.ProblemDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 题目相关控制层
@@ -233,5 +235,39 @@ public class ProblemController {
         EntityToVoListMapper<JudgeProblemEntity, ProblemBasicVO> mapper = new EntityToVoListMapper<>(res, ProblemBasicVO.class);
         List<ProblemBasicVO> problemBasicVOList = mapper.getItems();
         return new UnifiedResponse(problemBasicVOList);
+    }
+
+    /**
+     * 获取用户AC过的问题
+     *
+     * @param uid 用户ID, 如果没有传则为调用者的信息
+     * @author yuzhanglong
+     * @date 2020-9-5 17:51:24
+     */
+    @GetMapping("/user_ac_problem_ids")
+    @AuthorizationRequired
+    public UnifiedResponse getUserAcceptProblems(@RequestParam(defaultValue = "") Long uid) {
+        if (uid == null) {
+            uid = UserHolder.getUserId();
+        }
+        List<Map<String, Object>> res = problemService.getUserAcceptProblems(uid);
+        return new UnifiedResponse(res);
+    }
+
+    /**
+     * 获取用户尝试过的问题(没通过)
+     *
+     * @param uid 用户ID, 如果没有传则为调用者的信息
+     * @author yuzhanglong
+     * @date 2020-9-5 17:51:27
+     */
+    @GetMapping("/user_tried_problem_ids")
+    @AuthorizationRequired
+    public UnifiedResponse getUserTriedProblems(@RequestParam(defaultValue = "") Long uid) {
+        if (uid == null) {
+            uid = UserHolder.getUserId();
+        }
+        List<Map<String, Object>> res = problemService.getUserTriedProblems(uid);
+        return new UnifiedResponse(res);
     }
 }
