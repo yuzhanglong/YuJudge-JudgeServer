@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
+import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.service.UserService;
 import com.yzl.yujudge.utils.TokenUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class AuthorizationManage implements AuthorizationManageable {
         if (isRootUser(userId)) {
             return true;
         }
-        if (!userService.isUserPermissionAccepted(userId, permission.name())) {
+        if (!userService.isUserPermissionAccepted(permission.name())) {
             throw new ForbiddenException("A0011");
         }
         return true;
@@ -91,7 +92,8 @@ public class AuthorizationManage implements AuthorizationManageable {
      */
     private void setUserDataToThreadLocal(Map<String, Claim> userInfo) {
         String userId = userInfo.get("userId").asString();
-        UserHolder.setUser(Long.valueOf(userId));
+        UserEntity u = userService.getUserById(Long.valueOf(userId));
+        UserHolder.setUser(u);
     }
 
     /**

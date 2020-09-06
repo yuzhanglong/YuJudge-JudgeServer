@@ -274,15 +274,14 @@ public class UserService {
      * 在数据表层面，我们可以理解为：
      * 用户【user】对应的用户组【user_group】是否拥有这个权限【permission】，三张表全为多对多关系
      *
-     * @param userId 用户ID
+     * @param permission 权限
      * @return 用户是否有资格访问资源
      * @author yuzhanglong
      * @date 2020-8-22 13:41:07
      */
-    public Boolean isUserPermissionAccepted(Long userId, String permission) {
+    public Boolean isUserPermissionAccepted(String permission) {
         // TODO: 权限数据一般很少改变，但调用较为频繁，采用缓存，避免大量查询
-        UserEntity userEntity = getUserById(userId);
-        List<UserGroupEntity> userGroupEntityList = userEntity.getUserGroups();
+        List<UserGroupEntity> userGroupEntityList = UserHolder.getUserUserGroups();
         for (UserGroupEntity userGroupEntity : userGroupEntityList) {
             List<PermissionEntity> permissionEntityList = userGroupEntity.getPermissions();
             for (PermissionEntity permissionEntity : permissionEntityList) {
@@ -320,7 +319,7 @@ public class UserService {
      * @author yuzhanglong
      * @date 2020-9-6 21:43:47
      */
-    private UserEntity getUserById(Long userId) {
+    public UserEntity getUserById(Long userId) {
         UserEntity user = userRepository.findOneById(userId);
         // 用户为空
         if (user == null) {
