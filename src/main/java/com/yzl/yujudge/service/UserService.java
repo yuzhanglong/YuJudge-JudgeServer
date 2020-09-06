@@ -245,11 +245,7 @@ public class UserService {
      * @date 2020-8-22 13:41:07
      */
     public void deleteUser(Long userId) {
-        UserEntity user = userRepository.findOneById(userId);
-        // 用户为空
-        if (user == null) {
-            throw new NotFoundException("B0006");
-        }
+        UserEntity user = getUserById(userId);
         // 可能出现是自己的情况
         if (UserHolder.getUserId().equals(userId)) {
             throw new NotFoundException("B0006");
@@ -266,7 +262,7 @@ public class UserService {
      * @date 2020-8-22 13:41:07
      */
     public Boolean isRootUser(Long userId) {
-        UserEntity userEntity = userRepository.findOneById(userId);
+        UserEntity userEntity = getUserById(userId);
         // 管理员用户只有一个用户组，即ROOT
         UserGroupEntity userGroupEntity = userEntity.getUserGroups().get(0);
         return userGroupEntity.getName().equals(BaseUserGroupEnum.ROOT.name());
@@ -285,7 +281,7 @@ public class UserService {
      */
     public Boolean isUserPermissionAccepted(Long userId, String permission) {
         // TODO: 权限数据一般很少改变，但调用较为频繁，采用缓存，避免大量查询
-        UserEntity userEntity = userRepository.findOneById(userId);
+        UserEntity userEntity = getUserById(userId);
         List<UserGroupEntity> userGroupEntityList = userEntity.getUserGroups();
         for (UserGroupEntity userGroupEntity : userGroupEntityList) {
             List<PermissionEntity> permissionEntityList = userGroupEntity.getPermissions();
@@ -297,5 +293,39 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    /**
+     * 为用户分配用户组
+     *
+     * @param userId 用户ID
+     * @author yuzhanglong
+     * @date 2020-9-6 21:41:25
+     */
+    public void allocateUserUserGroups(Long userId, List<Long> userGroups) {
+        UserEntity userEntity = getUserById(userId);
+        List<UserGroupEntity> userGroupEntityList = new ArrayList<>();
+        for (Long userGroup : userGroups) {
+            UserGroupEntity userGroupEntity = userGroupService.getUserGroupById(userGroup);
+            userGroupEntityList.add(userGroupEntity);
+        }
+        userEntity.setUserGroups(userGroupEntityList);
+        userRepository.save(userEntity);
+    }
+
+    /**
+     * 根据id获取用户
+     *
+     * @param userId 用户id
+     * @author yuzhanglong
+     * @date 2020-9-6 21:43:47
+     */
+    private UserEntity getUserById(Long userId) {
+        UserEntity user = userRepository.findOneById(userId);
+        // 用户为空
+        if (user == null) {
+            throw new NotFoundException("B0006");
+        }
+        return user;
     }
 }

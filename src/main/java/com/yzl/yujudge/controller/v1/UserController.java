@@ -7,6 +7,7 @@ import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
+import com.yzl.yujudge.dto.UserUserGroupDTO;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.service.UserService;
 import com.yzl.yujudge.utils.EntityToVoListMapper;
@@ -178,5 +179,18 @@ public class UserController {
     public UnifiedResponse createUser(@RequestBody LoginDTO user) {
         userService.createUser(user.getNickname(), user.getPassword());
         return new UnifiedResponse("创建用户成功~");
+    }
+
+    /**
+     * 为用户分配用户组
+     *
+     * @author yuzhanglong
+     * @date 2020-9-6 21:30:37
+     */
+    @PutMapping("/user_user_groups")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse addUserToUserGroup(@RequestBody @Validated UserUserGroupDTO userUserGroupDTO) {
+        userService.allocateUserUserGroups(userUserGroupDTO.getUserId(), userUserGroupDTO.getUserGroupIds());
+        return new UnifiedResponse("添加成功");
     }
 }

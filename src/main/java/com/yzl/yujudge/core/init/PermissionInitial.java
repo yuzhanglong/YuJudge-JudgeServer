@@ -37,7 +37,7 @@ public class PermissionInitial implements ApplicationRunner {
      * @date 2020-8-30 12:18:15
      */
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         for (PermissionEnum value : PermissionEnum.values()) {
             PermissionEntity permissionEntity = permissionRepository.findByName(value.name());
             if (permissionEntity == null) {

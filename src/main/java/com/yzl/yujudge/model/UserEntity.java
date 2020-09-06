@@ -48,7 +48,10 @@ public class UserEntity extends SoftDeleteEntity {
     @ManyToMany(mappedBy = "participants")
     private List<ProblemSetEntity> problemSetEntityList;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany
+    @JoinTable(name = "user_user_group",
+            joinColumns = @JoinColumn(name = "pk_user"),
+            inverseJoinColumns = @JoinColumn(name = "pk_user_group"))
     private List<UserGroupEntity> userGroups;
 
 

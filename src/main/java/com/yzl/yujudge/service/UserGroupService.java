@@ -75,10 +75,7 @@ public class UserGroupService {
      * @date 2020-8-22 14:58:30
      */
     public void deleteUserGroup(Long userGroupId) {
-        UserGroupEntity userGroupEntityToDelete = userGroupRepository.findOneById(userGroupId);
-        if (userGroupEntityToDelete == null) {
-            throw new NotFoundException("B0015");
-        }
+        UserGroupEntity userGroupEntityToDelete = getUserGroupById(userGroupId);
         // 默认分组禁止删除
         validateUserGroupName(userGroupEntityToDelete.getName());
         userGroupRepository.delete(userGroupEntityToDelete);
@@ -94,10 +91,7 @@ public class UserGroupService {
      * @date 2020-8-22 14:58:30
      */
     public void setUserGroup(Long userGroupId, UserGroupDTO userGroupDTO) {
-        UserGroupEntity entity = userGroupRepository.findOneById(userGroupId);
-        if (entity == null) {
-            throw new NotFoundException("B0015");
-        }
+        UserGroupEntity entity = getUserGroupById(userGroupId);
         // 不允许的名称
         validateUserGroupName(entity.getName());
         String nameToEdit = userGroupDTO.getName().toUpperCase();
@@ -170,5 +164,37 @@ public class UserGroupService {
             throw new NotFoundException("B0015");
         }
         return userGroupEntity;
+    }
+
+    /**
+     * 根据id获取用户组
+     *
+     * @param userGroupId 用户组ID
+     * @author yuzhanglong
+     * @date 2020-9-6 21:20:19
+     */
+    public UserGroupEntity getUserGroupById(Long userGroupId) {
+        UserGroupEntity entity = userGroupRepository.findOneById(userGroupId);
+        if (entity == null) {
+            throw new NotFoundException("B0015");
+        }
+        return entity;
+    }
+
+    /**
+     * 判断用户是否在用户组中
+     *
+     * @param userId          用户id
+     * @param userGroupEntity 用户组实体
+     * @author yuzhanglong
+     * @date 2020-9-6 23:02:17
+     */
+    public Boolean isUserInUserGroup(Long userId, UserGroupEntity userGroupEntity) {
+        for (UserEntity user : userGroupEntity.getUsers()) {
+            if (user.getId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

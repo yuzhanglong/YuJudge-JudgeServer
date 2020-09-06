@@ -3,7 +3,9 @@ package com.yzl.yujudge.controller.v1;
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
+import com.yzl.yujudge.dto.AddUserToUserGroupDTO;
 import com.yzl.yujudge.dto.UserGroupDTO;
+import com.yzl.yujudge.model.UserGroupEntity;
 import com.yzl.yujudge.service.UserGroupService;
 import com.yzl.yujudge.vo.UserGroupVO;
 import org.springframework.validation.annotation.Validated;
@@ -81,5 +83,19 @@ public class UserGroupController {
             @RequestBody UserGroupDTO userGroupDTO) {
         userGroupService.setUserGroup(userGroupId, userGroupDTO);
         return new UnifiedResponse("编辑用户组信息成功");
+    }
+
+    /**
+     * 向用户组添加用户
+     *
+     * @author yuzhanglong
+     * @date 2020-8-22 15:06:23
+     */
+    @PutMapping("/user_group_users")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse addUserToUserGroup(@RequestBody @Validated AddUserToUserGroupDTO addUserToUserGroupDTO) {
+        UserGroupEntity u = userGroupService.getUserGroupById(addUserToUserGroupDTO.getUserGroupId());
+        userGroupService.addUsersInUserGroup(addUserToUserGroupDTO.getUserIds(), u);
+        return new UnifiedResponse("添加成功");
     }
 }
