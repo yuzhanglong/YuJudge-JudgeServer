@@ -136,8 +136,9 @@ public class ProblemSetController {
      * @date 2020-08-12 00:43:38
      */
     @GetMapping("/get_problem_set/{problemSetId}")
+    @AuthorizationRequired
     public UnifiedResponse getProblemSetById(@PathVariable Long problemSetId) {
-        ProblemSetEntity problemSet = problemSetService.getProblemSetById(problemSetId);
+        ProblemSetEntity problemSet = problemSetService.validateAndGetProblemSetById(problemSetId);
         EntityToVoMapper<ProblemSetEntity, ProblemSetVO> mapper = new EntityToVoMapper<>(problemSet, ProblemSetVO.class);
         ProblemSetVO problemSetVO = mapper.getViewObject();
         problemSetVO.setCondition(problemSetService.getProblemSetCondition(problemSet));
@@ -212,6 +213,7 @@ public class ProblemSetController {
      * @date 2020-9-4 23:32:56
      */
     @GetMapping("/timeline/{problemSetId}")
+    @AuthorizationRequired
     public UnifiedResponse getProblemSetTimeLine(@PathVariable Long problemSetId) {
         List<Map<String, Object>> res = problemSetService.getProblemSetTimeLine(problemSetId);
         return new UnifiedResponse(res);

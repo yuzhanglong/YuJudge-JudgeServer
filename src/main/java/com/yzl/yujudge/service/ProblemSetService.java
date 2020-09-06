@@ -8,6 +8,7 @@ import com.yzl.yujudge.bo.TeamProblemsSolutionBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.LanguageEnum;
 import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
+import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.ProblemSetDTO;
 import com.yzl.yujudge.model.JudgeProblemEntity;
@@ -192,28 +193,69 @@ public class ProblemSetService {
         if (problemEntity == null) {
             throw new NotFoundException("B0002");
         }
-        boolean isDeleted = problemSetEntity.getProblems().remove(problemEntity);
-        if (!isDeleted) {
+        int index = getProblemSetProblemIndex(problemSetEntity.getProblems(), problemId);
+        if (index == -1) {
             // 走到这里说明这个题目集中没有这个问题
             throw new NotFoundException("B0012");
         }
+        problemSetEntity.getProblems().remove(index);
         problemSetRepository.save(problemSetEntity);
+    }
+
+    /**
+     * 获取问题在题目集的索引
+     *
+     * @param problemEntityList 问题实体类
+     * @param problemId         操作的题目id
+     * @author yuzhanglong
+     * @date 2020-9-6 14:24:41
+     */
+    public Integer getProblemSetProblemIndex(List<JudgeProblemEntity> problemEntityList, Long problemId) {
+        for (int i = 0; i < problemEntityList.size(); i++) {
+            if (problemEntityList.get(i).getId().equals(problemId)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 
     /**
-     * 通过题目集id来获取某个题目集信息
+     * 通过题目集id来获取某个题目集信息, 附带开放性验证、存在性验证
      *
      * @param problemSetId 操作的题目集id
      * @author yuzhanglong
-     * @date 2020-08-12 12:23:53
+     * @date 2020-9-6 11:07:46
      */
-    public ProblemSetEntity getProblemSetById(Long problemSetId) {
+    public ProblemSetEntity validateAndGetProblemSetById(Long problemSetId) {
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
-        if (problemRepository == null) {
+        if (problemSetEntity == null) {
             throw new NotFoundException("B0011");
         }
+        Long uid = UserHolder.getUserId();
+        // 题目集非公开, 且用户不在规定的参与者中
+        if (!problemSetEntity.getOpen() && !isUserInProblemSetParticipant(problemSetEntity, uid)) {
+            throw new ForbiddenException("B0022");
+        }
         return problemSetEntity;
+    }
+
+    /**
+     * 检查用户是否在题目集参与者中
+     *
+     * @param problemSetEntity 题目集实体类
+     * @param userId           用户id
+     * @author yuzhanglong
+     * @date 2020-08-12 12:23:53
+     */
+    private Boolean isUserInProblemSetParticipant(ProblemSetEntity problemSetEntity, Long userId) {
+        List<UserEntity> participants = problemSetEntity.getParticipants();
+        for (UserEntity participant : participants) {
+            if (participant.getId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -380,6 +422,8 @@ public class ProblemSetService {
      * @date 2020-08-15 00:08:49
      */
     public Object getProblemSetScoreBoardCache(Long problemSetId) {
+        // 校验
+        ProblemSetEntity problemSetEntity = validateAndGetProblemSetById(problemSetId);
         return problemSetCache.getProblemSetScoreBoardCache(problemSetId);
     }
 
@@ -400,6 +444,8 @@ public class ProblemSetService {
         problemSetEntity.setDescription(problemSetDTO.getDescription());
         problemSetEntity.setStartTime(problemSetDTO.getStartTime());
         problemSetEntity.setDeadline(problemSetDTO.getDeadline());
+        problemSetEntity.setAllowedLanguage(problemSetDTO.getAllowedLanguage());
+        problemSetEntity.setOpen(problemSetDTO.getOpen());
         problemSetRepository.save(problemSetEntity);
     }
 
@@ -457,10 +503,7 @@ public class ProblemSetService {
      * @date 2020-8-20 14:36:12
      */
     public List<Map<String, Object>> getProblemSetTimeLine(Long problemSetId) {
-        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
-        if (problemSetEntity == null) {
-            throw new NotFoundException("B0011");
-        }
+        ProblemSetEntity problemSetEntity = validateAndGetProblemSetById(problemSetId);
         // 获取题目集下的所有问题
         List<JudgeProblemEntity> problems = problemSetEntity.getProblems();
         List<Map<String, Object>> result = new ArrayList<>();

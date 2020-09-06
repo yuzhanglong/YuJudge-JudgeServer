@@ -2,11 +2,13 @@ package com.yzl.yujudge.dto;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 
 /**
+ * 创建题目集的数据传输对象
+ *
  * @author yuzhanglong
- * @description 创建题目集的数据传输对象
  * @date 2020-08-09 15:19:51
  */
 public class ProblemSetDTO {
@@ -18,6 +20,24 @@ public class ProblemSetDTO {
     private Date deadline;
     @NotNull(message = "开始时间不得为空")
     private Date startTime;
+    private List<String> allowedLanguage;
+    private Boolean open;
+
+    public List<String> getAllowedLanguage() {
+        return allowedLanguage;
+    }
+
+    public void setAllowedLanguage(List<String> allowedLanguage) {
+        this.allowedLanguage = allowedLanguage;
+    }
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
 
     public String getName() {
         return name;
