@@ -15,6 +15,7 @@ public class LoginDTO {
     private String nickname;
 
     private String email;
+
     @NotNull(message = "密码不得为空")
     private String password;
 

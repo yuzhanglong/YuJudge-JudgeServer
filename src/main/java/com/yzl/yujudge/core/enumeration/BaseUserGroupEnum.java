@@ -14,8 +14,12 @@ import java.util.stream.Stream;
 public enum BaseUserGroupEnum {
     // 系统管理员
     ROOT,
+
     // 一般用户
-    COMMON;
+    COMMON,
+
+    // 题目、题目集管理
+    PROBLEM_MANAGER;
 
 
     /**

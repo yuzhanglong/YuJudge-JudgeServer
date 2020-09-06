@@ -548,4 +548,19 @@ public class ProblemSetService {
         }
         return -1;
     }
+
+    /**
+     * 删除题目集
+     *
+     * @param problemSetId id
+     * @author yuzhanglong
+     * @date 2020-9-6 14:38:33
+     */
+    public void deleteProblemSet(Long problemSetId) {
+        ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(problemSetId);
+        if (problemSetEntity == null) {
+            throw new NotFoundException("B0011");
+        }
+        problemSetRepository.delete(problemSetEntity);
+    }
 }

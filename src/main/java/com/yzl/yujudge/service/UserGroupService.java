@@ -5,8 +5,10 @@ import com.yzl.yujudge.core.enumeration.BaseUserGroupEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.UserGroupDTO;
+import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.model.UserGroupEntity;
 import com.yzl.yujudge.repository.UserGroupRepository;
+import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.utils.EntityToVoListMapper;
 import com.yzl.yujudge.vo.UserGroupVO;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,15 @@ import java.util.List;
 @Service
 public class UserGroupService {
     private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
     private final Mapper mapper;
 
-    public UserGroupService(UserGroupRepository userGroupRepository, Mapper mapper) {
+    public UserGroupService(
+            UserGroupRepository userGroupRepository,
+            UserRepository userRepository,
+            Mapper mapper) {
         this.userGroupRepository = userGroupRepository;
+        this.userRepository = userRepository;
         this.mapper = mapper;
     }
 
@@ -129,5 +136,39 @@ public class UserGroupService {
     private Boolean isDuplicateUserGroupName(String name) {
         UserGroupEntity userGroupEntity = userGroupRepository.findOneByName(name);
         return userGroupEntity != null;
+    }
+
+    /**
+     * 添加一个或者多个用户到用户组
+     *
+     * @param uidList         用户列表
+     * @param userGroupEntity 用户组实体
+     * @author yuzhanglong
+     * @date 2020-9-6 18:17:00
+     */
+    public void addUsersInUserGroup(List<Long> uidList, UserGroupEntity userGroupEntity) {
+        for (Long uid : uidList) {
+            UserEntity user = userRepository.findOneById(uid);
+            if (user == null) {
+                throw new NotFoundException("B0006");
+            }
+            userGroupEntity.getUsers().add(user);
+        }
+        userGroupRepository.save(userGroupEntity);
+    }
+
+    /**
+     * 根据名称获取用户组
+     *
+     * @param name 用户组名称
+     * @author yuzhanglong
+     * @date 2020-9-6 18:17:00
+     */
+    public UserGroupEntity getUserGroupByName(String name) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findOneByName(name);
+        if (userGroupEntity == null) {
+            throw new NotFoundException("B0015");
+        }
+        return userGroupEntity;
     }
 }

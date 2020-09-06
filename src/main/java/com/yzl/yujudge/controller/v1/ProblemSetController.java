@@ -218,4 +218,18 @@ public class ProblemSetController {
         List<Map<String, Object>> res = problemSetService.getProblemSetTimeLine(problemSetId);
         return new UnifiedResponse(res);
     }
+
+    /**
+     * 移除一个题目集
+     *
+     * @param problemSetId 题目集id
+     * @author yuzhanglong
+     * @date 2020-9-6 14:39:41
+     */
+    @DeleteMapping("/problem_set/{problemSetId}")
+    @AuthorizationRequired
+    public UnifiedResponse deleteProblemSet(@PathVariable Long problemSetId) {
+        problemSetService.deleteProblemSet(problemSetId);
+        return new UnifiedResponse("删除成功~");
+    }
 }

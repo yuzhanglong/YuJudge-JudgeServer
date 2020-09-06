@@ -10,17 +10,18 @@ import com.yzl.yujudge.dto.RegisterDTO;
 import com.yzl.yujudge.model.PermissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.model.UserGroupEntity;
+import com.yzl.yujudge.repository.UserGroupRepository;
 import com.yzl.yujudge.repository.UserRepository;
-import com.yzl.yujudge.utils.RedisOperations;
 import com.yzl.yujudge.utils.CheckCodeUtil;
+import com.yzl.yujudge.utils.RedisOperations;
 import com.yzl.yujudge.utils.SecurityUtil;
-import com.yzl.yujudge.utils.ToEntityUtil;
 import com.yzl.yujudge.utils.TokenUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,14 +41,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthorizationConfiguration authorizationConfiguration;
     private final RedisOperations redisOperations;
+    private final UserGroupService userGroupService;
+    private final UserGroupRepository userGroupRepository;
 
     public UserService(
             UserRepository userRepository,
             AuthorizationConfiguration authorizationConfiguration,
-            RedisOperations redisOperations) {
+            RedisOperations redisOperations, UserGroupService userGroupService,
+            UserGroupRepository userGroupRepository) {
         this.userRepository = userRepository;
         this.authorizationConfiguration = authorizationConfiguration;
         this.redisOperations = redisOperations;
+        this.userGroupService = userGroupService;
+        this.userGroupRepository = userGroupRepository;
     }
 
     /**
@@ -101,15 +107,33 @@ public class UserService {
             // 验证码异常
             throw new ForbiddenException("B0009");
         }
-        String nickname = registerDTO.getNickname();
+        createUser(registerDTO.getNickname(), registerDTO.getPassword());
+    }
+
+    /**
+     * 创建一个用户
+     *
+     * @param nickname 用户昵称
+     * @param password 用户密码
+     * @author yuzhanglong
+     * @date 2020-08-03 18:42:30
+     */
+    public void createUser(String nickname, String password) {
         // 判断用户是否已经存在
         if (userRepository.findByNickname(nickname) != null) {
             throw new ForbiddenException("B0008");
         }
-        UserEntity userEntity = ToEntityUtil.registerDtoToUserEntity(registerDTO);
-        // 将密码hash，并存入entity对象
-        userEntity.setPassword(SecurityUtil.generatePasswordHash(registerDTO.getPassword()));
+        UserEntity userEntity = new UserEntity();
+        userEntity.setNickname(nickname);
+        // 将密码加密，并存入entity对象
+        userEntity.setPassword(SecurityUtil.generatePasswordHash(password));
+        // 设置默认用户组
         userRepository.save(userEntity);
+        // 添加到默认用户组
+        UserGroupEntity userGroupEntity = userGroupRepository.findOneByName(BaseUserGroupEnum.COMMON.name());
+        List<Long> users = new ArrayList<>();
+        users.add(userEntity.getId());
+        userGroupService.addUsersInUserGroup(users, userGroupEntity);
     }
 
 

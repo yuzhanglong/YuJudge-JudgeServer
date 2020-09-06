@@ -138,11 +138,11 @@ public class ProblemController {
      * @author yuzhanglong
      * @date 2020-7-22
      */
-    @DeleteMapping("/delete_problem/{problemId}")
+    @DeleteMapping("/problem/{problemId}")
     @AuthorizationRequired(permission = PermissionEnum.PROBLEM_MANAGER)
     public UnifiedResponse deleteProblem(@PathVariable Long problemId) {
         problemService.deleteProblem(problemId);
-        return new UnifiedResponse();
+        return new UnifiedResponse("删除问题成功");
     }
 
 

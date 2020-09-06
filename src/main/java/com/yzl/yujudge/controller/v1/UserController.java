@@ -165,4 +165,18 @@ public class UserController {
         userService.deleteUser(userId);
         return new UnifiedResponse("删除用户成功");
     }
+
+    /**
+     * 创建用户
+     *
+     * @param user 用户信息
+     * @author yuzhanglong
+     * @date 2020-8-22 14:05:20
+     */
+    @PostMapping("/user")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse createUser(@RequestBody LoginDTO user) {
+        userService.createUser(user.getNickname(), user.getPassword());
+        return new UnifiedResponse("创建用户成功~");
+    }
 }
