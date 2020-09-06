@@ -42,6 +42,7 @@ import java.util.*;
 public class ProblemSetService {
     private final ProblemSetRepository problemSetRepository;
     private final UserRepository userRepository;
+    private final UserGroupService userGroupService;
     private final ProblemRepository problemRepository;
     private final SubmissionRepository submissionRepository;
     private final ProblemSetCache problemSetCache;
@@ -52,12 +53,13 @@ public class ProblemSetService {
     public ProblemSetService(
             ProblemSetRepository problemSetRepository,
             UserRepository userRepository,
-            ProblemRepository problemRepository,
+            UserGroupService userGroupService, ProblemRepository problemRepository,
             SubmissionRepository submissionRepository,
             ProblemSetCache problemSetCache,
             Mapper mapper) {
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
+        this.userGroupService = userGroupService;
         this.problemRepository = problemRepository;
         this.submissionRepository = submissionRepository;
         this.problemSetCache = problemSetCache;
@@ -249,6 +251,10 @@ public class ProblemSetService {
      * @date 2020-08-12 12:23:53
      */
     private Boolean isUserInProblemSetParticipant(ProblemSetEntity problemSetEntity, Long userId) {
+        // 系统默认的无限制用户组
+        if (userGroupService.isUserProblemSetFree()) {
+            return true;
+        }
         List<UserEntity> participants = problemSetEntity.getParticipants();
         for (UserEntity participant : participants) {
             if (participant.getId().equals(userId)) {

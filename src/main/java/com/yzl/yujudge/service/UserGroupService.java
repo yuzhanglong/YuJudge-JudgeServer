@@ -1,6 +1,7 @@
 package com.yzl.yujudge.service;
 
 import com.github.dozermapper.core.Mapper;
+import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.enumeration.BaseUserGroupEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -192,6 +193,24 @@ public class UserGroupService {
     public Boolean isUserInUserGroup(Long userId, UserGroupEntity userGroupEntity) {
         for (UserEntity user : userGroupEntity.getUsers()) {
             if (user.getId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断用户题目集操作无限制
+     *
+     * @author yuzhanglong
+     * @date 2020-9-6 23:47:56
+     */
+    public Boolean isUserProblemSetFree() {
+        List<UserGroupEntity> g = UserHolder.getUserUserGroups();
+        for (UserGroupEntity userGroupEntity : g) {
+            boolean isRoot = userGroupEntity.getName().equals(BaseUserGroupEnum.ROOT.name());
+            boolean isProblemManager = userGroupEntity.getName().equals(BaseUserGroupEnum.PROBLEM_MANAGER.name());
+            if (isRoot || isProblemManager) {
                 return true;
             }
         }
