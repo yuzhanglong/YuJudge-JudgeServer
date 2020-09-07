@@ -117,18 +117,18 @@ public class UserController {
 
     /**
      * 通过用户id，获取用户信息
-     * 我们不会直接让调用者传入用户id
-     * 而是通过用户传入的token
-     * 将token解析，获取其中包含的用户id
+     * 可以传入用户id，如果没有传入，则我们返回调用者的个人信息
      *
      * @author yuzhanglong
      * @date 2020-08-08 13:11:24
      */
-    @GetMapping("/get_user_info")
+    @GetMapping("/user_info")
     @AuthorizationRequired
-    public UnifiedResponse getUserInfo() {
-        Long userId = UserHolder.getUserId();
-        UserEntity user = userService.getUserInfo(userId);
+    public UnifiedResponse getUserInfo(@RequestParam(defaultValue = "") Long uid) {
+        if (uid == null) {
+            uid = UserHolder.getUserId();
+        }
+        UserEntity user = userService.getUserInfo(uid);
         EntityToVoMapper<UserEntity, UserInfoVO> mapper = new EntityToVoMapper<>(user, UserInfoVO.class);
         return new UnifiedResponse(mapper.getViewObject());
     }

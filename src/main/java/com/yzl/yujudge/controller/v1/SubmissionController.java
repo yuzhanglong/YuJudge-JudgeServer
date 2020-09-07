@@ -4,6 +4,8 @@ import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
+import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
@@ -11,6 +13,7 @@ import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.utils.EntityToVoMapper;
 import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.SubmissionDetailVO;
+import com.yzl.yujudge.vo.SubmissionThreadPoolVO;
 import com.yzl.yujudge.vo.SubmissionVO;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -150,5 +153,32 @@ public class SubmissionController {
         }
         List<Map<String, Object>> res = submissionService.countUserJudgeResult(uid);
         return new UnifiedResponse(res);
+    }
+
+    /**
+     * 获取提交线程池配置
+     *
+     * @author yuzhanglong
+     * @date 2020-9-7 13:30:20
+     */
+    @GetMapping("/thread_pool_config")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse getSubmissionThreadPoolConfig() {
+        SubmissionThreadPoolVO config = submissionService.getSubmissionThreadPoolConfig();
+        return new UnifiedResponse(config);
+    }
+
+    /**
+     * 设置提交线程池最大工作数
+     *
+     * @author yuzhanglong
+     * @date 2020-9-7 13:30:15
+     */
+    @PutMapping("/thread_pool_max_working_size")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse setThreadPoolMaxWorkingSize(@Validated @RequestBody SetWorkingAmountDTO setWorkingAmountDTO) {
+        Integer maxWorkingAmount = setWorkingAmountDTO.getMaxWorkingAmount();
+        submissionService.setSubmissionThreadPoolMaxSize(maxWorkingAmount);
+        return new UnifiedResponse("设置提交线程池最大工作数成功");
     }
 }

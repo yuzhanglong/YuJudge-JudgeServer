@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yzl.yujudge.bo.JudgeHostBO;
 import com.yzl.yujudge.core.authorization.UserHolder;
+import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
 import com.yzl.yujudge.core.enumeration.JudgeResultEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
@@ -20,6 +21,7 @@ import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
+import com.yzl.yujudge.vo.SubmissionThreadPoolVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +46,8 @@ public class SubmissionService {
     private final UserRepository userRepository;
     private final JudgeHostService judgeHostService;
     private final JudgeHostRepository judgeHostRepository;
+    private final UserGroupService userGroupService;
+    private final SubmissionExecutorConfiguration submissionExecutorConfiguration;
     public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
     public static final int MAX_SUBMISSION_COUNT_DATE = 40;
     public static final int MAX_SUBMISSION_COUNT_HOURS = 24 * 15;
@@ -54,13 +58,17 @@ public class SubmissionService {
             ProblemSetRepository problemSetRepository,
             UserRepository userRepository,
             JudgeHostService judgeHostService,
-            JudgeHostRepository judgeHostRepository) {
+            JudgeHostRepository judgeHostRepository,
+            SubmissionExecutorConfiguration submissionExecutorConfiguration,
+            UserGroupService userGroupService) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.problemSetRepository = problemSetRepository;
         this.userRepository = userRepository;
         this.judgeHostService = judgeHostService;
         this.judgeHostRepository = judgeHostRepository;
+        this.submissionExecutorConfiguration = submissionExecutorConfiguration;
+        this.userGroupService = userGroupService;
     }
 
     /**
@@ -83,9 +91,12 @@ public class SubmissionService {
             throw new NotFoundException("B0021");
         }
         UserEntity userEntity = userRepository.findOneById(userId);
+
+        // 将这个用户添加到题目集参与者中
         if (!isUserInProblemSet(problemSetEntity.getId(), userEntity)) {
             problemSetEntity.getParticipants().add(userEntity);
         }
+
         // 验证目标problem是否存在
         JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionDTO.getProblemId());
 
@@ -271,6 +282,12 @@ public class SubmissionService {
         if (submissionEntity == null) {
             throw new NotFoundException("B0005");
         }
+
+        // 系统默认的题目、题目集无限制用户组，不受时间，用户限制
+        if (userGroupService.isUserProblemSetFree()) {
+            return submissionEntity;
+        }
+
         // 不是自己的提交
         if (!UserHolder.getUserId().equals(submissionEntity.getCreator().getId())) {
             submissionEntity.setCodeContent("抱歉, 代码不予显示");
@@ -364,7 +381,6 @@ public class SubmissionService {
      * @author yuzhanglong
      * @date 2020-8-20 10:54:52
      * @see SubmissionRepository#countSubmissionGroupByHoursByJudgeHostId(Date, Date, Long)
-     * 参阅传入内容的数据结构
      */
     public static List<Map<String, Object>> publishSubmissionHourlyCount(Set<List<Object>> results) {
         List<Map<String, Object>> items = new ArrayList<>();
@@ -376,5 +392,31 @@ public class SubmissionService {
             items.add(itemForOneHour);
         }
         return items;
+    }
+
+    /**
+     * 获取判题服务器线程池配置信息
+     *
+     * @return 配置内容视图层对象
+     * @author yuzhanglong
+     * @date 2020-9-7 13:21:21
+     */
+    public SubmissionThreadPoolVO getSubmissionThreadPoolConfig() {
+        Integer maxPoolSize = submissionExecutorConfiguration.submissionAsyncServiceExecutor().getMaximumPoolSize();
+        Integer workingAmount = submissionExecutorConfiguration.submissionAsyncServiceExecutor().getActiveCount();
+        Integer maxQueueAmount = SubmissionExecutorConfiguration.BLOCKING_QUEUE_CAPACITY;
+        return new SubmissionThreadPoolVO(maxPoolSize, workingAmount, maxQueueAmount);
+    }
+
+    /**
+     * 设置判题服务器同时连接数目
+     *
+     * @param size 大小
+     * @author yuzhanglong
+     * @date 2020-9-7 13:21:21
+     */
+    public void setSubmissionThreadPoolMaxSize(Integer size) {
+        submissionExecutorConfiguration.submissionAsyncServiceExecutor().setCorePoolSize(size);
+        submissionExecutorConfiguration.submissionAsyncServiceExecutor().setMaximumPoolSize(size);
     }
 }

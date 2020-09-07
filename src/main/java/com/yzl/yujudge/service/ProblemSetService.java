@@ -234,10 +234,19 @@ public class ProblemSetService {
         if (problemSetEntity == null) {
             throw new NotFoundException("B0011");
         }
-        Long uid = UserHolder.getUserId();
+
+        // 系统默认的题目、题目集无限制用户组，不受时间，用户限制
+        if (userGroupService.isUserProblemSetFree()) {
+            return problemSetEntity;
+        }
+        boolean isUserPermissionPass = isUserInProblemSetParticipant(problemSetEntity, UserHolder.getUserId());
         // 题目集非公开, 且用户不在规定的参与者中
-        if (!problemSetEntity.getOpen() && !isUserInProblemSetParticipant(problemSetEntity, uid)) {
+        if (!problemSetEntity.getOpen() && !isUserPermissionPass) {
             throw new ForbiddenException("B0022");
+        }
+        // 如果不在运行状态, 返回
+        if (getProblemSetCondition(problemSetEntity) != ProblemSetConditionEnum.RUNNING) {
+            throw new ForbiddenException("B0024");
         }
         return problemSetEntity;
     }
@@ -251,10 +260,6 @@ public class ProblemSetService {
      * @date 2020-08-12 12:23:53
      */
     private Boolean isUserInProblemSetParticipant(ProblemSetEntity problemSetEntity, Long userId) {
-        // 系统默认的无限制用户组
-        if (userGroupService.isUserProblemSetFree()) {
-            return true;
-        }
         List<UserEntity> participants = problemSetEntity.getParticipants();
         for (UserEntity participant : participants) {
             if (participant.getId().equals(userId)) {

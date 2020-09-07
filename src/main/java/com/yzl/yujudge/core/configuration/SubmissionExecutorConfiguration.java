@@ -21,16 +21,16 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableAsync
 public class SubmissionExecutorConfiguration {
-    private static final long KEEP_ALIVE_TIME = 5L;
-    private static final int BLOCKING_QUEUE_CAPACITY = 100;
-    private static final String THREAD_NAME_PREFIX = "submissionJudge";
+    public static final long KEEP_ALIVE_TIME = 5L;
+    public static final int BLOCKING_QUEUE_CAPACITY = 100;
+    public static final String THREAD_NAME_PREFIX = "submissionJudge";
 
     @Bean
     public ThreadPoolExecutor submissionAsyncServiceExecutor() {
-        final int maximumPoolSize = Runtime.getRuntime().availableProcessors() + 1;
+        final int maximumPoolSize = Runtime.getRuntime().availableProcessors();
         return new ThreadPoolExecutor(
-                8,
-                8,
+                maximumPoolSize,
+                maximumPoolSize,
                 KEEP_ALIVE_TIME,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(BLOCKING_QUEUE_CAPACITY),
