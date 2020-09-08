@@ -5,6 +5,7 @@ import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
+import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
@@ -60,7 +61,11 @@ public class SubmissionController {
         } else {
             submissionEntity = submissionService.initSubmissionWithoutProblemSet(submissionDTO);
         }
-        submissionService.addSubmissionTask(submissionEntity, 0);
+        try {
+            submissionService.addSubmissionTask(submissionEntity, 0);
+        } catch (Exception e) {
+            throw new ForbiddenException("B0025");
+        }
         return new UnifiedResponse("提交已经开始处理");
     }
 

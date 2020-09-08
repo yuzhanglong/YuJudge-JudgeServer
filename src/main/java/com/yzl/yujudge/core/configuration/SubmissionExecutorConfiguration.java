@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @EnableAsync
 public class SubmissionExecutorConfiguration {
     public static final long KEEP_ALIVE_TIME = 5L;
-    public static final int BLOCKING_QUEUE_CAPACITY = 100;
+    public static final int BLOCKING_QUEUE_CAPACITY = 1000;
     public static final String THREAD_NAME_PREFIX = "submissionJudge";
 
     @Bean

@@ -63,10 +63,11 @@ public class UserService {
      * 接下来调用相关接口只需要带上token即可
      *
      * @param loginDTO 登录信息的数据传输对象
+     * @param isCheck  是否验证验证码
      * @author yuzhanglong
      * @date 2020-08-03 13:30:29
      */
-    public String userLogin(LoginDTO loginDTO) {
+    public String userLogin(LoginDTO loginDTO, Boolean isCheck) {
         // TODO: 支持邮箱登录
         UserEntity user = userRepository.findByNickname(loginDTO.getNickname());
         if (user == null) {
@@ -80,13 +81,15 @@ public class UserService {
         boolean isCodePass = isCheckCodePass(key, loginDTO.getCheckCodeContent());
         // 移除本次验证码的相关信息
         redisOperations.remove(key);
-        if (!isCodePass) {
-            // 验证码异常
-            throw new ForbiddenException("B0009");
-        }
-        if (!isPasswordPass) {
-            // 用户密码异常
-            throw new ForbiddenException("B0007");
+        if (isCheck) {
+            if (!isCodePass) {
+                // 验证码异常
+                throw new ForbiddenException("B0009");
+            }
+            if (!isPasswordPass) {
+                // 用户密码异常
+                throw new ForbiddenException("B0007");
+            }
         }
         return generateUserTokenByUserId(user.getId());
     }
@@ -95,10 +98,11 @@ public class UserService {
      * 用户注册
      *
      * @param registerDTO 注册信息的数据传输对象
+     * @return 用户id
      * @author yuzhanglong
-     * @date 2020-08-03 18:42:30
+     * @date 2020-9-8 16:10:48
      */
-    public void userRegister(RegisterDTO registerDTO) {
+    public Long userRegister(RegisterDTO registerDTO) {
         String key = registerDTO.getCheckCodeKey();
         boolean isCodePass = isCheckCodePass(key, registerDTO.getCheckCodeContent());
         // 移除本次验证码的相关信息
@@ -107,7 +111,8 @@ public class UserService {
             // 验证码异常
             throw new ForbiddenException("B0009");
         }
-        createUser(registerDTO.getNickname(), registerDTO.getPassword());
+        UserEntity u = createUser(registerDTO.getNickname(), registerDTO.getPassword());
+        return u.getId();
     }
 
     /**
@@ -115,10 +120,11 @@ public class UserService {
      *
      * @param nickname 用户昵称
      * @param password 用户密码
+     * @return UserEntity 创建用户的实体类
      * @author yuzhanglong
      * @date 2020-08-03 18:42:30
      */
-    public void createUser(String nickname, String password) {
+    public UserEntity createUser(String nickname, String password) {
         // 判断用户是否已经存在
         if (userRepository.findByNickname(nickname) != null) {
             throw new ForbiddenException("B0008");
@@ -134,6 +140,7 @@ public class UserService {
         List<Long> users = new ArrayList<>();
         users.add(userEntity.getId());
         userGroupService.addUsersInUserGroup(users, userGroupEntity);
+        return userEntity;
     }
 
 

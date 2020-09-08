@@ -52,8 +52,8 @@ public class UserController {
      */
     @PostMapping("/register")
     public UnifiedResponse register(@Validated @RequestBody RegisterDTO registerDTO) {
-        userService.userRegister(registerDTO);
-        return new UnifiedResponse("注册成功");
+        Long uid = userService.userRegister(registerDTO);
+        return new UnifiedResponse("用户" + uid.toString() + "注册成功");
     }
 
     /**
@@ -65,7 +65,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public UnifiedResponse login(@RequestBody @Validated LoginDTO loginDTO) {
-        String token = userService.userLogin(loginDTO);
+        String token = userService.userLogin(loginDTO, false);
         AuthorizationVO authorizationVO = new AuthorizationVO();
         authorizationVO.setAccessToken(token);
         authorizationVO.setExpiresIn(authorizationConfiguration.getExpiredIn());
@@ -177,8 +177,8 @@ public class UserController {
     @PostMapping("/user")
     @AuthorizationRequired(permission = PermissionEnum.ADMIN)
     public UnifiedResponse createUser(@RequestBody LoginDTO user) {
-        userService.createUser(user.getNickname(), user.getPassword());
-        return new UnifiedResponse("创建用户成功~");
+        UserEntity u = userService.createUser(user.getNickname(), user.getPassword());
+        return new UnifiedResponse("用户" + u.getId().toString() + "注册成功");
     }
 
     /**

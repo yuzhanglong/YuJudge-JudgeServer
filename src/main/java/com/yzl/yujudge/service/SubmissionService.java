@@ -7,6 +7,7 @@ import com.yzl.yujudge.core.authorization.UserHolder;
 import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
 import com.yzl.yujudge.core.enumeration.JudgeResultEnum;
+import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
@@ -48,6 +49,7 @@ public class SubmissionService {
     private final JudgeHostRepository judgeHostRepository;
     private final UserGroupService userGroupService;
     private final SubmissionExecutorConfiguration submissionExecutorConfiguration;
+    private final ProblemSetService problemSetService;
     public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
     public static final int MAX_SUBMISSION_COUNT_DATE = 40;
     public static final int MAX_SUBMISSION_COUNT_HOURS = 24 * 15;
@@ -60,7 +62,8 @@ public class SubmissionService {
             JudgeHostService judgeHostService,
             JudgeHostRepository judgeHostRepository,
             SubmissionExecutorConfiguration submissionExecutorConfiguration,
-            UserGroupService userGroupService) {
+            UserGroupService userGroupService,
+            ProblemSetService problemSetService) {
         this.submissionRepository = submissionRepository;
         this.problemRepository = problemRepository;
         this.problemSetRepository = problemSetRepository;
@@ -69,6 +72,7 @@ public class SubmissionService {
         this.judgeHostRepository = judgeHostRepository;
         this.submissionExecutorConfiguration = submissionExecutorConfiguration;
         this.userGroupService = userGroupService;
+        this.problemSetService = problemSetService;
     }
 
     /**
@@ -87,7 +91,7 @@ public class SubmissionService {
             throw new NotFoundException("B0011");
         }
         // 是否超时？如果超时，我们不执行
-        if (problemSetEntity.getDeadline().before(new Date())) {
+        if (problemSetService.getProblemSetCondition(problemSetEntity) != ProblemSetConditionEnum.RUNNING) {
             throw new NotFoundException("B0021");
         }
         UserEntity userEntity = userRepository.findOneById(userId);
