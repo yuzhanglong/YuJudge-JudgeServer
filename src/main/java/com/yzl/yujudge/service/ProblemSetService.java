@@ -384,11 +384,14 @@ public class ProblemSetService {
     private Map<String, Object> generateProblemCondition(
             Long wrongAnswerAmount,
             ProblemSetEntity problemSetEntity,
-            SubmissionEntity firstAcSubmission, JudgeProblemEntity problemEntity) {
+            SubmissionEntity firstAcSubmission,
+            JudgeProblemEntity problemEntity) {
         Map<String, Object> problemCondition = new HashMap<>(3);
         boolean isAc = firstAcSubmission != null;
         // 是否 ac
         problemCondition.put("isAccepted", isAc);
+        // ac提交id，如果没有ac，我们返回 -1
+        problemCondition.put("submissionId", isAc ? firstAcSubmission.getId() : -1);
         // 之前是否已经有人ac了
         boolean hasEarlyAcBefore = false;
         if (isAc) {

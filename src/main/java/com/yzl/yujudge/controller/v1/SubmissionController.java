@@ -6,6 +6,7 @@ import com.yzl.yujudge.core.common.UnifiedResponse;
 import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.core.exception.http.ForbiddenException;
+import com.yzl.yujudge.dto.ChangeSubmissionConditionDTO;
 import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
@@ -185,5 +186,20 @@ public class SubmissionController {
         Integer maxWorkingAmount = setWorkingAmountDTO.getMaxWorkingAmount();
         submissionService.setSubmissionThreadPoolMaxSize(maxWorkingAmount);
         return new UnifiedResponse("设置提交线程池最大工作数成功");
+    }
+
+    /**
+     * 修改某个提交的判题结果
+     *
+     * @author yuzhanglong
+     * @date 2020-9-8 22:32:52
+     */
+    @PutMapping("/condition")
+    @AuthorizationRequired(permission = PermissionEnum.PROBLEM_MANAGER)
+    public UnifiedResponse changeSubmissionCondition(@RequestBody ChangeSubmissionConditionDTO changeSubmissionConditionDTO) {
+        Long submissionId = changeSubmissionConditionDTO.getSubmissionId();
+        String condition = changeSubmissionConditionDTO.getCondition();
+        submissionService.changeSubmissionCondition(submissionId, condition);
+        return new UnifiedResponse("修改判题结果成功");
     }
 }

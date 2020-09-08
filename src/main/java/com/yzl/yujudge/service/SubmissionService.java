@@ -423,4 +423,25 @@ public class SubmissionService {
         submissionExecutorConfiguration.submissionAsyncServiceExecutor().setCorePoolSize(size);
         submissionExecutorConfiguration.submissionAsyncServiceExecutor().setMaximumPoolSize(size);
     }
+
+    /**
+     * 修改提交状态
+     *
+     * @param condition 提交状态
+     * @author yuzhanglong
+     * @date 2020-9-8 22:25:50
+     */
+    public void changeSubmissionCondition(Long submissionId, String condition) {
+        SubmissionEntity submissionEntity = submissionRepository.findOneById(submissionId);
+        if (submissionEntity == null) {
+            throw new NotFoundException("B0005");
+        }
+        JudgeResultEnum judgeResultEnum = JudgeResultEnum.toJudgeResult(condition);
+        // 传入了错误的状态
+        if (judgeResultEnum == null) {
+            throw new NotFoundException("A0012");
+        }
+        submissionEntity.setCondition(condition);
+        submissionRepository.save(submissionEntity);
+    }
 }
