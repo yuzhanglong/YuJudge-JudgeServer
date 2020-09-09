@@ -21,8 +21,10 @@ import com.yzl.yujudge.repository.SubmissionRepository;
 import com.yzl.yujudge.repository.UserRepository;
 import com.yzl.yujudge.store.redis.ProblemSetCache;
 import com.yzl.yujudge.utils.DateTimeUtil;
+import com.yzl.yujudge.utils.TypeUtil;
 import com.yzl.yujudge.utils.comparator.ScoreBoardItemComparator;
 import com.yzl.yujudge.vo.CountSubmissionByTimeVO;
+import com.yzl.yujudge.vo.PaginationVO;
 import com.yzl.yujudge.vo.UserInfoBasicVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -502,7 +504,7 @@ public class ProblemSetService {
         List<SubmissionEntity> res = submissionRepository.countSubmissionConditionScatterByProblemSetId(problemSetId);
         List<Map<String, Object>> result = new ArrayList<>();
         for (SubmissionEntity re : res) {
-            Map<String, Object> tmp = new HashMap<>();
+            Map<String, Object> tmp = new HashMap<>(3);
             tmp.put("judgeResult", re.getJudgeCondition());
             tmp.put("userNickName", re.getCreator().getNickname());
             tmp.put("time", re.getCreateTime());
@@ -515,25 +517,28 @@ public class ProblemSetService {
      * 获取题目集时间线
      *
      * @param problemSetId 题目集id
+     * @return PaginationVO 分页对象
      * @author yuzhanglong
      * @date 2020-8-20 14:36:12
      */
-    public List<Map<String, Object>> getProblemSetTimeLine(Long problemSetId) {
+    public PaginationVO<Object, Map<String, Object>> getProblemSetTimeLine(Long problemSetId, Integer start, Integer count) {
+        Pageable pageable = PageRequest.of(start, count);
         ProblemSetEntity problemSetEntity = validateAndGetProblemSetById(problemSetId);
         // 获取题目集下的所有问题
         List<JudgeProblemEntity> problems = problemSetEntity.getProblems();
         List<Map<String, Object>> result = new ArrayList<>();
         Map<Long, Boolean> acAppearCondition = new HashMap<>(10);
-        Set<List<Object>> res = submissionRepository.getAcSubmissionByProblemSet(problemSetEntity);
-        for (List<Object> re : res) {
+        Page<Object> resultPagination = submissionRepository.getAcSubmissionByProblemSet(problemSetEntity, pageable);
+        List<Object[]> resultList = TypeUtil.castObjectToList(resultPagination.getContent(), Object[].class);
+        for (Object[] re : resultList) {
             Map<String, Object> tmp = new HashMap<>(10);
             // 创建者
-            UserEntity user = (UserEntity) re.get(0);
+            UserEntity user = (UserEntity) re[0];
             tmp.put("creator", mapper.map(user, UserInfoBasicVO.class));
             // ac时间
-            tmp.put("acTime", re.get(1));
+            tmp.put("acTime", re[1]);
             // 本次提交对应的题目
-            JudgeProblemEntity targetProblem = (JudgeProblemEntity) re.get(2);
+            JudgeProblemEntity targetProblem = (JudgeProblemEntity) re[2];
             tmp.put("problemIndex", getProblemIndexInProblemSet(problems, targetProblem));
             tmp.put("problemId", targetProblem.getId());
             // 如果没有出现过AC，即一血，我们将isFirstAc键置为true
@@ -546,7 +551,7 @@ public class ProblemSetService {
             }
             result.add(tmp);
         }
-        return result;
+        return new PaginationVO<>(resultPagination, result);
     }
 
     /**

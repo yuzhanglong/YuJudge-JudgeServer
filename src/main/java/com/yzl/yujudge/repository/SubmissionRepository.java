@@ -300,6 +300,7 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * 获取某个题目集下所有的AC提交
      *
      * @param problemSetEntity 题目集实体类
+     * @param pageable         分页对象
      * @return 提交数据统计的集合
      * @author yuzhanglong
      * @date 2020-9-4 23:23:52
@@ -307,5 +308,5 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
     @Query("select submission.creator, submission.createTime, submission.problem from SubmissionEntity submission " +
             "where submission.problemSet = ?1 " +
             "and submission.id in (select min(id) from submission where submission.judgeCondition = 'ACCEPT' group by problem, creator)")
-    Set<List<Object>> getAcSubmissionByProblemSet(ProblemSetEntity problemSetEntity);
+    Page<Object> getAcSubmissionByProblemSet(ProblemSetEntity problemSetEntity, Pageable pageable);
 }

@@ -209,14 +209,18 @@ public class ProblemSetController {
      * 获取题目集时间线
      *
      * @param problemSetId 题目集id
+     * @param start        页码
+     * @param count        每页个数
      * @author yuzhanglong
      * @date 2020-9-4 23:32:56
      */
     @GetMapping("/timeline/{problemSetId}")
     @AuthorizationRequired
-    public UnifiedResponse getProblemSetTimeLine(@PathVariable Long problemSetId) {
-        List<Map<String, Object>> res = problemSetService.getProblemSetTimeLine(problemSetId);
-        return new UnifiedResponse(res);
+    public UnifiedResponse getProblemSetTimeLine(
+            @PathVariable Long problemSetId,
+            @RequestParam(defaultValue = "0") Integer start,
+            @RequestParam(defaultValue = "10") Integer count) {
+        return new UnifiedResponse(problemSetService.getProblemSetTimeLine(problemSetId, start, count));
     }
 
     /**

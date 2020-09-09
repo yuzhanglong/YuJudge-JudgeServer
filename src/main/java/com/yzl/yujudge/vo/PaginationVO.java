@@ -17,12 +17,32 @@ public class PaginationVO<T, K> {
     private Integer totalPage;
     private List<K> items;
 
+    /**
+     * 带自动序列化的分页对象
+     *
+     * @param pageItems   分页对象
+     * @param targetClass 目标转化类
+     * @author yuzhanglong
+     * @date 2020-8-20 14:36:12
+     */
     public PaginationVO(Page<T> pageItems, Class<K> targetClass) {
         this.initPaginationData(pageItems);
 
         List<T> tList = pageItems.getContent();
         EntityToVoListMapper<T, K> mapper = new EntityToVoListMapper<>(tList, targetClass);
         setItems(mapper.getItems());
+    }
+
+    /**
+     * 不带自动序列化的分页对象
+     *
+     * @param pageItems 分页对象
+     * @author yuzhanglong
+     * @date 2020-9-9 14:28:58
+     */
+    public PaginationVO(Page<T> pageItems, List<K> items) {
+        this.initPaginationData(pageItems);
+        this.setItems(items);
     }
 
     void initPaginationData(Page<T> pageItems) {
