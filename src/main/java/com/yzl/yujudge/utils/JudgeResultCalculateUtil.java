@@ -7,8 +7,9 @@ import com.yzl.yujudge.dto.JudgeTestCaseResultDTO;
 import java.util.List;
 
 /**
+ * 判题结果数据处理的工具类
+ *
  * @author yuzhanglong
- * @description 判题结果数据处理的工具类
  * @date 2020-7-30 12:57
  */
 public class JudgeResultCalculateUtil {
@@ -21,8 +22,9 @@ public class JudgeResultCalculateUtil {
     }
 
     /**
+     * 执行计算方案
+     *
      * @author yuzhanglong
-     * @description 执行计算方案
      * @date 2020-7-30 13:19
      */
     public void executeCalculate() {
@@ -30,8 +32,9 @@ public class JudgeResultCalculateUtil {
     }
 
     /**
+     * 获取最大的时间消耗和内存消耗
+     *
      * @author yuzhanglong
-     * @description 获取最大的时间消耗和内存消耗
      * @date 2020-7-30 13:18
      */
     private void countMaxTimeAndMaxMemoryCost() {
@@ -53,8 +56,9 @@ public class JudgeResultCalculateUtil {
     }
 
     /**
+     * 获取最大时间消耗
+     *
      * @author yuzhanglong
-     * @description 获取最大时间消耗
      * @date 2020-7-31 9:36
      */
     private Integer countMaxTime(JudgeTestCaseResultDTO testCase) {
@@ -70,11 +74,12 @@ public class JudgeResultCalculateUtil {
     }
 
     /**
-     * @author yuzhanglong
-     * @date 2020-7-31 9:48
-     * @description 获取判题结果描述
+     * 获取判题结果描述
      * 判题描述是对一次提交的汇总评价，以一个字符串的形式来表示，例如"ACCEPT"、"WRONG_ANSWER"等，
      * 在多个提交中，如果全ac则返回accept否则返回第一个错误描述
+     *
+     * @author yuzhanglong
+     * @date 2020-7-31 9:48
      */
     public JudgeResultEnum countJudgeResult() {
         List<JudgeTestCaseResultDTO> testCaseResultDTOList = judgeResult.getJudgeResults();

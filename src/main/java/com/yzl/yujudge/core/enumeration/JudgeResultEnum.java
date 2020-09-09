@@ -4,9 +4,10 @@ package com.yzl.yujudge.core.enumeration;
 import java.util.stream.Stream;
 
 /**
+ * 判题结果枚举类
+ *
  * @author yuzhanglong
  * @date 2020-7-29 14:32:29
- * @description 判题结果枚举类
  */
 
 public enum JudgeResultEnum {

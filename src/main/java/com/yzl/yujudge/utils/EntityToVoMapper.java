@@ -5,9 +5,10 @@ import com.github.dozermapper.core.Mapper;
 
 
 /**
+ * 实体类转视图层对象
+ *
  * @author yuzhanglong
  * @date 2020-08-08 13:08:38
- * @description 实体类转视图层对象
  */
 public class EntityToVoMapper<T, K> {
     private K viewObject;

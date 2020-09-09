@@ -1,8 +1,9 @@
 package com.yzl.yujudge.core.enumeration;
 
 /**
+ * 有关题目集状态的枚举类
+ *
  * @author yuzhanglong
- * @description 有关题目集状态的枚举类
  * @date 2020-08-12 01:30:53
  */
 

@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yuzhanglong
- * @description 某支队伍/某个用户
+ * 某支队伍/某个用户
  * 在某个题目集中的问题解决情况统计业务对象
+ *
+ * @author yuzhanglong
+ * @date 2020-9-9 11:51:52
  */
 public class TeamProblemsSolutionBO {
     private List<Map<String, Object>> problemResult;

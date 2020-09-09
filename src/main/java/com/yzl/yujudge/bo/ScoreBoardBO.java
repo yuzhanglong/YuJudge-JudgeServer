@@ -3,8 +3,9 @@ package com.yzl.yujudge.bo;
 import java.util.List;
 
 /**
+ * 记分板的的业务对象
+ *
  * @author yuzhanglong
- * @description 记分板的的业务对象
  * @date 2020-08-12 14:33:51
  */
 

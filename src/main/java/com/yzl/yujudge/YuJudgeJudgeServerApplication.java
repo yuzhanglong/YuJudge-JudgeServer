@@ -5,9 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
+ * YuJudge的服务端项目
+ *
  * @author yuzhanglong
  * @version develop
- * @description YuJudge的服务端项目
  */
 
 @SpringBootApplication

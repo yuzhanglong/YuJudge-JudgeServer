@@ -8,9 +8,10 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 /**
+ * 提交记录实体类
+ *
  * @author yuzhanglong
  * @date 2020-7-29 00:29:16
- * @description 提交记录实体类
  */
 
 @Entity

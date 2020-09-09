@@ -5,8 +5,9 @@ import com.yzl.yujudge.dto.JudgeHostConditionDTO;
 import java.util.Date;
 
 /**
+ * 单个判题服务器信息的业务对象
+ *
  * @author yuzhanglong
- * @description 单个判题服务器信息的业务对象
  * @date 2020-08-08 15:10
  */
 
@@ -18,7 +19,6 @@ public class JudgeHostBO {
     private Date createTime;
     private JudgeHostConditionDTO condition;
     private Boolean connection;
-
 
 
     public Boolean getConnection() {

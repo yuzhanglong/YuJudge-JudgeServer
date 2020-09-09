@@ -18,7 +18,7 @@ public interface AuthorizationManageable {
      *
      * @param request  请求
      * @param response 响应
-     * @return 支付正常执行完成
+     * @return 权限判断正常执行完成
      * @author yuzhanglong
      * @date 2020-8-22 23:29:49
      */
@@ -30,7 +30,7 @@ public interface AuthorizationManageable {
      * @param request    请求
      * @param response   响应
      * @param permission 这个接口的权限
-     * @return 支付正常执行完成
+     * @return 权限判断正常执行完成
      * @author yuzhanglong
      * @date 2020-8-23 00:02:34
      */

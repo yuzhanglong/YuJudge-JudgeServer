@@ -9,8 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 题目集实体类
+ *
  * @author yuzhanglong
- * @description 题目集实体类
  * @date 2020-7-26 23:58:30
  */
 @Entity

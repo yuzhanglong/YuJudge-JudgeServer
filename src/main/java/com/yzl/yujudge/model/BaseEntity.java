@@ -7,8 +7,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
+ * 基础实体类
+ *
  * @author yuzhanglong
- * @description 基础实体类
  * @date 2020-7-19 00:07:16
  */
 

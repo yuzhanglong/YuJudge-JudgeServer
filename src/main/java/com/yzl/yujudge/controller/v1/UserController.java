@@ -101,8 +101,8 @@ public class UserController {
     /**
      * 获取近期活跃用户
      *
+     * @param amount 需要获取的用户数目
      * @author yuzhanglong
-     * @description 需要获取的用户数目
      * @date 2020-08-07 20:13:09
      */
     @GetMapping("/get_active_user")

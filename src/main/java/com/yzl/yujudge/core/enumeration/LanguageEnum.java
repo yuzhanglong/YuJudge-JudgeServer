@@ -19,11 +19,12 @@ public enum LanguageEnum {
     C_PLUS_PLUS;
 
     /**
+     * 判断是否支持某个语言
+     *
      * @param languageName 语言的名称，例如：JAVA
      * @return Boolean 是否支持传入的语言
      * @author yuzhanglong
      * @date 2020-7-26 18:34:32
-     * @description 判断是否支持某个语言
      */
     public static Boolean isLanguageAccepted(String languageName) {
         return toLanguageType(languageName) != null;

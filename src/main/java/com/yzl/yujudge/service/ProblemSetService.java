@@ -273,8 +273,8 @@ public class ProblemSetService {
      * 获取题目集的状态
      *
      * @param problemSetEntity 题目集实体类
+     * @return ProblemSetConditionEnum 状态枚举类
      * @author yuzhanglong
-     * @description ProblemSetConditionEnum 状态枚举类
      * @date 2020-08-12 10:10:24
      */
     public ProblemSetConditionEnum getProblemSetCondition(ProblemSetEntity problemSetEntity) {
@@ -295,8 +295,8 @@ public class ProblemSetService {
      * 获取题目集计分板信息
      *
      * @param problemSetEntity 题目集
+     * @return ScoreBoardBO 记分板相关业务对象
      * @author yuzhanglong
-     * @description ScoreBoardBO 记分板相关业务对象
      * @date 2020-08-13 17:44:56
      */
     public ScoreBoardBO getProblemSetScoreBoard(ProblemSetEntity problemSetEntity) {
@@ -392,6 +392,8 @@ public class ProblemSetService {
         problemCondition.put("isAccepted", isAc);
         // ac提交id，如果没有ac，我们返回 -1
         problemCondition.put("submissionId", isAc ? firstAcSubmission.getId() : -1);
+        // 本次提交对应的problem
+        problemCondition.put("problemId", problemEntity.getId());
         // 之前是否已经有人ac了
         boolean hasEarlyAcBefore = false;
         if (isAc) {
@@ -533,6 +535,7 @@ public class ProblemSetService {
             // 本次提交对应的题目
             JudgeProblemEntity targetProblem = (JudgeProblemEntity) re.get(2);
             tmp.put("problemIndex", getProblemIndexInProblemSet(problems, targetProblem));
+            tmp.put("problemId", targetProblem.getId());
             // 如果没有出现过AC，即一血，我们将isFirstAc键置为true
             boolean isAcBefore = acAppearCondition.get(targetProblem.getId()) != null;
             if (isAcBefore) {

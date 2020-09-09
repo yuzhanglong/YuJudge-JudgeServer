@@ -6,9 +6,10 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
+ * 上传相关配置
+ *
  * @author yuzhanglong
  * @date 2020-08-06 12:37:15
- * @description 上传相关配置
  */
 
 @Component

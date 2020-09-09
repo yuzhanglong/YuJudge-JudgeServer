@@ -5,8 +5,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
+ * 判题机相关任务
+ *
  * @author yuzhanglong
- * @description 判题机相关任务
  * @date 2020-08-17 12:20:15
  */
 

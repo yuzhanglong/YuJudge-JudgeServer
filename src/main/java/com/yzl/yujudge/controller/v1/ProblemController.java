@@ -207,9 +207,10 @@ public class ProblemController {
     }
 
     /**
+     * 修改Problem限制
+     *
      * @param problemId 目标problemId
      * @author yuzhanglong
-     * @description 修改Problem限制
      * @date 2020-7-26 17:54:45
      */
     @PutMapping("/set_limitation/{problemId}")

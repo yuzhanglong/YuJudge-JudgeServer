@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 记分板子项的业务对象
+ *
  * @author yuzhanglong
- * @description 记分板子项的业务对象
  * @date 2020-08-12 23:14:38
  */
 

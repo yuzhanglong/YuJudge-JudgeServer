@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author yuzhanglong
- * @description 验证码相关工具类，基于easy-captcha包的二次封装
+ * 验证码相关工具类，基于easy-captcha包的二次封装
  * 其中: 常量 xxxKEY_NAME 代表了该内容对应的键名
+ *
+ * @author yuzhanglong
  * @date 2020-08-03 19:58:51
  */
 
