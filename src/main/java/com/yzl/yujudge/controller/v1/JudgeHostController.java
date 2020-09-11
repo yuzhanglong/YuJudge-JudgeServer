@@ -14,6 +14,8 @@ import com.yzl.yujudge.vo.JudgeHostVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -146,5 +148,20 @@ public class JudgeHostController {
     public UnifiedResponse deleteJudgeHost(@PathVariable Long judgeHostId) {
         judgeHostService.deleteJudgeHost(judgeHostId);
         return new UnifiedResponse("设置成功~");
+    }
+
+    /**
+     * 重定向到判题服务器下载提交
+     *
+     * @author yuzhanglong
+     * @date 2020-9-11 12:09:48
+     */
+    @GetMapping("/submission")
+    public void downloadSubmission(
+            @RequestParam Long host,
+            @RequestParam String submission,
+            HttpServletResponse response) throws IOException {
+        String urlInJudgeHost = judgeHostService.downloadSubmission(host, submission);
+        response.sendRedirect(urlInJudgeHost);
     }
 }

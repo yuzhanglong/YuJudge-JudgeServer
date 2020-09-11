@@ -214,10 +214,10 @@ public class ProblemSetController {
      * @author yuzhanglong
      * @date 2020-9-4 23:32:56
      */
-    @GetMapping("/timeline/{problemSetId}")
+    @GetMapping("/timeline")
     @AuthorizationRequired
     public UnifiedResponse getProblemSetTimeLine(
-            @PathVariable Long problemSetId,
+            @RequestParam Long problemSetId,
             @RequestParam(defaultValue = "0") Integer start,
             @RequestParam(defaultValue = "10") Integer count) {
         return new UnifiedResponse(problemSetService.getProblemSetTimeLine(problemSetId, start, count));

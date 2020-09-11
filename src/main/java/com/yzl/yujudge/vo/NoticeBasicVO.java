@@ -17,6 +17,15 @@ public class NoticeBasicVO {
     private NoticePriorityEnum priority;
     private UserInfoBasicVO creator;
     private Date createTime;
+    private String content;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public Long getId() {
         return id;

@@ -65,7 +65,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public UnifiedResponse login(@RequestBody @Validated LoginDTO loginDTO) {
-        String token = userService.userLogin(loginDTO, false);
+        String token = userService.userLogin(loginDTO, true);
         AuthorizationVO authorizationVO = new AuthorizationVO();
         authorizationVO.setAccessToken(token);
         authorizationVO.setExpiresIn(authorizationConfiguration.getExpiredIn());

@@ -177,7 +177,6 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @return 提交数据统计的集合
      * @author yuzhanglong
      * @date 2020-8-19 17:05:29
-     * @description
      */
     @Query(value = "SELECT DATE(s.create_time), HOUR(s.create_time), COUNT(*)" +
             "FROM submission s " +
@@ -198,7 +197,6 @@ public interface SubmissionRepository extends JpaRepository<SubmissionEntity, Lo
      * @return 提交数据统计的集合
      * @author yuzhanglong
      * @date 2020-8-19 17:05:29
-     * @description
      * @see SubmissionRepository#countSubmissionGroupByHoursByJudgeHostId(Date, Date, Long)
      */
     @Query(value = "SELECT DATE(s.create_time), HOUR(s.create_time), COUNT(*)" +

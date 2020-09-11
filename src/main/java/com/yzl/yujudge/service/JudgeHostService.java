@@ -36,6 +36,7 @@ public class JudgeHostService {
     private final Mapper mapper;
     private final ObjectMapper objectMapper;
     private final SubmissionRepository submissionRepository;
+    public static final String JUDGE_HOST_DOWNLOAD_PATH = "/file/submission/";
 
     public JudgeHostService(
             JudgeHostRepository judgeHostRepository,
@@ -87,6 +88,24 @@ public class JudgeHostService {
     public void createJudgeHost(JudgeHostDTO judgeHostDTO) {
         String baseUrl = judgeHostDTO.getBaseUrl();
         Integer port = judgeHostDTO.getPort();
+        if (isJudgeHostValidated(baseUrl, port)) {
+            JudgeHostEntity judgeHostEntity = mapper.map(judgeHostDTO, JudgeHostEntity.class);
+            judgeHostEntity.setBaseUrl(baseUrl);
+            // 活跃状态默认置为否
+            judgeHostEntity.setActive(false);
+            judgeHostRepository.save(judgeHostEntity);
+        }
+    }
+
+    /**
+     * 验证判题机参数合法性
+     *
+     * @param baseUrl baseUrl
+     * @param port    端口
+     * @author yuzhanglong
+     * @date 2020-9-11 12:37:14
+     */
+    private Boolean isJudgeHostValidated(String baseUrl, Integer port) {
         // IP 合法性
         if (!PublicValidator.isAddressValidated(baseUrl)) {
             throw new ForbiddenException("A0009");
@@ -99,11 +118,7 @@ public class JudgeHostService {
         if (judgeHostRepository.findOneByBaseUrl(baseUrl) != null) {
             throw new ForbiddenException("B0014");
         }
-        JudgeHostEntity judgeHostEntity = mapper.map(judgeHostDTO, JudgeHostEntity.class);
-        judgeHostEntity.setBaseUrl(baseUrl);
-        // 活跃状态默认置为否
-        judgeHostEntity.setActive(false);
-        judgeHostRepository.save(judgeHostEntity);
+        return true;
     }
 
 
@@ -283,5 +298,20 @@ public class JudgeHostService {
     public void deleteJudgeHost(Long judgeHostId) {
         JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
         judgeHostRepository.delete(judgeHostEntity);
+    }
+
+    /**
+     * 重定向到判题服务器下载提交
+     *
+     * @author yuzhanglong
+     * @date 2020-9-11 12:09:48
+     */
+    public String downloadSubmission(Long judgeHostId, String judgeHostSubmissionId) {
+        // TODO: 对外隐藏 judgeHostSubmissionId 变量。我们应该用过submissionId来找到 submissionIdInJudgeHost
+        JudgeHostEntity judgeHostEntity = judgeHostRepository.findOneById(judgeHostId);
+        if (judgeHostEntity == null) {
+            throw new NotFoundException("B0013");
+        }
+        return judgeHostEntity.getBaseUrl() + ":" + judgeHostEntity.getPort() + JUDGE_HOST_DOWNLOAD_PATH + judgeHostSubmissionId;
     }
 }
