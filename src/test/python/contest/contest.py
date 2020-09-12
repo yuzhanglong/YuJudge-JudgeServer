@@ -3,17 +3,18 @@
 # Created: 2020-9-8 14:55:40
 # Author: yuzhanglong
 # Email: yuzl1123@163.com
+
 import random
 
 import requests
 
-from base.base import HEADERS
+from base.base import BASE_URL
 from problems import bcj, bestCowFences, childString, division, forkBomb, maxSum, money, plus, prime, publicString, \
     square
 from user.common import login
-from user.userGenetare import geneateUsers
+from user.userGenerate import generateUsers
 
-SUBMISSION_BASE_URL = "http://localhost:8080/submission/submit_code"
+SUBMISSION_BASE_URL = BASE_URL + "/submission/submit_code"
 
 AC_KEY = "AC"
 WA_KEY = "WA"
@@ -29,8 +30,8 @@ def loginUsers(users):
     return totalToken
 
 
-def run(problemSetId, testTimes):
-    nickNames = geneateUsers(userAmount=40)
+def runContest(problemSetId, testTimes):
+    nickNames = generateUsers(userAmount=30)
     tokens = loginUsers(nickNames)
     keys = [AC_KEY, WA_KEY]
     for res in range(0, testTimes):
@@ -39,10 +40,10 @@ def run(problemSetId, testTimes):
         problem = data[random.randint(0, 10)]
         json = problem.requestBody[keys[isAc]]
         json['problemSetId'] = problemSetId
-        HEADERS['Authorization'] = tokens[random.randint(0, 39)]
-        res = requests.post(url=SUBMISSION_BASE_URL, json=json, headers=HEADERS)
+        headers = {'Authorization': tokens[random.randint(0, 39)]}
+        res = requests.post(url=SUBMISSION_BASE_URL, json=json, headers=headers)
         print(res.json())
 
 
 if __name__ == '__main__':
-    run(102, 980)
+    runContest(102, 980)
