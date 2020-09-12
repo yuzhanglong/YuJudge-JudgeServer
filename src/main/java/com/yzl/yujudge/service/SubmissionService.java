@@ -8,6 +8,7 @@ import com.yzl.yujudge.core.configuration.SubmissionExecutorConfiguration;
 import com.yzl.yujudge.core.enumeration.JudgeConditionEnum;
 import com.yzl.yujudge.core.enumeration.JudgeResultEnum;
 import com.yzl.yujudge.core.enumeration.ProblemSetConditionEnum;
+import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.JudgeHostJudgeRequestDTO;
 import com.yzl.yujudge.dto.JudgeResultDTO;
@@ -18,11 +19,13 @@ import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.network.JudgeHostJudgeRequest;
 import com.yzl.yujudge.repository.*;
+import com.yzl.yujudge.store.redis.SubmissionCache;
 import com.yzl.yujudge.utils.DateTimeUtil;
 import com.yzl.yujudge.utils.JudgeResultCalculateUtil;
 import com.yzl.yujudge.utils.ToDtoUtil;
 import com.yzl.yujudge.utils.ToEntityUtil;
 import com.yzl.yujudge.vo.SubmissionThreadPoolVO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,12 +50,15 @@ public class SubmissionService {
     private final UserRepository userRepository;
     private final JudgeHostService judgeHostService;
     private final JudgeHostRepository judgeHostRepository;
+    private final SubmissionCache submissionCache;
     private final UserGroupService userGroupService;
     private final SubmissionExecutorConfiguration submissionExecutorConfiguration;
     private final ProblemSetService problemSetService;
     public static final int MAX_SUBMISSION_TRY_AMOUNT = 5;
     public static final int MAX_SUBMISSION_COUNT_DATE = 40;
-    public static final int MAX_SUBMISSION_COUNT_HOURS = 24 * 15;
+
+    @Value("${submission.frequency}")
+    private Long submissionFrequency;
 
     public SubmissionService(
             SubmissionRepository submissionRepository,
@@ -61,6 +67,7 @@ public class SubmissionService {
             UserRepository userRepository,
             JudgeHostService judgeHostService,
             JudgeHostRepository judgeHostRepository,
+            SubmissionCache submissionCache,
             SubmissionExecutorConfiguration submissionExecutorConfiguration,
             UserGroupService userGroupService,
             ProblemSetService problemSetService) {
@@ -70,6 +77,7 @@ public class SubmissionService {
         this.userRepository = userRepository;
         this.judgeHostService = judgeHostService;
         this.judgeHostRepository = judgeHostRepository;
+        this.submissionCache = submissionCache;
         this.submissionExecutorConfiguration = submissionExecutorConfiguration;
         this.userGroupService = userGroupService;
         this.problemSetService = problemSetService;
@@ -85,6 +93,7 @@ public class SubmissionService {
      */
     public SubmissionEntity initSubmissionWithProblemSet(SubmissionDTO submissionDTO) {
         Long userId = UserHolder.getUserId();
+        validateUserSubmissionFrequency(userId);
         // 查询题目集是否存在
         ProblemSetEntity problemSetEntity = problemSetRepository.findOneById(submissionDTO.getProblemSetId());
         if (problemSetEntity == null) {
@@ -135,9 +144,9 @@ public class SubmissionService {
      */
     public SubmissionEntity initSubmissionWithoutProblemSet(SubmissionDTO submissionDTO) {
         Long userId = UserHolder.getUserId();
+        validateUserSubmissionFrequency(userId);
         UserEntity userEntity = userRepository.findOneById(userId);
         JudgeProblemEntity judgeProblemEntity = problemRepository.findOneById(submissionDTO.getProblemId());
-
         // 如果目标problem不存在
         if (judgeProblemEntity == null) {
             throw new NotFoundException("B0002");
@@ -443,5 +452,60 @@ public class SubmissionService {
         }
         submissionEntity.setCondition(condition);
         submissionRepository.save(submissionEntity);
+    }
+
+    /**
+     * 设置提交频率。单位为秒
+     *
+     * @param frequency 提交频率。单位为秒
+     * @author yuzhanglong
+     * @date 2020-9-12 15:51:30
+     */
+    public void setSubmissionFrequency(Long frequency) {
+        submissionFrequency = frequency;
+    }
+
+    /**
+     * 获取提交频率。单位为秒
+     *
+     * @return 提交频率。单位为秒
+     * @author yuzhanglong
+     * @date 2020-9-12 15:51:30
+     */
+    public Long getSubmissionFrequency() {
+        return submissionFrequency;
+    }
+
+    /**
+     * 检测用户是否频繁提交
+     * 本质上利用了redis键的过期机制，用户执行一次提交，redis记录，并设置过期时间
+     * 如果用户在规定的间隔时间内再次提交，我们可以在redis中查到这个值
+     *
+     * @return 是否频繁提交
+     * @author yuzhanglong
+     * @date 2020-9-12 16:02:19
+     */
+    private Boolean isUserSubmissionFrequently(Long uid) {
+        Object data = submissionCache.getUserFromSubmissionNote(uid);
+        return data != null;
+    }
+
+    /**
+     * 用户提交间隔验证 / 记录保存
+     * 如果 submissionFrequency 为 0 不验证
+     *
+     * @author yuzhanglong
+     * @date 2020-9-12 16:09:39
+     */
+    private void validateUserSubmissionFrequency(Long userId) {
+        // 没有设限，不验证
+        if (submissionFrequency == 0) {
+            return;
+        }
+        // 提交频繁性检测
+        if (isUserSubmissionFrequently(userId)) {
+            throw new ForbiddenException("A0013");
+        }
+        submissionCache.setUserSubmissionNote(userId, submissionFrequency);
     }
 }

@@ -9,6 +9,7 @@ import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.dto.ChangeSubmissionConditionDTO;
 import com.yzl.yujudge.dto.SetWorkingAmountDTO;
 import com.yzl.yujudge.dto.SubmissionDTO;
+import com.yzl.yujudge.dto.SubmissionFrequencyDTO;
 import com.yzl.yujudge.model.SubmissionEntity;
 import com.yzl.yujudge.service.SubmissionService;
 import com.yzl.yujudge.utils.DateTimeUtil;
@@ -201,5 +202,31 @@ public class SubmissionController {
         String condition = changeSubmissionConditionDTO.getCondition();
         submissionService.changeSubmissionCondition(submissionId, condition);
         return new UnifiedResponse("修改判题结果成功");
+    }
+
+    /**
+     * 设置用户提交频率
+     *
+     * @author yuzhanglong
+     * @date 2020-9-8 22:32:52
+     */
+    @PutMapping("/frequency_control")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse setSubmissionFrequency(@Validated @RequestBody SubmissionFrequencyDTO submissionFrequencyDTO) {
+        submissionService.setSubmissionFrequency(submissionFrequencyDTO.getFrequency());
+        return new UnifiedResponse("修改提交频率成功");
+    }
+
+    /**
+     * 获取用户提交频率限制值
+     *
+     * @author yuzhanglong
+     * @date 2020-9-12 15:54:15
+     */
+    @GetMapping("/frequency_control")
+    @AuthorizationRequired
+    public UnifiedResponse getSubmissionFrequency() {
+        Long res = submissionService.getSubmissionFrequency();
+        return new UnifiedResponse(res);
     }
 }

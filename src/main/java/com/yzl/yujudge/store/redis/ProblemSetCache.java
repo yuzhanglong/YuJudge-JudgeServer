@@ -8,8 +8,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
+ * 题目集相关缓存操作
+ *
  * @author yuzhanglong
- * @description 题目集相关缓存操作
  * @date 2020-08-14 18:35:43
  */
 
@@ -24,11 +25,13 @@ public class ProblemSetCache {
     }
 
     /**
+     * 添加题目集记分板缓存
+     *
      * @param problemSetId   题目集id
      * @param scoreBoardInfo 记分板信息
      * @author yuzhanglong
      * @date 2020-08-15 00:10:50
-     * @description 添加题目集记分板缓存
+     * @description
      */
     public void setProblemSetScoreBoardCache(ScoreBoardBO scoreBoardInfo, String problemSetId) {
         // 生成key
@@ -40,10 +43,11 @@ public class ProblemSetCache {
     }
 
     /**
+     * 获取题目集记分板缓存
+     *
      * @param problemSetId 题目集id
      * @author yuzhanglong
      * @date 2020-08-15 00:11:42
-     * @description 添加题目集记分板缓存
      */
     public Object getProblemSetScoreBoardCache(Long problemSetId) {
         readWriteLock.readLock().lock();

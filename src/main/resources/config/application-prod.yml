@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   datasource:
@@ -26,3 +26,6 @@ cross-origin: true
 
 application:
   version: V1.0.0
+
+submission:
+  frequency: 0

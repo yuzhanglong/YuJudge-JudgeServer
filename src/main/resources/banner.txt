@@ -6,13 +6,23 @@ __   __         _           _
                               |___/
 [BASIC]
 ${AnsiColor.GREEN}-> Spring-Boot Version: ${AnsiColor.BLUE}${spring-boot.version}
-${AnsiColor.GREEN}-> JudgeHost Version: ${AnsiColor.BLUE}${application.version}
-${AnsiColor.GREEN}-> JudgeHost Started: ${AnsiColor.BLUE}${server.port}
+${AnsiColor.GREEN}-> JudgeServer Version: ${AnsiColor.BLUE}${application.version}
+${AnsiColor.GREEN}-> JudgeServer Started: ${AnsiColor.BLUE}${server.port}
+
+[MYSQL]
+${AnsiColor.GREEN}-> Mysql Url: ${AnsiColor.BLUE}${spring.datasource.url}
+${AnsiColor.GREEN}-> Mysql UserName: ${AnsiColor.BLUE}${spring.datasource.username}
+${AnsiColor.GREEN}-> Mysql Password: ${AnsiColor.BLUE}${spring.datasource.password}
 
 [REDIS]
 ${AnsiColor.GREEN}-> Redis Host: ${AnsiColor.BLUE}${spring.redis.host}
 ${AnsiColor.GREEN}-> Redis Port: ${AnsiColor.BLUE}${spring.redis.port}
 ${AnsiColor.GREEN}-> Redis Database: ${AnsiColor.BLUE}${spring.redis.database}
+
+[REMOTE DATA]
+${AnsiColor.GREEN} -> Qn Access Key: ${AnsiColor.BLUE}${upload.qn-service.access-key}
+${AnsiColor.GREEN} -> Qn Secret Key: ${AnsiColor.BLUE}${upload.qn-service.secret-key}
+${AnsiColor.GREEN} -> Qn Bucket: ${AnsiColor.BLUE}${upload.qn-service.bucket}
 
 [SECRET]
 ${AnsiColor.GREEN} -> Secret Key: ${AnsiColor.BLUE}${authorization.secret-key}

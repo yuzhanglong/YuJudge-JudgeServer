@@ -10,8 +10,9 @@ import java.util.Map;
 import java.util.concurrent.locks.*;
 
 /**
+ * 判题机相关缓存
+ *
  * @author yuzhanglong
- * @description 判题机相关缓存
  * @date 2020-8-18 21:43:34
  */
 
