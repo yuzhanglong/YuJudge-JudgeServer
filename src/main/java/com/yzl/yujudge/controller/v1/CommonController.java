@@ -2,12 +2,14 @@ package com.yzl.yujudge.controller.v1;
 
 import com.yzl.yujudge.core.authorization.AuthorizationRequired;
 import com.yzl.yujudge.core.common.UnifiedResponse;
+import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.service.CommonService;
 import com.yzl.yujudge.vo.DailyWordVO;
 import com.yzl.yujudge.vo.GlobalCountVO;
 import com.yzl.yujudge.vo.UploadTokenVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -68,5 +70,31 @@ public class CommonController {
     public UnifiedResponse getDailyWord() {
         DailyWordVO dailyWordVO = commonService.getDailyWord();
         return new UnifiedResponse(dailyWordVO);
+    }
+
+    /**
+     * 开启或者关闭验证码验证功能
+     *
+     * @author yuzhanglong
+     * @date 2020-8-30 21:18:31
+     */
+    @PutMapping("/check_code_condition")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse resetCheckCodeCondition() {
+        Boolean res = commonService.resetCheckCodeCondition();
+        return new UnifiedResponse("验证码验证功能已重置，当前状态" + (res ? "已开启" : "已关闭"));
+    }
+
+    /**
+     * 获取验证码验证状态
+     *
+     * @author yuzhanglong
+     * @date 2020-9-13 11:20:39
+     */
+    @GetMapping("/check_code_condition")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse getCheckCodeCondition() {
+        Boolean res = commonService.getCheckCodeCondition();
+        return new UnifiedResponse(res);
     }
 }

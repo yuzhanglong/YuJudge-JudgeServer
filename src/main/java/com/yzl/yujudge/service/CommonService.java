@@ -1,6 +1,7 @@
 package com.yzl.yujudge.service;
 
 import com.qiniu.util.Auth;
+import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.configuration.UploadConfiguration;
 import com.yzl.yujudge.model.DailyWordEntity;
 import com.yzl.yujudge.repository.*;
@@ -28,6 +29,7 @@ public class CommonService {
     private final UserRepository userRepository;
     private final JudgeHostRepository judgeHostRepository;
     private final DailyWordRepository dailyWordRepository;
+    private final AuthorizationConfiguration authorizationConfiguration;
 
     public CommonService(
             UploadConfiguration uploadConfiguration,
@@ -36,7 +38,8 @@ public class CommonService {
             ProblemRepository problemRepository,
             UserRepository userRepository,
             JudgeHostRepository judgeHostRepository,
-            DailyWordRepository dailyWordRepository) {
+            DailyWordRepository dailyWordRepository,
+            AuthorizationConfiguration authorizationConfiguration) {
         this.uploadConfiguration = uploadConfiguration;
         this.submissionRepository = submissionRepository;
         this.problemSetRepository = problemSetRepository;
@@ -44,6 +47,7 @@ public class CommonService {
         this.userRepository = userRepository;
         this.judgeHostRepository = judgeHostRepository;
         this.dailyWordRepository = dailyWordRepository;
+        this.authorizationConfiguration = authorizationConfiguration;
     }
 
     /**
@@ -112,5 +116,29 @@ public class CommonService {
         DailyWordEntity dailyWordEntity = dailyWordRepository.findOneById(dayOfYear);
         EntityToVoMapper<DailyWordEntity, DailyWordVO> mapper = new EntityToVoMapper<>(dailyWordEntity, DailyWordVO.class);
         return mapper.getViewObject();
+    }
+
+    /**
+     * 开启或者关闭验证码验证功能
+     *
+     * @return 修改后的结果
+     * @author yuzhanglong
+     * @date 2020-9-13 01:05:15
+     */
+    public Boolean resetCheckCodeCondition() {
+        Boolean old = authorizationConfiguration.getCheckCode();
+        authorizationConfiguration.setCheckCode(!old);
+        return !old;
+    }
+
+    /**
+     * 获取验证码验证功能状态
+     *
+     * @return 验证码验证功能状态
+     * @author yuzhanglong
+     * @date 2020-9-13 11:24:15
+     */
+    public Boolean getCheckCodeCondition() {
+        return authorizationConfiguration.getCheckCode();
     }
 }

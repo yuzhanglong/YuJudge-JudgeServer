@@ -19,6 +19,15 @@ public class AuthorizationConfiguration {
     private Integer expiredIn;
     private String secretKey;
     private Boolean active;
+    private Boolean checkCode;
+
+    public Boolean getCheckCode() {
+        return checkCode;
+    }
+
+    public void setCheckCode(Boolean checkCode) {
+        this.checkCode = checkCode;
+    }
 
     public String getSecretKey() {
         return secretKey;

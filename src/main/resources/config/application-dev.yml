@@ -15,6 +15,7 @@ authorization:
   expired-in: 14400
   secret-key: secret
   active: true
+  check-code: false
 
 upload:
   qn-service:

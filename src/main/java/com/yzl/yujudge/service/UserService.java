@@ -63,11 +63,10 @@ public class UserService {
      * 接下来调用相关接口只需要带上token即可
      *
      * @param loginDTO 登录信息的数据传输对象
-     * @param isCheck  是否验证验证码
      * @author yuzhanglong
      * @date 2020-08-03 13:30:29
      */
-    public String userLogin(LoginDTO loginDTO, Boolean isCheck) {
+    public String userLogin(LoginDTO loginDTO) {
         // TODO: 支持邮箱登录
         UserEntity user = userRepository.findByNickname(loginDTO.getNickname());
         if (user == null) {
@@ -81,7 +80,7 @@ public class UserService {
         boolean isCodePass = isCheckCodePass(key, loginDTO.getCheckCodeContent());
         // 移除本次验证码的相关信息
         redisOperations.remove(key);
-        if (isCheck) {
+        if (authorizationConfiguration.getCheckCode()) {
             if (!isCodePass) {
                 // 验证码异常
                 throw new ForbiddenException("B0009");
