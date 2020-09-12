@@ -9,13 +9,15 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.yzl</groupId>
-    <artifactId>YuJudge</artifactId>
-    <version>0.0.1</version>
+    <artifactId>YuJudge-JudgeServer</artifactId>
+    <version>1.0.0</version>
     <name>YuJudge-JudgeServer</name>
     <description>YuJudge-JudgeServer project for Spring Boot</description>
 
+
     <properties>
         <java.version>1.8</java.version>
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>

@@ -1,0 +1,32 @@
+version: '3'
+services:
+  judge-server:
+    image: registry.cn-shenzhen.aliyuncs.com/coderyzl/judge-server:1.0
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+      - mysql
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JUDGE_SERVER_USER_SECRET: yzl
+      MYSQL_URL: jdbc:mysql://localhost:3306/yu-judge?characterEncoding=utf-8&serverTimezone=GMT%2B8
+      MYSQL_USER_NAME: root
+      MYSQL_PASSWORD: yzl520
+      QN_ACCESS_KEY: o4fgM7P2lPEyo3FZ7s_NGdo_xJVNDdKf55apCubX
+      QN_SECRET_KEY: YxRkcS8o-GSLMo1ajWuLjeFxFsMo1WKnOvyrLjB8
+      QN_BUCKET: yzlyzl123
+  redis:
+    image: redis
+    command:
+      redis-server --port 6379 --appendonly yes
+    volumes:
+      - /home/YuJudge/Judge-Server/redis:/data
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: yzl520
+      MYSQL_DATABASE: yu-judge
+    volumes:
+      - /home/YuJudge/Judge-Server/mysql:/var/lib/mysql
