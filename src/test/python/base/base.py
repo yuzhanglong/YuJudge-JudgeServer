@@ -7,4 +7,4 @@
 
 ADMIN_USER_NAME = "admin"
 ADMIN_PASSWORD = "yzl"
-BASE_URL = ""
+BASE_URL = "http://47.106.202.255:8081"

@@ -7,7 +7,9 @@
 # 需要关闭验证码模式
 import requests
 
-LOGIN_BASE_URL = "http://localhost:8080/user/login"
+from base.base import BASE_URL
+
+LOGIN_BASE_URL = BASE_URL + "/user/login"
 
 
 # 返回token
