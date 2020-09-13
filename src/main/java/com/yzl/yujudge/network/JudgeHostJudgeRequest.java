@@ -17,9 +17,9 @@ import java.nio.charset.StandardCharsets;
 public class JudgeHostJudgeRequest extends HttpRequest {
     public static final String JUDGE_URL = "/judge/result";
     public static final String ACCESS_TOKEN_KEY = "accessToken";
-    public static final String TEST_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOiJ5emwiLCJpYXQiOjE1OTM2OTE1Nzl9." +
-            "6iXiQWK0l8ysGpjTutltZw1JJdOAjjHSaensgHY9kxE";
+
+    public static final String TEST_ACCESS_TOKEN = "token";
+    // TODO: 在未来的版本中加入判题服务器令牌机制, 当前判题服务器无需token，我们暂时以无效值代替
 
     /**
      * 判题机判题请求的构造方法，传入完整地址

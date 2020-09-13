@@ -40,10 +40,10 @@ def runContest(problemSetId, testTimes):
         problem = data[random.randint(0, 10)]
         json = problem.requestBody[keys[isAc]]
         json['problemSetId'] = problemSetId
-        headers = {'Authorization': tokens[random.randint(0, 39)]}
+        headers = {'Authorization': tokens[random.randint(0, 29)]}
         res = requests.post(url=SUBMISSION_BASE_URL, json=json, headers=headers)
         print(res.json())
 
 
 if __name__ == '__main__':
-    runContest(102, 980)
+    runContest(100, 200)

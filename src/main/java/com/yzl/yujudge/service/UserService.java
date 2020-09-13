@@ -7,6 +7,7 @@ import com.yzl.yujudge.core.exception.http.ForbiddenException;
 import com.yzl.yujudge.core.exception.http.NotFoundException;
 import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
+import com.yzl.yujudge.dto.UserDTO;
 import com.yzl.yujudge.model.PermissionEntity;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.model.UserGroupEntity;
@@ -332,5 +333,19 @@ public class UserService {
             throw new NotFoundException("B0006");
         }
         return user;
+    }
+
+    /**
+     * 编辑用户
+     *
+     * @param userDTO 用户传输对象
+     * @author yuzhanglong
+     * @date 2020-9-13 23:11:37
+     */
+    public void editUser(Long userId, UserDTO userDTO) {
+        UserEntity userEntity = getUserById(userId);
+        userEntity.setNickname(userDTO.getNickname());
+        userEntity.setPassword(SecurityUtil.generatePasswordHash(userDTO.getPassword()));
+        userRepository.save(userEntity);
     }
 }

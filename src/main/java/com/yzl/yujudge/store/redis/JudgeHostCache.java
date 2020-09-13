@@ -28,9 +28,10 @@ public class JudgeHostCache {
     }
 
     /**
+     * 获取缓存中redis状态的信息
+     *
      * @return List<Object> 判题机信息列表
      * @author yuzhanglong
-     * @description 获取缓存中redis状态的信息
      * @date 2020-8-18 14:30:40
      */
     public List<Object> getJudgeHostsConditionListCache() {
@@ -42,9 +43,10 @@ public class JudgeHostCache {
 
 
     /**
+     * 通过id 获取缓存中redis状态的信息（单个判题机）
+     *
      * @return Object 判题机信息列表 / null 如果判题机信息不存在的话
      * @author yuzhanglong
-     * @description 通过id 获取缓存中redis状态的信息（单个判题机）
      * @date 2020-8-18 14:32:39
      */
     public Object getJudgeHostsConditionByJudgeHostId(String key) {
@@ -55,9 +57,10 @@ public class JudgeHostCache {
     }
 
     /**
+     * 更新判题机状态的信息, 存入redis中
+     *
      * @param judgeHostBOList 判题机相关业务对象
      * @author yuzhanglong
-     * @description 更新判题机状态的信息, 存入redis中
      * @date 2020-08-17 14:18:59
      */
     public void setJudgeConditionCache(List<JudgeHostBO> judgeHostBOList) {

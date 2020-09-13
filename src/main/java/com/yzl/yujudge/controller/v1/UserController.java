@@ -7,6 +7,7 @@ import com.yzl.yujudge.core.configuration.AuthorizationConfiguration;
 import com.yzl.yujudge.core.enumeration.PermissionEnum;
 import com.yzl.yujudge.dto.LoginDTO;
 import com.yzl.yujudge.dto.RegisterDTO;
+import com.yzl.yujudge.dto.UserDTO;
 import com.yzl.yujudge.dto.UserUserGroupDTO;
 import com.yzl.yujudge.model.UserEntity;
 import com.yzl.yujudge.service.UserService;
@@ -192,5 +193,23 @@ public class UserController {
     public UnifiedResponse addUserToUserGroup(@RequestBody @Validated UserUserGroupDTO userUserGroupDTO) {
         userService.allocateUserUserGroups(userUserGroupDTO.getUserId(), userUserGroupDTO.getUserGroupIds());
         return new UnifiedResponse("添加成功");
+    }
+
+
+    /**
+     * 编辑用户
+     *
+     * @param userDTO 用户数据传输对象
+     * @param userId  用户id
+     * @author yuzhanglong
+     * @date 2020-9-13 23:08:03
+     */
+    @PutMapping("/user/{userId}")
+    @AuthorizationRequired(permission = PermissionEnum.ADMIN)
+    public UnifiedResponse editUser(
+            @PathVariable Long userId,
+            @RequestBody @Validated UserDTO userDTO) {
+        userService.editUser(userId, userDTO);
+        return new UnifiedResponse("修改成功~");
     }
 }
