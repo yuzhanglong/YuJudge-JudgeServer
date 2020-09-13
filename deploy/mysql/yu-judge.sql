@@ -49,7 +49,7 @@ CREATE TABLE `judge_host`
 -- Records of judge_host
 -- ----------------------------
 INSERT INTO `judge_host`
-VALUES (100, 'JudgeHost1', 'http://judge-host', '2020-08-16 21:04:13', '2020-08-31 16:06:51', NULL, 0, 8080);
+VALUES (100, 'JudgeHost1', 'http://judge-host', '2020-08-16 21:04:13', '2020-08-31 16:06:51', NULL, 1, 8080);
 
 -- ----------------------------
 -- Table structure for judge_problem
@@ -644,7 +644,7 @@ CREATE TABLE `user`
 -- ----------------------------
 INSERT INTO `user`
 VALUES (10000, 'Admin', '4fa8d6515821cdbb82631985611f437a', '2020-08-22 13:57:02', '2020-09-11 17:35:39', NULL,
-        'yuzl1123@163.com', 'http://cdn.yuzzl.top/120200072905619.jpg', 13, 32);
+        'yuzl1123@163.com', 'http://cdn.yuzzl.top/120200072905619.jpg', 0, 0);
 
 -- ----------------------------
 -- Table structure for user_group

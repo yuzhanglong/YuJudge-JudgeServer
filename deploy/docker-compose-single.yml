@@ -24,8 +24,8 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - /home/YuJudge/Judge-Host/judgeEnvironment/resolutions:/home/judgeEnvironment/resolutions
-      - /home/YuJudge/Judge-Host/judgeEnvironment/submissions:/home/judgeEnvironment/resolutions
+      - /home/YuJudge/judgeEnvironment/resolutions:/home/judgeEnvironment/resolutions
+      - /home/YuJudge/judgeEnvironment/submissions:/home/judgeEnvironment/resolutions
     depends_on:
       - redis
     environment:
@@ -44,6 +44,7 @@ services:
     image: registry.cn-shenzhen.aliyuncs.com/coderyzl/mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: yzl520
+      TZ: Asia/Shanghai
     ports:
       - 3306:3306
     volumes:
