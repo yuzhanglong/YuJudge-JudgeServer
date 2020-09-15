@@ -6,7 +6,7 @@ services:
       - 8080:8080
     volumes:
       - /home/YuJudge/judgeEnvironment/resolutions:/home/judgeEnvironment/resolutions
-      - /home/YuJudge/judgeEnvironment/submissions:/home/judgeEnvironment/resolutions
+      - /home/YuJudge/judgeEnvironment/submissions:/home/judgeEnvironment/submissions
     depends_on:
       - redis
     environment:
