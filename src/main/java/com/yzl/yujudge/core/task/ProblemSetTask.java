@@ -22,6 +22,7 @@ public class ProblemSetTask {
     private final ProblemSetRepository problemSetRepository;
     private final ProblemSetService problemSetService;
     private final ProblemSetCache problemSetCache;
+    public static final int PROBLEM_SET_TASK_POOL_SIZE = 10;
 
     public ProblemSetTask(
             ProblemSetRepository problemSetRepository,

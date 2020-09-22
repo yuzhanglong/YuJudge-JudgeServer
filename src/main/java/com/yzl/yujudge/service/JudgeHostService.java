@@ -62,6 +62,7 @@ public class JudgeHostService {
             JudgeHostCommonRequest request = new JudgeHostCommonRequest(res.getBaseUrl(), res.getPort());
             try {
                 String testResponse = request.testJudgeConnection();
+                request = null;
                 JudgeHostConnectionDTO responseDTO = objectMapper.readValue(testResponse, JudgeHostConnectionDTO.class);
                 boolean isSuccess = isConnectSuccess(responseDTO);
                 judgeHost.setCondition(responseDTO.getData());
